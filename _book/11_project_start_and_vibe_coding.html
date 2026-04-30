@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门 – 模块 B：金融文本智能项目</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./12_cninfo_crawling_with_vibe_coding.html" rel="next">
+<link href="./00_intro_and_assessment.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-ed6da6eef3892af8a4b5ed59bfb951f5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./11_project_start_and_vibe_coding.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">模块 B：金融文本智能项目</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">前言</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_intro_and_assessment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">模块导论与考核说明</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_project_start_and_vibe_coding.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_cninfo_crawling_with_vibe_coding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Week 12：用 Vibe Coding 抓取巨潮公告数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week12_metadata_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab Week 12：Metadata、PDF 下载与数据检查示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_workflow_framework.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Week 14：通用工作流框架与项目端到端串联</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week14_workflow_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lab Week 14：Workflow 一键串联示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15_evaluation_prompt_skills_optimization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Week 15：评估、提示词优化、Skills 与展示工程化</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_presentation_and_exam_review.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Week 16：项目展示、答辩与期末考试说明</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_templates_and_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">模板与材料清单</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">3.1</span> 本周目标</a></li>
+  <li><a href="#为什么本周先看数据" id="toc-为什么本周先看数据" class="nav-link" data-scroll-target="#为什么本周先看数据"><span class="header-section-number">3.2</span> 为什么本周先看数据</a></li>
+  <li><a href="#巨潮数据地图与选题发现" id="toc-巨潮数据地图与选题发现" class="nav-link" data-scroll-target="#巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 11.1 巨潮数据地图与选题发现</a>
+  <ul class="collapse">
+  <li><a href="#巨潮在本项目中的角色" id="toc-巨潮在本项目中的角色" class="nav-link" data-scroll-target="#巨潮在本项目中的角色"><span class="header-section-number">3.3.1</span> 巨潮在本项目中的角色</a></li>
+  <li><a href="#从公告类型到项目问题" id="toc-从公告类型到项目问题" class="nav-link" data-scroll-target="#从公告类型到项目问题"><span class="header-section-number">3.3.2</span> 从公告类型到项目问题</a></li>
+  <li><a href="#课堂活动巨潮数据观察" id="toc-课堂活动巨潮数据观察" class="nav-link" data-scroll-target="#课堂活动巨潮数据观察"><span class="header-section-number">3.3.3</span> 课堂活动：巨潮数据观察</a></li>
+  </ul></li>
+  <li><a href="#vibe-coding-工具安装与工作流" id="toc-vibe-coding-工具安装与工作流" class="nav-link" data-scroll-target="#vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> 11.2 Vibe Coding 工具安装与工作流</a>
+  <ul class="collapse">
+  <li><a href="#工具选择" id="toc-工具选择" class="nav-link" data-scroll-target="#工具选择"><span class="header-section-number">3.4.1</span> 工具选择</a></li>
+  <li><a href="#安装与检查" id="toc-安装与检查" class="nav-link" data-scroll-target="#安装与检查"><span class="header-section-number">3.4.2</span> 安装与检查</a></li>
+  <li><a href="#受控-vibe-coding-六步法" id="toc-受控-vibe-coding-六步法" class="nav-link" data-scroll-target="#受控-vibe-coding-六步法"><span class="header-section-number">3.4.3</span> 受控 Vibe Coding 六步法</a></li>
+  <li><a href="#为什么不能让-ai-一次性写完整项目" id="toc-为什么不能让-ai-一次性写完整项目" class="nav-link" data-scroll-target="#为什么不能让-ai-一次性写完整项目"><span class="header-section-number">3.4.4</span> 为什么不能让 AI 一次性写完整项目</a></li>
+  <li><a href="#prompt-对比" id="toc-prompt-对比" class="nav-link" data-scroll-target="#prompt-对比"><span class="header-section-number">3.4.5</span> Prompt 对比</a></li>
+  </ul></li>
+  <li><a href="#最小项目骨架" id="toc-最小项目骨架" class="nav-link" data-scroll-target="#最小项目骨架"><span class="header-section-number">3.5</span> 11.3 最小项目骨架</a></li>
+  <li><a href="#选题可行性工作坊" id="toc-选题可行性工作坊" class="nav-link" data-scroll-target="#选题可行性工作坊"><span class="header-section-number">3.6</span> 11.4 选题可行性工作坊</a>
+  <ul class="collapse">
+  <li><a href="#绿灯黄灯红灯" id="toc-绿灯黄灯红灯" class="nav-link" data-scroll-target="#绿灯黄灯红灯"><span class="header-section-number">3.6.1</span> 绿灯、黄灯、红灯</a></li>
+  <li><a href="#topic_proposal.md-模板" id="toc-topic_proposal.md-模板" class="nav-link" data-scroll-target="#topic_proposal.md-模板"><span class="header-section-number">3.6.2</span> <code>topic_proposal.md</code> 模板</a></li>
+  </ul></li>
+  <li><a href="#课堂练习" id="toc-课堂练习" class="nav-link" data-scroll-target="#课堂练习"><span class="header-section-number">3.7</span> 课堂练习</a></li>
+  <li><a href="#课后提交" id="toc-课后提交" class="nav-link" data-scroll-target="#课后提交"><span class="header-section-number">3.8</span> 课后提交</a></li>
+  <li><a href="#常见错误" id="toc-常见错误" class="nav-link" data-scroll-target="#常见错误"><span class="header-section-number">3.9</span> 常见错误</a></li>
+  <li><a href="#教师提示" id="toc-教师提示" class="nav-link" data-scroll-target="#教师提示"><span class="header-section-number">3.10</span> 教师提示</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本周目标" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="本周目标"><span class="header-section-number">3.1</span> 本周目标</h2>
+<p>Week 11 的核心是先看数据、定问题、装工具、建骨架。</p>
+<p>完成本周后，学生应该能够：</p>
+<ol type="1">
+<li>在巨潮资讯网上观察不同公告类型；</li>
+<li>从公告类型出发提出一个金融文本分析选题；</li>
+<li>理解教师给出的选题只是参考，能够自拟题目；</li>
+<li>安装 TRAE，或确认 Claude Code / Codex / Kimi Code 等工具可用；</li>
+<li>使用 AI coding agent 建立最小项目骨架；</li>
+<li>写出 <code>topic_proposal.md</code> 和 <code>cninfo_data_discovery.md</code>。</li>
+</ol>
+</section>
+<section id="为什么本周先看数据" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="为什么本周先看数据"><span class="header-section-number">3.2</span> 为什么本周先看数据</h2>
+<p>很多项目失败，不是因为模型不够强，而是因为一开始没有弄清楚数据长什么样。</p>
+<p>例如，“分析年报风险”听起来很合理，但如果没有进一步限定行业、年份、风险章节、字段和输出形式，就会变成一个过大的题目。相反，“抽取新能源行业 2022–2025 年年报风险因素中的供应链风险、价格风险和政策风险，并比较风险表述变化”就更容易落地。</p>
+<p>本周的基本原则是：</p>
+<pre class="text"><code>公告类型 -&gt; 金融问题 -&gt; 目标字段 -&gt; 结构化输出 -&gt; 难度档位</code></pre>
+</section>
+<section id="巨潮数据地图与选题发现" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 11.1 巨潮数据地图与选题发现</h2>
+<section id="巨潮在本项目中的角色" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="巨潮在本项目中的角色"><span class="header-section-number">3.3.1</span> 巨潮在本项目中的角色</h3>
+<p>巨潮资讯网提供上市公司公告查询和 PDF 下载入口。本项目的主数据必须来自巨潮公告。其他资料可以作为背景知识，但不能替代项目主数据。</p>
+<p>学生需要观察的公告类型包括：</p>
+<ul>
+<li>定期报告：年报、半年报、季报；</li>
+<li>临时公告：回购、增减持、重大合同、诉讼仲裁、关联交易、担保、分红、股权激励；</li>
+<li>监管互动：问询函、关注函、回复公告；</li>
+<li>投资者关系活动记录。</li>
+</ul>
+</section>
+<section id="从公告类型到项目问题" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="从公告类型到项目问题"><span class="header-section-number">3.3.2</span> 从公告类型到项目问题</h3>
+<p>一个好选题不是“做某类公告总结”，而是回答一个具体金融问题。</p>
+<p>示例：</p>
+<pre class="text"><code>观察：很多公司披露“关于股东减持计划的公告”。
+金融问题：大股东减持是否可能形成市场风险信号？
+目标字段：股东名称、减持数量、减持比例、减持期间、减持原因、是否为控股股东。
+输出形式：股东减持事件台账 + 风险提示卡。
+难度：基础档 0.9。</code></pre>
+<p>再看一个更复杂的例子：</p>
+<pre class="text"><code>观察：上市公司会先披露回购方案，之后披露进展公告和结果公告。
+金融问题：公司回购计划是否按承诺执行？回购金额与上限差距多大？
+目标字段：方案日期、计划金额区间、计划股份数量、进展金额、最终完成金额、完成比例。
+输出形式：回购生命周期时间线 + 完成度统计。
+难度：挑战档 1.1。</code></pre>
+</section>
+<section id="课堂活动巨潮数据观察" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="课堂活动巨潮数据观察"><span class="header-section-number">3.3.3</span> 课堂活动：巨潮数据观察</h3>
+<p>每组选择两个候选方向，打开 5–10 份公告，完成 <code>cninfo_data_discovery.md</code>。</p>
+<p>建议记录：</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 巨潮数据探索记录</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 方向 A</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>关键词：</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>公告类型：</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>示例公司/代码：</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>示例标题：</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PDF 是否可下载：是/否</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>可能字段：</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>金融问题：</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>风险点：</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## 方向 B</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>关键词：</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>公告类型：</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>示例公司/代码：</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>示例标题：</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>PDF 是否可下载：是/否</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>可能字段：</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>金融问题：</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>风险点：</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## 初步选择</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>我们更倾向于：</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>理由：</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="vibe-coding-工具安装与工作流" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> 11.2 Vibe Coding 工具安装与工作流</h2>
+<section id="工具选择" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="工具选择"><span class="header-section-number">3.4.1</span> 工具选择</h3>
+<p>默认推荐使用 TRAE。已经拥有 Claude Code、Codex、Kimi Code 或其他 AI coding agent 的学生可以继续使用原工具。</p>
+<p>课程不以工具品牌评分。评分只看：</p>
+<ul>
+<li>项目是否可复现；</li>
+<li>AI 使用过程是否有记录；</li>
+<li>学生是否能解释关键代码；</li>
+<li>结果是否有证据和评估。</li>
+</ul>
+</section>
+<section id="安装与检查" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="安装与检查"><span class="header-section-number">3.4.2</span> 安装与检查</h3>
+<p>本周每位学生至少完成一次工具检查：</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 工具安装与检查</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>使用工具：TRAE / Claude Code / Codex / Kimi Code / 其他</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>操作系统：</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>是否能打开项目目录：是/否</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>是否能生成 run.py：是/否</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>是否成功运行 python run.py --help：是/否</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>遇到的问题：</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="受控-vibe-coding-六步法" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="受控-vibe-coding-六步法"><span class="header-section-number">3.4.3</span> 受控 Vibe Coding 六步法</h3>
+<pre class="text"><code>Spec -&gt; Plan -&gt; Generate -&gt; Run -&gt; Repair -&gt; Review</code></pre>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>步骤</th>
+<th>学生要做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Spec</td>
+<td>写清任务、输入、输出、约束和验收标准</td>
+</tr>
+<tr class="even">
+<td>Plan</td>
+<td>让 AI 先给实现计划，不急着写代码</td>
+</tr>
+<tr class="odd">
+<td>Generate</td>
+<td>让 AI 只生成一个小模块</td>
+</tr>
+<tr class="even">
+<td>Run</td>
+<td>学生在本地运行命令</td>
+</tr>
+<tr class="odd">
+<td>Repair</td>
+<td>把完整报错贴回 AI，让它只修改必要部分</td>
+</tr>
+<tr class="even">
+<td>Review</td>
+<td>检查输出、记录过程、解释关键代码</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="为什么不能让-ai-一次性写完整项目" class="level3" data-number="3.4.4">
+<h3 data-number="3.4.4" class="anchored" data-anchor-id="为什么不能让-ai-一次性写完整项目"><span class="header-section-number">3.4.4</span> 为什么不能让 AI 一次性写完整项目</h3>
+<p>一条 prompt 让 AI “帮我做一个巨潮公告分析项目”，通常会导致：</p>
+<ul>
+<li>文件结构看起来完整，但无法运行；</li>
+<li>字段定义不稳定；</li>
+<li>API Key 处理不安全；</li>
+<li>数据来源和合规边界不清；</li>
+<li>学生无法解释代码；</li>
+<li>错误难以定位。</li>
+</ul>
+<p>因此本课程要求把任务拆成小模块。每次只让 AI 处理一个可验证的步骤。</p>
+</section>
+<section id="prompt-对比" class="level3" data-number="3.4.5">
+<h3 data-number="3.4.5" class="anchored" data-anchor-id="prompt-对比"><span class="header-section-number">3.4.5</span> Prompt 对比</h3>
+<p>坏 prompt：</p>
+<pre class="text"><code>帮我做一个巨潮公告分析项目。</code></pre>
+<p>好 prompt：</p>
+<pre class="text"><code>请只帮我生成一个 run.py，使它支持 python run.py --help，并显示本项目可用命令。
+不要生成其他文件。请给出运行命令和最小测试。</code></pre>
+<p>更完整的开发 prompt：</p>
+<pre class="text"><code>你是我的 Python 项目助教。请帮我创建一个最小可运行的课程项目骨架，
+但不要实现业务逻辑。
+
+背景：金融文本智能课程，数据来自巨潮资讯网 PDF。
+要求：
+1. 创建标准目录：data、src、configs、outputs、tests。
+2. 写一个 run.py，支持 python run.py --help。
+3. 写 README.md，说明项目目标、目录结构和运行方法。
+4. 写 .env.example，但不要出现真实 API Key。
+5. 写 ai_worklog.md 模板。
+6. 不要抓取数据，不要调用 LLM，不要写复杂功能。</code></pre>
+</section>
+</section>
+<section id="最小项目骨架" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="最小项目骨架"><span class="header-section-number">3.5</span> 11.3 最小项目骨架</h2>
+<p>本周建议项目结构如下：</p>
+<pre class="text"><code>project_name/
+  README.md
+  ai_worklog.md
+  .env.example
+  requirements.txt
+  configs/
+    task.yaml
+  data/
+    metadata/
+    pdf/
+    parsed/
+  src/
+    __init__.py
+    cninfo/
+    llm/
+    mineru/
+    workflow/
+    evaluation/
+  outputs/
+    logs/
+    results/
+    reports/
+  tests/</code></pre>
+<p>本周不要求抓取大量数据。项目骨架的验收标准是：</p>
+<ul>
+<li><code>python run.py --help</code> 可以运行；</li>
+<li>README 能说明项目目标和目录；</li>
+<li><code>.env.example</code> 只有变量名和占位符；</li>
+<li>有 <code>ai_worklog.md</code> 或周记录模板；</li>
+<li>不包含真实 API Key。</li>
+</ul>
+<p>如果学生第一次使用 AI coding agent，可以先运行讲义目录中的离线 starter：</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> starter_example</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">-r</span> requirements.txt</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> run.py all</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>starter 的作用是帮助学生看懂项目链路，不是最终答案。正式项目仍需替换为本组选题、真实 metadata、真实 PDF 或解析文本。</p>
+</section>
+<section id="选题可行性工作坊" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="选题可行性工作坊"><span class="header-section-number">3.6</span> 11.4 选题可行性工作坊</h2>
+<p>每组需要把“看到的数据”转化为可执行项目。选题四问：</p>
+<ol type="1">
+<li>数据来自巨潮哪类公告？</li>
+<li>字段是否能结构化？</li>
+<li>证据是否能追溯？</li>
+<li>六周是否做得完？</li>
+</ol>
+<section id="绿灯黄灯红灯" class="level3" data-number="3.6.1">
+<h3 data-number="3.6.1" class="anchored" data-anchor-id="绿灯黄灯红灯"><span class="header-section-number">3.6.1</span> 绿灯、黄灯、红灯</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>状态</th>
+<th>判断标准</th>
+<th>教师反馈</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>绿灯</td>
+<td>数据可获得，字段清楚，金融问题明确，工作量合适</td>
+<td>可以进入 Week 12 抓取</td>
+</tr>
+<tr class="even">
+<td>黄灯</td>
+<td>方向有价值，但字段、数据量或范围需要收缩</td>
+<td>修改后再确认</td>
+</tr>
+<tr class="odd">
+<td>红灯</td>
+<td>数据不是巨潮来源，题目过大或字段无法判断对错</td>
+<td>换题或大幅重做</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="topic_proposal.md-模板" class="level3" data-number="3.6.2">
+<h3 data-number="3.6.2" class="anchored" data-anchor-id="topic_proposal.md-模板"><span class="header-section-number">3.6.2</span> <code>topic_proposal.md</code> 模板</h3>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Topic Proposal</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## 项目题目</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 金融问题</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## 巨潮数据来源</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## 公告类型</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## 示例公告</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>| 公司 | 代码 | 标题 | 日期 | URL |</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|---|</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## 目标字段</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>| 字段 | 类型 | 是否必填 | 金融含义 | 证据来源 |</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>|---|---|---|---|---|</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="fu">## 最终输出形式</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## 难度档位</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>0.9 / 1.0 / 1.1</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>理由：</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## 风险与备选方案</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="课堂练习" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="课堂练习"><span class="header-section-number">3.7</span> 课堂练习</h2>
+<ol type="1">
+<li>每组在巨潮上检索两个候选方向。</li>
+<li>每组打开至少 5 份公告，记录标题、日期、PDF 链接和可能字段。</li>
+<li>使用 AI coding agent 生成最小项目骨架。</li>
+<li>运行 <code>python run.py --help</code>，截图或记录输出。</li>
+<li>与教师进行 3–5 分钟选题确认。</li>
+</ol>
+</section>
+<section id="课后提交" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="课后提交"><span class="header-section-number">3.8</span> 课后提交</h2>
+<p>Deliverable 11：</p>
+<pre class="text"><code>team_info.md
+cninfo_data_discovery.md
+topic_ideas.md
+topic_proposal.md
+output_sample.md
+project_skeleton/
+AGENTS.md 或 CODING_RULES.md
+tool_setup_check.md
+ai_worklog_week11.md</code></pre>
+</section>
+<section id="常见错误" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="常见错误"><span class="header-section-number">3.9</span> 常见错误</h2>
+<ul>
+<li>选题太大，例如“分析所有上市公司年报风险”；</li>
+<li>选题太空，例如“总结公司公告”；</li>
+<li>数据不是巨潮来源；</li>
+<li>字段无法判断对错；</li>
+<li>没有证据页码或原文片段；</li>
+<li>过早写代码，没搞清公告类型；</li>
+<li>让 AI 一次性生成整个项目；</li>
+<li>API Key 出现在 README、截图或代码里。</li>
+</ul>
+</section>
+<section id="教师提示" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="教师提示"><span class="header-section-number">3.10</span> 教师提示</h2>
+<p>本周教师应重点追问三个问题：</p>
+<ol type="1">
+<li>你们为什么选择这个公告类型？</li>
+<li>你们最终输出的表格或 JSON 长什么样？</li>
+<li>哪些字段最容易判断错？</li>
+</ol>
+<p>如果学生回答不出第三个问题，说明他们还没有真正理解任务边界，应先缩小选题。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./00_intro_and_assessment.html" class="pagination-link" aria-label="模块导论与考核说明">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">模块导论与考核说明</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./12_cninfo_crawling_with_vibe_coding.html" class="pagination-link" aria-label="Week 12：用 Vibe Coding 抓取巨潮公告数据">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Week 12：用 Vibe Coding 抓取巨潮公告数据</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

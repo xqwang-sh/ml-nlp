@@ -1,0 +1,97 @@
+---
+title: "Lab Week 14：Workflow 一键串联示范"
+---
+
+## Lab 目标
+
+本 lab 演示 Week 14 的端到端 workflow：
+
+```text
+metadata -> download -> audit -> parse -> route -> extract -> validate
+```
+
+重点不是代码复杂，而是让学生看到每一步都有输入、输出、日志和可检查结果。
+
+## 1. 查看 workflow 配置
+
+```bash
+cat configs/workflow.yaml
+```
+
+课堂讲解重点：
+
+- `paths.metadata`：metadata 输入；
+- `paths.parsed_dir`：解析结果目录；
+- `paths.section_report`：section 检查报告；
+- `paths.extract_results`：抽取 JSONL；
+- `paths.validated_results`：最终可读 CSV；
+- `paths.run_log`：运行日志。
+
+## 2. 一键运行
+
+```bash
+python3 src/pipeline_run.py --step all
+```
+
+输出示例：
+
+```text
+[metadata] metadata rows=2
+[download] download rows=2, failures=0
+[audit] dataset report=outputs/reports/dataset_check_report.md
+[parse] parsed docs=2
+[route] sections=2
+[extract] extract records=2
+[validate] valid=2, errors=0
+```
+
+## 3. 单步运行
+
+如果某一步失败，学生不应重新跑所有东西，而应先定位问题。
+
+```bash
+python3 src/pipeline_run.py --step route
+python3 src/pipeline_run.py --step extract
+python3 src/pipeline_run.py --step validate
+```
+
+## 4. 检查日志
+
+打开：
+
+```text
+outputs/logs/run_log.jsonl
+```
+
+每一行应说明：
+
+- 哪一步；
+- 是否成功；
+- 处理了多少记录；
+- 如果失败，错误原因是什么。
+
+## 5. 给学生的观察任务
+
+请学生画出本 demo 的 workflow，并补充每个节点的输入输出：
+
+| 节点 | 输入 | 输出 | 检查方式 |
+|---|---|---|---|
+| metadata | 巨潮查询接口 | metadata.csv | 字段是否完整 |
+| download | metadata.csv | data/pdf/*.pdf | 文件是否存在 |
+| audit | metadata + pdf | dataset report | 缺失/重复/关键词 |
+| parse | pdf text | parsed_docs.jsonl | 页码和正文 |
+| route | parsed docs + rules | sections.jsonl | section check |
+| extract | sections | extract_results.jsonl | 字段和 evidence |
+| validate | extract results + schema | records_validated.csv | Pydantic |
+
+## 6. 正式项目如何替换 demo
+
+| Demo 环节 | 正式项目替换 |
+|---|---|
+| `crawl_cninfo.py` | 调整关键词、时间范围、股票池、公告类型 |
+| `download_pdfs.py` | 保留限速、失败记录和域名检查 |
+| `parse_docs.py` | 可替换为 MinerU API / MinerU 输出标准化 |
+| `extract_fields.py` 规则抽取 | LLM API + prompt + schema |
+| 默认 5 条公告 | 按项目难度扩展数据量 |
+
+替换后仍应保留 workflow 的基本形状：输入、输出、日志、校验和可重跑。

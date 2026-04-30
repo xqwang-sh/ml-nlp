@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查 – 模块 B：金融文本智能项目</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./labs/week13_schema_section_demo.html" rel="next">
+<link href="./labs/week12_metadata_demo.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-ed6da6eef3892af8a4b5ed59bfb951f5.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "没有结果",
+    "search-matching-documents-text": "匹配的文档",
+    "search-copy-link-title": "复制搜索链接",
+    "search-hide-matches-text": "隐藏其它匹配结果",
+    "search-more-match-text": "更多匹配结果",
+    "search-more-matches-text": "更多匹配结果",
+    "search-clear-button-title": "清除",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "取消",
+    "search-submit-button-title": "提交",
+    "search-label": "搜索"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./13_llm_pydantic_mineru_section_checking.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">模块 B：金融文本智能项目</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="搜索"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">前言</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_intro_and_assessment.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">模块导论与考核说明</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./11_project_start_and_vibe_coding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./12_cninfo_crawling_with_vibe_coding.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Week 12：用 Vibe Coding 抓取巨潮公告数据</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week12_metadata_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab Week 12：Metadata、PDF 下载与数据检查示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./14_workflow_framework.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Week 14：通用工作流框架与项目端到端串联</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./labs/week14_workflow_demo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Lab Week 14：Workflow 一键串联示范</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./15_evaluation_prompt_skills_optimization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Week 15：评估、提示词优化、Skills 与展示工程化</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./16_presentation_and_exam_review.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Week 16：项目展示、答辩与期末考试说明</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./90_templates_and_materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">模板与材料清单</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">目录</h2>
+   
+  <ul>
+  <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">6.1</span> 本周目标</a></li>
+  <li><a href="#本周主线" id="toc-本周主线" class="nav-link" data-scroll-target="#本周主线"><span class="header-section-number">6.2</span> 本周主线</a></li>
+  <li><a href="#llm-api-最小调用" id="toc-llm-api-最小调用" class="nav-link" data-scroll-target="#llm-api-最小调用"><span class="header-section-number">6.3</span> 13.1 LLM API 最小调用</a>
+  <ul class="collapse">
+  <li><a href="#api-调用的通用结构" id="toc-api-调用的通用结构" class="nav-link" data-scroll-target="#api-调用的通用结构"><span class="header-section-number">6.3.1</span> API 调用的通用结构</a></li>
+  <li><a href="#env.example" id="toc-env.example" class="nav-link" data-scroll-target="#env.example"><span class="header-section-number">6.3.2</span> <code>.env.example</code></a></li>
+  <li><a href="#model_config.yaml" id="toc-model_config.yaml" class="nav-link" data-scroll-target="#model_config.yaml"><span class="header-section-number">6.3.3</span> <code>model_config.yaml</code></a></li>
+  <li><a href="#最小-api-连通性检查" id="toc-最小-api-连通性检查" class="nav-link" data-scroll-target="#最小-api-连通性检查"><span class="header-section-number">6.3.4</span> 最小 API 连通性检查</a></li>
+  <li><a href="#为什么要封装-llm_client.py" id="toc-为什么要封装-llm_client.py" class="nav-link" data-scroll-target="#为什么要封装-llm_client.py"><span class="header-section-number">6.3.5</span> 为什么要封装 <code>llm_client.py</code></a></li>
+  </ul></li>
+  <li><a href="#pydantic-schema-与结构化抽取" id="toc-pydantic-schema-与结构化抽取" class="nav-link" data-scroll-target="#pydantic-schema-与结构化抽取"><span class="header-section-number">6.4</span> 13.2 Pydantic Schema 与结构化抽取</a>
+  <ul class="collapse">
+  <li><a href="#为什么先定义-schema" id="toc-为什么先定义-schema" class="nav-link" data-scroll-target="#为什么先定义-schema"><span class="header-section-number">6.4.1</span> 为什么先定义 Schema</a></li>
+  <li><a href="#常用字段类型" id="toc-常用字段类型" class="nav-link" data-scroll-target="#常用字段类型"><span class="header-section-number">6.4.2</span> 常用字段类型</a></li>
+  <li><a href="#null-rule" id="toc-null-rule" class="nav-link" data-scroll-target="#null-rule"><span class="header-section-number">6.4.3</span> Null Rule</a></li>
+  <li><a href="#示例股东减持公告-schema" id="toc-示例股东减持公告-schema" class="nav-link" data-scroll-target="#示例股东减持公告-schema"><span class="header-section-number">6.4.4</span> 示例：股东减持公告 Schema</a></li>
+  </ul></li>
+  <li><a href="#mineru-api-文档解析" id="toc-mineru-api-文档解析" class="nav-link" data-scroll-target="#mineru-api-文档解析"><span class="header-section-number">6.5</span> 13.3 MinerU API 文档解析</a>
+  <ul class="collapse">
+  <li><a href="#解析检查表" id="toc-解析检查表" class="nav-link" data-scroll-target="#解析检查表"><span class="header-section-number">6.5.1</span> 解析检查表</a></li>
+  <li><a href="#解析日志" id="toc-解析日志" class="nav-link" data-scroll-target="#解析日志"><span class="header-section-number">6.5.2</span> 解析日志</a></li>
+  </ul></li>
+  <li><a href="#section-routing-与-section-checking" id="toc-section-routing-与-section-checking" class="nav-link" data-scroll-target="#section-routing-与-section-checking"><span class="header-section-number">6.6</span> 13.4 Section Routing 与 Section Checking</a>
+  <ul class="collapse">
+  <li><a href="#两者的区别" id="toc-两者的区别" class="nav-link" data-scroll-target="#两者的区别"><span class="header-section-number">6.6.1</span> 两者的区别</a></li>
+  <li><a href="#为什么-section-不容易" id="toc-为什么-section-不容易" class="nav-link" data-scroll-target="#为什么-section-不容易"><span class="header-section-number">6.6.2</span> 为什么 section 不容易</a></li>
+  <li><a href="#section_rules.yaml-示例" id="toc-section_rules.yaml-示例" class="nav-link" data-scroll-target="#section_rules.yaml-示例"><span class="header-section-number">6.6.3</span> <code>section_rules.yaml</code> 示例</a></li>
+  <li><a href="#section-检查表" id="toc-section-检查表" class="nav-link" data-scroll-target="#section-检查表"><span class="header-section-number">6.6.4</span> Section 检查表</a></li>
+  </ul></li>
+  <li><a href="#章节级抽取与证据回填" id="toc-章节级抽取与证据回填" class="nav-link" data-scroll-target="#章节级抽取与证据回填"><span class="header-section-number">6.7</span> 13.5 章节级抽取与证据回填</a>
+  <ul class="collapse">
+  <li><a href="#baseline-抽取流程" id="toc-baseline-抽取流程" class="nav-link" data-scroll-target="#baseline-抽取流程"><span class="header-section-number">6.7.1</span> Baseline 抽取流程</a></li>
+  </ul></li>
+  <li><a href="#课堂练习" id="toc-课堂练习" class="nav-link" data-scroll-target="#课堂练习"><span class="header-section-number">6.8</span> 课堂练习</a></li>
+  <li><a href="#week-13-常见环境问题" id="toc-week-13-常见环境问题" class="nav-link" data-scroll-target="#week-13-常见环境问题"><span class="header-section-number">6.9</span> Week 13 常见环境问题</a></li>
+  <li><a href="#课后提交" id="toc-课后提交" class="nav-link" data-scroll-target="#课后提交"><span class="header-section-number">6.10</span> 课后提交</a></li>
+  <li><a href="#常见错误" id="toc-常见错误" class="nav-link" data-scroll-target="#常见错误"><span class="header-section-number">6.11</span> 常见错误</a></li>
+  <li><a href="#教师提示" id="toc-教师提示" class="nav-link" data-scroll-target="#教师提示"><span class="header-section-number">6.12</span> 教师提示</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="本周目标" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="本周目标"><span class="header-section-number">6.1</span> 本周目标</h2>
+<p>Week 13 的任务是把 PDF 变成可处理文本，并把“想抽取的字段”变成可验证的结构化输出。</p>
+<p>完成本周后，学生应该能够：</p>
+<ol type="1">
+<li>用硅基流动或千问官方 API 跑通最小 LLM 调用；</li>
+<li>用 <code>.env</code> 管理 API Key；</li>
+<li>用 Pydantic 写项目字段 Schema；</li>
+<li>用 MinerU API 或 MinerU 输出解析 PDF；</li>
+<li>对自动识别的 section 做人工检查和规则修正；</li>
+<li>输出带证据的结构化抽取结果。</li>
+</ol>
+</section>
+<section id="本周主线" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="本周主线"><span class="header-section-number">6.2</span> 本周主线</h2>
+<pre class="text"><code>PDF
+  -&gt; MinerU 解析
+  -&gt; Markdown / JSON
+  -&gt; Section Routing
+  -&gt; Section Checking
+  -&gt; LLM 抽取
+  -&gt; Pydantic 校验
+  -&gt; 带 evidence 的结果</code></pre>
+</section>
+<section id="llm-api-最小调用" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="llm-api-最小调用"><span class="header-section-number">6.3</span> 13.1 LLM API 最小调用</h2>
+<section id="api-调用的通用结构" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="api-调用的通用结构"><span class="header-section-number">6.3.1</span> API 调用的通用结构</h3>
+<p>无论使用硅基流动、千问官方 API，还是其他兼容服务，基本概念都类似：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>base_url</code></td>
+<td>API 服务地址</td>
+</tr>
+<tr class="even">
+<td><code>api_key</code></td>
+<td>身份凭证，必须从环境变量读取</td>
+</tr>
+<tr class="odd">
+<td><code>model</code></td>
+<td>使用的模型名称</td>
+</tr>
+<tr class="even">
+<td><code>messages</code></td>
+<td>给模型的输入消息</td>
+</tr>
+<tr class="odd">
+<td><code>temperature</code></td>
+<td>随机性，结构化抽取建议设为 0</td>
+</tr>
+<tr class="even">
+<td><code>max_tokens</code></td>
+<td>最大输出长度</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="env.example" class="level3" data-number="6.3.2">
+<h3 data-number="6.3.2" class="anchored" data-anchor-id="env.example"><span class="header-section-number">6.3.2</span> <code>.env.example</code></h3>
+<p><code>.env.example</code> 只写变量名和占位符，不写真实 Key：</p>
+<pre class="text"><code>LLM_PROVIDER=siliconflow
+LLM_BASE_URL=https://api.siliconflow.cn/v1
+LLM_API_KEY=your_key_here
+LLM_MODEL=your_model_here
+
+QWEN_API_KEY=your_qwen_key_here
+MINERU_API_KEY=your_mineru_key_here</code></pre>
+<p>真实 <code>.env</code> 不得提交到 Git 或作业平台。</p>
+</section>
+<section id="model_config.yaml" class="level3" data-number="6.3.3">
+<h3 data-number="6.3.3" class="anchored" data-anchor-id="model_config.yaml"><span class="header-section-number">6.3.3</span> <code>model_config.yaml</code></h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">provider</span><span class="kw">:</span><span class="at"> </span><span class="st">"your_provider"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> </span><span class="st">"your_model_here"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">base_url_env</span><span class="kw">:</span><span class="at"> </span><span class="st">"LLM_BASE_URL"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">api_key_env</span><span class="kw">:</span><span class="at"> </span><span class="st">"LLM_API_KEY"</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">temperature</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">max_tokens</span><span class="kw">:</span><span class="at"> </span><span class="dv">2048</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">timeout_seconds</span><span class="kw">:</span><span class="at"> </span><span class="dv">60</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="最小-api-连通性检查" class="level3" data-number="6.3.4">
+<h3 data-number="6.3.4" class="anchored" data-anchor-id="最小-api-连通性检查"><span class="header-section-number">6.3.4</span> 最小 API 连通性检查</h3>
+<p>讲义目录中的 <code>starter_example/</code> 已提供一个最小连通性脚本。它不绑定具体厂商，只要求服务兼容常见的 <code>/chat/completions</code> 调用形式。</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> starter_example</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> pip install <span class="at">-r</span> requirements.txt</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.example .env</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 在 .env 中填入真实 LLM_BASE_URL、LLM_API_KEY、LLM_MODEL</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/hello_llm.py <span class="at">--config</span> configs/model_config.yaml</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>如果暂时没有真实 API Key，本步骤可以先跳过，但正式项目必须至少完成一次 API 连通性检查并记录在 <code>ai_worklog</code> 中。</p>
+</section>
+<section id="为什么要封装-llm_client.py" class="level3" data-number="6.3.5">
+<h3 data-number="6.3.5" class="anchored" data-anchor-id="为什么要封装-llm_client.py"><span class="header-section-number">6.3.5</span> 为什么要封装 <code>llm_client.py</code></h3>
+<p>不要把 API 调用散落在多个脚本中。统一封装有三个好处：</p>
+<ul>
+<li>便于切换 provider 或 model；</li>
+<li>便于统一日志和错误处理；</li>
+<li>便于测试“API 是否能连通”。</li>
+</ul>
+<p>常见报错包括：</p>
+<ul>
+<li>API Key 无效；</li>
+<li>model 名称错误；</li>
+<li>base_url 错误；</li>
+<li>网络或超时；</li>
+<li>返回内容不是 JSON；</li>
+<li>输出太长被截断。</li>
+</ul>
+</section>
+</section>
+<section id="pydantic-schema-与结构化抽取" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="pydantic-schema-与结构化抽取"><span class="header-section-number">6.4</span> 13.2 Pydantic Schema 与结构化抽取</h2>
+<section id="为什么先定义-schema" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="为什么先定义-schema"><span class="header-section-number">6.4.1</span> 为什么先定义 Schema</h3>
+<p>Pydantic Schema 是字段契约。它能告诉模型、代码和评分标准：结果应该长什么样。</p>
+<p>先定义 Schema 的好处：</p>
+<ul>
+<li>明确字段；</li>
+<li>限制类型；</li>
+<li>便于验证；</li>
+<li>便于评分；</li>
+<li>便于根据错误修复 prompt；</li>
+<li>避免“这次字段叫 amount，下次叫 money”的混乱。</li>
+</ul>
+</section>
+<section id="常用字段类型" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="常用字段类型"><span class="header-section-number">6.4.2</span> 常用字段类型</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>类型</th>
+<th>用法</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>str</code></td>
+<td>公司名、公告标题、原文金额</td>
+</tr>
+<tr class="even">
+<td><code>int</code></td>
+<td>页码、次数、年限</td>
+</tr>
+<tr class="odd">
+<td><code>float</code></td>
+<td>标准化金额、比例</td>
+</tr>
+<tr class="even">
+<td><code>Optional</code></td>
+<td>可能缺失的字段</td>
+</tr>
+<tr class="odd">
+<td><code>Literal</code></td>
+<td>枚举值，如事件类型</td>
+</tr>
+<tr class="even">
+<td><code>list</code></td>
+<td>多个主体、多个问题、多个证据</td>
+</tr>
+<tr class="odd">
+<td>嵌套模型</td>
+<td>证据、金额、日期范围等复杂对象</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="null-rule" class="level3" data-number="6.4.3">
+<h3 data-number="6.4.3" class="anchored" data-anchor-id="null-rule"><span class="header-section-number">6.4.3</span> Null Rule</h3>
+<p>不确定时输出 <code>null</code>，不能编造。</p>
+<p>这是金融公告抽取中非常重要的规则。模型如果根据常识补全字段，结果看起来完整，但实际不可用。</p>
+</section>
+<section id="示例股东减持公告-schema" class="level3" data-number="6.4.4">
+<h3 data-number="6.4.4" class="anchored" data-anchor-id="示例股东减持公告-schema"><span class="header-section-number">6.4.4</span> 示例：股东减持公告 Schema</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Optional, Literal</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Evidence(BaseModel):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">"支持字段的公告原文"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    page_no: Optional[<span class="bu">int</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"证据所在页码"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ShareholderReduction(BaseModel):</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    company_name: <span class="bu">str</span> <span class="op">=</span> Field(description<span class="op">=</span><span class="st">"上市公司名称"</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    stock_code: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"证券代码"</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    announcement_date: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"YYYY-MM-DD"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    shareholder_name: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"减持股东名称"</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    shareholder_type: Optional[Literal[<span class="st">"控股股东"</span>, <span class="st">"实际控制人"</span>, <span class="st">"董监高"</span>, <span class="st">"其他股东"</span>]] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    reduction_method: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"集中竞价、大宗交易等"</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    reduction_amount_text: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"公告原文中的减持数量"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    reduction_ratio_text: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"公告原文中的减持比例"</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    reduction_period: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"减持期间原文"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    reason: Optional[<span class="bu">str</span>] <span class="op">=</span> Field(default<span class="op">=</span><span class="va">None</span>, description<span class="op">=</span><span class="st">"减持原因"</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    evidence: Evidence</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>金额和比例建议先保留原文，再逐步做标准化。直接要求模型输出标准化数值，容易在单位、万股、亿元、百分比上出错。</p>
+</section>
+</section>
+<section id="mineru-api-文档解析" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="mineru-api-文档解析"><span class="header-section-number">6.5</span> 13.3 MinerU API 文档解析</h2>
+<p>MinerU 的作用是把 PDF 转为 Markdown、JSON 或其他更容易处理的文本格式。与普通 PDF 文本提取相比，公告 PDF 常见的难点包括：</p>
+<ul>
+<li>表格；</li>
+<li>页眉页脚；</li>
+<li>多栏排版；</li>
+<li>目录；</li>
+<li>标题层级；</li>
+<li>跨页段落；</li>
+<li>扫描件或复杂版式。</li>
+</ul>
+<p>MinerU 输出仍然需要检查。不要把解析结果当作绝对正确。</p>
+<section id="解析检查表" class="level3" data-number="6.5.1">
+<h3 data-number="6.5.1" class="anchored" data-anchor-id="解析检查表"><span class="header-section-number">6.5.1</span> 解析检查表</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Parse Check</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Document</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>doc_id:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>title:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>pdf_path:</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>parsed_path:</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Page Check</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>页码是否保留：</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>是否有乱码：</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>表格是否完整：</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>标题层级是否合理：</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>目录是否混入正文：</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## Target Content</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>目标章节是否出现：</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>关键字段是否能在解析文本中找到：</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>是否需要人工修正：</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="解析日志" class="level3" data-number="6.5.2">
+<h3 data-number="6.5.2" class="anchored" data-anchor-id="解析日志"><span class="header-section-number">6.5.2</span> 解析日志</h3>
+<p>每次解析至少记录：</p>
+<pre class="text"><code>doc_id, pdf_path, parsed_path, status, error_message, parse_time</code></pre>
+</section>
+</section>
+<section id="section-routing-与-section-checking" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="section-routing-与-section-checking"><span class="header-section-number">6.6</span> 13.4 Section Routing 与 Section Checking</h2>
+<section id="两者的区别" class="level3" data-number="6.6.1">
+<h3 data-number="6.6.1" class="anchored" data-anchor-id="两者的区别"><span class="header-section-number">6.6.1</span> 两者的区别</h3>
+<pre class="text"><code>Section Routing：自动找到可能相关的章节。
+Section Checking：检查找到的章节是否真的对，必要时修正规则。</code></pre>
+<p>Routing 是程序行为，Checking 是质量控制。一个项目可以有简单的 Routing，但不能没有 Checking。</p>
+</section>
+<section id="为什么-section-不容易" class="level3" data-number="6.6.2">
+<h3 data-number="6.6.2" class="anchored" data-anchor-id="为什么-section-不容易"><span class="header-section-number">6.6.2</span> 为什么 section 不容易</h3>
+<ul>
+<li>标题写法不统一；</li>
+<li>目录页会误匹配；</li>
+<li>年报章节很长；</li>
+<li>表格和段落混合；</li>
+<li>有些公告没有清晰标题；</li>
+<li>同一个关键词可能出现在“释义”“风险提示”“目录”等无关位置。</li>
+</ul>
+</section>
+<section id="section_rules.yaml-示例" class="level3" data-number="6.6.3">
+<h3 data-number="6.6.3" class="anchored" data-anchor-id="section_rules.yaml-示例"><span class="header-section-number">6.6.3</span> <code>section_rules.yaml</code> 示例</h3>
+<div class="sourceCode" id="cb9"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">target_sections</span><span class="kw">:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">risk_factors</span><span class="kw">:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include_keywords</span><span class="kw">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"风险因素"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"可能面对的风险"</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"公司面临的风险"</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">exclude_keywords</span><span class="kw">:</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"目录"</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"释义"</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"重要提示"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">min_chars</span><span class="kw">:</span><span class="at"> </span><span class="dv">500</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">page_expansion</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">shareholder_reduction</span><span class="kw">:</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include_keywords</span><span class="kw">:</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"减持计划"</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"减持股份"</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"减持情况"</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">exclude_keywords</span><span class="kw">:</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"目录"</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="st">"备查文件"</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">min_chars</span><span class="kw">:</span><span class="at"> </span><span class="dv">200</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">page_expansion</span><span class="kw">:</span><span class="at"> </span><span class="dv">0</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="section-检查表" class="level3" data-number="6.6.4">
+<h3 data-number="6.6.4" class="anchored" data-anchor-id="section-检查表"><span class="header-section-number">6.6.4</span> Section 检查表</h3>
+<pre class="csv"><code>doc_id,title,target_section,found,section_title,page_start,page_end,quality_issue,notes</code></pre>
+<p><code>quality_issue</code> 可以使用：</p>
+<ul>
+<li><code>ok</code></li>
+<li><code>not_found</code></li>
+<li><code>toc_mismatch</code></li>
+<li><code>too_short</code></li>
+<li><code>table_broken</code></li>
+<li><code>wrong_section</code></li>
+<li><code>page_missing</code></li>
+<li><code>needs_manual_review</code></li>
+</ul>
+</section>
+</section>
+<section id="章节级抽取与证据回填" class="level2" data-number="6.7">
+<h2 data-number="6.7" class="anchored" data-anchor-id="章节级抽取与证据回填"><span class="header-section-number">6.7</span> 13.5 章节级抽取与证据回填</h2>
+<p>不要把整篇年报直接交给 LLM 抽取所有字段。应先定位目标章节，再把相关文本送入模型。</p>
+<p>每条结果至少包含：</p>
+<ul>
+<li><code>value</code>；</li>
+<li><code>evidence_text</code>；</li>
+<li><code>page_no</code>；</li>
+<li><code>confidence</code>。</li>
+</ul>
+<p>提示词模板：</p>
+<pre class="text"><code>你将收到公告中的一个目标章节。请只根据输入文本抽取字段。
+如果字段不存在，输出 null。
+不得根据常识补全。
+每个字段必须给出 evidence_text。
+evidence_text 必须是输入文本中的原文片段。
+输出必须是合法 JSON，并符合给定字段说明。</code></pre>
+<section id="baseline-抽取流程" class="level3" data-number="6.7.1">
+<h3 data-number="6.7.1" class="anchored" data-anchor-id="baseline-抽取流程"><span class="header-section-number">6.7.1</span> Baseline 抽取流程</h3>
+<ol type="1">
+<li>随机选取 5–10 份已解析 PDF；</li>
+<li>用 section rules 找目标章节；</li>
+<li>人工检查 section 是否正确；</li>
+<li>对正确 section 调用 LLM 抽取；</li>
+<li>用 Pydantic 校验；</li>
+<li>把校验失败写入 <code>validation_errors.jsonl</code>；</li>
+<li>人工检查 evidence 是否来自输入。</li>
+</ol>
+</section>
+</section>
+<section id="课堂练习" class="level2" data-number="6.8">
+<h2 data-number="6.8" class="anchored" data-anchor-id="课堂练习"><span class="header-section-number">6.8</span> 课堂练习</h2>
+<ol type="1">
+<li>创建 <code>.env.example</code> 和 <code>configs/model_config.yaml</code>。</li>
+<li>跑通一次 <code>hello_llm.py</code>。</li>
+<li>为本组选题写 <code>src/schemas.py</code>。</li>
+<li>解析 3–5 份 PDF，并填写 <code>parse_check.md</code>。</li>
+<li>写第一版 <code>section_rules.yaml</code>。</li>
+<li>抽取 5 条 baseline 结果，记录 Pydantic 错误。</li>
+</ol>
+</section>
+<section id="week-13-常见环境问题" class="level2" data-number="6.9">
+<h2 data-number="6.9" class="anchored" data-anchor-id="week-13-常见环境问题"><span class="header-section-number">6.9</span> Week 13 常见环境问题</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>问题</th>
+<th>常见表现</th>
+<th>建议处理</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>.env</code> 没读到</td>
+<td>提示 missing API key</td>
+<td>确认 <code>.env</code> 在项目根目录，变量名和 <code>model_config.yaml</code> 一致</td>
+</tr>
+<tr class="even">
+<td><code>base_url</code> 错误</td>
+<td>404、connection error</td>
+<td>检查是否以 <code>/v1</code> 结尾，脚本会自动拼接 <code>/chat/completions</code></td>
+</tr>
+<tr class="odd">
+<td>model 名称错误</td>
+<td>provider 返回 model not found</td>
+<td>到所用平台复制模型名称，不要凭记忆手写</td>
+</tr>
+<tr class="even">
+<td>JSON 不合法</td>
+<td>Pydantic 无法解析</td>
+<td>保存原始输出，用 JSON 修复 prompt 或降低 temperature</td>
+</tr>
+<tr class="odd">
+<td>PDF 无法解析</td>
+<td>parsed text 为空或乱码</td>
+<td>先换 3–5 份样本测试，保留失败记录，必要时标记人工复核</td>
+</tr>
+<tr class="even">
+<td>section 命中目录</td>
+<td>evidence 来自目录页</td>
+<td>增加 exclude keywords、最小长度和人工 section check</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="课后提交" class="level2" data-number="6.10">
+<h2 data-number="6.10" class="anchored" data-anchor-id="课后提交"><span class="header-section-number">6.10</span> 课后提交</h2>
+<p>Deliverable 13：</p>
+<pre class="text"><code>.env.example
+configs/model_config.yaml
+src/llm_client.py
+src/schemas.py
+src/parse_with_mineru.py
+data/parsed/parsed_docs_sample.jsonl
+parse_check.md
+section_rules.yaml
+src/route_sections.py
+section_check_report.md
+extract_results_v1.jsonl
+validation_errors.jsonl
+ai_worklog_week13.md</code></pre>
+<p>建议解析样本规模：</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>难度</th>
+<th>Week 13 解析样本要求</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>基础</td>
+<td>至少 10–20 份 PDF 完成 MinerU 解析与抽样检查</td>
+</tr>
+<tr class="even">
+<td>标准</td>
+<td>至少 20–40 份 PDF 完成 MinerU 解析与抽样检查</td>
+</tr>
+<tr class="odd">
+<td>挑战</td>
+<td>至少 40 份 PDF 或 20 对匹配样本完成解析与检查</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="常见错误" class="level2" data-number="6.11">
+<h2 data-number="6.11" class="anchored" data-anchor-id="常见错误"><span class="header-section-number">6.11</span> 常见错误</h2>
+<ul>
+<li>API Key 写进代码；</li>
+<li>Prompt 没有 Schema；</li>
+<li>模型输出 JSON 但无法被 Pydantic 解析；</li>
+<li>MinerU 解析结果没有检查；</li>
+<li>section 命中了目录而不是正文；</li>
+<li>evidence_text 是模型编造的，不在输入中；</li>
+<li>page_no 缺失或错误；</li>
+<li>把整篇长 PDF 一次性塞给模型；</li>
+<li>没有保存 validation error。</li>
+</ul>
+</section>
+<section id="教师提示" class="level2" data-number="6.12">
+<h2 data-number="6.12" class="anchored" data-anchor-id="教师提示"><span class="header-section-number">6.12</span> 教师提示</h2>
+<p>本周教师可以抽查一条结果，要求学生现场指出：</p>
+<ol type="1">
+<li>原 PDF 文件；</li>
+<li>MinerU 解析片段；</li>
+<li>section 检查记录；</li>
+<li>LLM 输出；</li>
+<li>Pydantic 校验结果；</li>
+<li>evidence_text 在原文中的位置。</li>
+</ol>
+<p>如果这条链断了，说明系统还不能被信任。</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "已复制");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "已复制");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./labs/week12_metadata_demo.html" class="pagination-link" aria-label="Lab Week 12：Metadata、PDF 下载与数据检查示范">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lab Week 12：Metadata、PDF 下载与数据检查示范</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./labs/week13_schema_section_demo.html" class="pagination-link" aria-label="Lab Week 13：Section、Schema 与 Evidence 示范">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

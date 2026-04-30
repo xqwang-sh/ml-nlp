@@ -1,0 +1,3 @@
+doc_id,stock_code,stock_name,market,announcement_title,announcement_type,publish_date,url,pdf_url,local_pdf_path,download_status,source,crawl_time,error_message,notes
+sample_001,300033,同花顺,sz,关于持股5%以上股东减持计划实施完成的公告,股东减持,2024-12-30,sample://cninfo/detail/sample_001,sample://cninfo/pdf/sample_001,data/pdf/sample_001.pdf,sample,cninfo_sample,2026-04-30T00:00:00,,离线 starter 样本；正式项目需替换为真实巨潮 URL
+sample_002,300456,赛微电子,sz,关于控股股东、实际控制人减持计划实施完毕的公告,股东减持,2024-12-27,sample://cninfo/detail/sample_002,sample://cninfo/pdf/sample_002,data/pdf/sample_002.pdf,sample,cninfo_sample,2026-04-30T00:00:00,,离线 starter 样本；正式项目需替换为真实巨潮 URL

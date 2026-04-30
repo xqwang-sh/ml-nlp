@@ -1,0 +1,34 @@
+project:
+  type: book
+  output-dir: _book
+
+book:
+  title: "模块 B：金融文本智能项目"
+  subtitle: "用受控 Vibe Coding 分析巨潮公告"
+  author: "邵颖慧、汪小圈"
+  date: last-modified
+  chapters:
+    - index.qmd
+    - 00_intro_and_assessment.qmd
+    - 11_project_start_and_vibe_coding.qmd
+    - 12_cninfo_crawling_with_vibe_coding.qmd
+    - labs/week12_metadata_demo.qmd
+    - 13_llm_pydantic_mineru_section_checking.qmd
+    - labs/week13_schema_section_demo.qmd
+    - 14_workflow_framework.qmd
+    - labs/week14_workflow_demo.qmd
+    - 15_evaluation_prompt_skills_optimization.qmd
+    - 16_presentation_and_exam_review.qmd
+    - 90_templates_and_materials.qmd
+
+format:
+  html:
+    theme: cosmo
+    code-fold: true
+    number-sections: true
+    toc: true
+    toc-depth: 3
+    lang: zh-CN
+
+execute:
+  freeze: auto

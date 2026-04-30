@@ -1,0 +1,107 @@
+---
+title: "Lab Week 12：Metadata、PDF 下载与数据检查示范"
+---
+
+## Lab 目标
+
+本 lab 演示 Week 12 的真实巨潮数据链路：
+
+```text
+抓取规格 -> 巨潮公告查询接口 -> metadata.csv -> PDF 下载 -> dataset_check_report.md
+```
+
+示范项目只访问巨潮公开公告查询接口和公开 PDF 地址，不使用登录态，不绕过验证码或访问限制。默认只抓取 5 条记录，并在请求之间限速，便于课堂稳定演示。
+
+## 示例项目位置
+
+```bash
+cd labs/cninfo_reduction_lab
+```
+
+## 1. 抓取规格
+
+查看配置：
+
+```bash
+cat configs/crawl.yaml
+```
+
+这里的关键字段包括：
+
+- `keywords`：公告关键词；
+- `date_range`：时间范围；
+- `sleep_seconds`：真实抓取时的限速参数；
+- `endpoint`：巨潮公开公告查询接口；
+- `query.max_records`：课堂默认最多抓取 5 条；
+- `output.metadata`：标准 metadata 输出位置；
+- `output.pdf_dir`：PDF 或样本文本保存位置。
+
+## 2. 生成 metadata
+
+运行：
+
+```bash
+python3 src/crawl_cninfo.py
+```
+
+输出：
+
+```text
+data/metadata/metadata.csv
+```
+
+课堂讲解重点：
+
+- `doc_id` 是后续所有步骤的主键；
+- `url` 和 `pdf_url` 用于追溯来源；
+- `local_pdf_path` 让 PDF 文件和 metadata 对应；
+- `download_status` 记录下载状态；
+- `error_message` 不能静默为空，失败时要写清原因。
+
+## 3. 下载 PDF
+
+运行：
+
+```bash
+python3 src/download_pdfs.py
+```
+
+这个脚本会下载 metadata 中的公开 PDF，并保存到 `data/pdf/`。脚本会检查下载 URL 是否属于巨潮域名，避免把任意外部 URL 传给下载函数。
+
+## 4. 数据检查
+
+运行：
+
+```bash
+python3 src/check_dataset.py
+```
+
+输出：
+
+```text
+outputs/reports/dataset_check_report.md
+```
+
+课堂讲解重点：
+
+- 是否有重复 `doc_id`；
+- metadata 中记录的文件是否真的存在；
+- 标题是否包含本组选题关键词；
+- 下载失败是否写入日志；
+- 只有 PDF 文件夹而没有 metadata，是不合格的数据提交。
+
+## 5. 给学生的观察任务
+
+请学生打开：
+
+```text
+data/metadata/metadata.csv
+outputs/reports/dataset_check_report.md
+```
+
+回答：
+
+1. 哪个字段能证明数据来自巨潮？
+2. 哪个字段能定位本地文件？
+3. 如果某个 PDF 下载失败，应记录在哪里？
+4. 如果标题不含“减持”，后续抽取会有什么风险？
