@@ -1,0 +1,24 @@
+target_sections:
+  risk_factors:
+    include_keywords:
+      - "风险因素"
+      - "可能面对的风险"
+      - "公司面临的风险"
+    exclude_keywords:
+      - "目录"
+      - "释义"
+      - "重要提示"
+    min_chars: 500
+    page_expansion: 1
+
+  shareholder_reduction:
+    include_keywords:
+      - "减持计划"
+      - "减持股份"
+      - "减持情况"
+    exclude_keywords:
+      - "目录"
+      - "备查文件"
+    min_chars: 200
+    page_expansion: 0
+

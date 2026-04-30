@@ -1,0 +1,34 @@
+---
+title: "前言"
+---
+
+本讲义用于《数据挖掘与机器学习》课程 Week 11–16，即后半程的金融文本智能项目模块。
+
+模块 B 的核心任务是：每个小组从巨潮资讯网公开公告中选择一个金融文本分析问题，使用受控 vibe coding 搭建一个小型、可复现、可检查的文本智能系统。最终成果不是一份单纯的文字报告，而是一套包含数据、代码、schema、prompt、解析结果、抽取结果、评估报告和展示材料的项目。
+
+## 学习路线
+
+1. [模块导论与考核说明](00_intro_and_assessment.qmd)
+2. [Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门](11_project_start_and_vibe_coding.qmd)
+3. [Week 12：用 Vibe Coding 抓取巨潮公告数据](12_cninfo_crawling_with_vibe_coding.qmd)
+4. [Lab Week 12：Metadata、样本下载与数据检查示范](labs/week12_metadata_demo.qmd)
+5. [Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查](13_llm_pydantic_mineru_section_checking.qmd)
+6. [Lab Week 13：Section、Schema 与 Evidence 示范](labs/week13_schema_section_demo.qmd)
+7. [Week 14：通用工作流框架与项目端到端串联](14_workflow_framework.qmd)
+8. [Lab Week 14：Workflow 一键串联示范](labs/week14_workflow_demo.qmd)
+9. [Week 15：评估、提示词优化、Skills 与展示工程化](15_evaluation_prompt_skills_optimization.qmd)
+10. [Week 16：项目展示、答辩与期末考试说明](16_presentation_and_exam_review.qmd)
+
+## 配套材料
+
+- [模板与材料清单](90_templates_and_materials.qmd)：给学生直接复制使用的项目模板、配置模板、prompt 模板、starter example、labs 和提交清单。
+
+## 使用说明
+
+本目录是一个独立的 Quarto book，不依赖现有 `handouts` 目录。进入本目录后可以运行：
+
+```bash
+quarto render
+```
+
+渲染结果会输出到本目录下的 `_book/`。

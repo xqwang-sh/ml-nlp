@@ -1,0 +1,288 @@
+---
+title: "Week 14：通用工作流框架与项目端到端串联"
+---
+
+## 本周目标
+
+Week 14 只学习通用工作流思想，并用普通 Python 把各组项目串成可运行流程。
+
+完成本周后，学生应该能够：
+
+1. 把本组项目拆成节点；
+2. 为每个节点写清输入、输出、成功标准和失败处理；
+3. 画出自己的 workflow；
+4. 用 `pipeline_run.py` 或等价入口串起项目；
+5. 在小样本上跑通端到端流程。
+
+## 为什么需要 Workflow
+
+Week 12 和 Week 13 产生了多个脚本：抓取、下载、检查、解析、section routing、抽取、校验。若这些脚本只是散落在项目里，别人很难复现，学生自己也很难定位错误。
+
+Workflow 的目的不是使用某个高级框架，而是让项目步骤变得清楚、可重跑、可检查。
+
+一个通用流程可以写成：
+
+```text
+metadata.csv
+  -> check_dataset
+  -> parse_pdf
+  -> route_sections
+  -> extract_fields
+  -> validate_results
+  -> aggregate_report
+  -> final_outputs
+```
+
+## 14.1 工作流的基本要素
+
+每个节点都应有五个要素：
+
+| 要素 | 说明 |
+|---|---|
+| 输入 | 文件、配置、参数 |
+| 输出 | 中间结果或最终结果 |
+| 日志 | 成功、失败、耗时、错误原因 |
+| 校验 | 如何知道这一步做对了 |
+| 可重跑 | 同样输入能否复现同样输出 |
+
+### 推荐通用流程
+
+```text
+Collect -> Audit -> Parse -> Inspect/Route -> Extract -> Validate -> Aggregate -> Report
+```
+
+| 节点 | 作用 |
+|---|---|
+| Collect | 获取公告列表和 PDF |
+| Audit | 检查 metadata、PDF、重复和相关性 |
+| Parse | 用 MinerU 解析 PDF |
+| Inspect/Route | 定位目标章节并人工抽查 |
+| Extract | 调用 LLM 抽取字段 |
+| Validate | 用 Pydantic 校验结果 |
+| Aggregate | 汇总为 CSV、JSONL 或分析表 |
+| Report | 生成评估报告和展示材料 |
+
+## 14.2 五种工作流模式
+
+### 顺序流水线
+
+最基础的模式，适合基础档项目。
+
+```text
+metadata -> parse -> extract -> validate -> report
+```
+
+例子：重大合同公告核心字段抽取。每份 PDF 独立处理，不需要和其他公告匹配。
+
+### 条件分支
+
+根据数据或结果进入不同路径。
+
+```text
+if section_found:
+    extract_fields
+else:
+    mark_manual_review
+```
+
+例子：年报风险因素抽取。若没有找到目标章节，进入人工复核列表。
+
+### 失败重试
+
+对不稳定节点进行有限重试。
+
+```text
+parse_pdf -> if failed retry 2 times -> log failure
+```
+
+例子：MinerU API 超时、网络波动、PDF 临时下载失败。
+
+### Reviewer-Revise
+
+先抽取，再让另一个检查环节判断结果是否合格，必要时修正。
+
+```text
+extract -> review_schema_and_evidence -> revise_or_accept
+```
+
+例子：模型抽取了金额，但 evidence_text 不包含该金额，进入修复 prompt。
+
+### Human-in-the-loop
+
+某些节点必须人工确认。
+
+```text
+route_sections -> sample_check_by_human -> update_rules -> continue
+```
+
+例子：问询函和回复闭环匹配，自动规则可能误匹配，需要人工抽样确认。
+
+## 14.3 Workflow Design
+
+每组先写 `workflow_design.md`，再写代码。
+
+模板：
+
+````markdown
+# Workflow Design
+
+## 项目目标
+
+## 总流程图
+Collect -> Audit -> Parse -> Inspect/Route -> Extract -> Validate -> Aggregate -> Report
+
+## 节点表
+| 节点 | 输入 | 输出 | 成功标准 | 失败处理 | 日志 |
+|---|---|---|---|---|---|
+
+## 人工检查点
+
+## 配置文件
+- configs/workflow.yaml
+
+## 最小运行命令
+```bash
+python pipeline_run.py --config configs/workflow.yaml --limit 10
+```
+````
+
+### `workflow.yaml` 示例
+
+```yaml
+project_name: "shareholder_reduction_events"
+paths:
+  metadata: "data/metadata/metadata.csv"
+  pdf_dir: "data/pdf"
+  parsed_dir: "data/parsed"
+  section_report: "outputs/reports/section_check_report.csv"
+  results_jsonl: "outputs/results/extract_results.jsonl"
+  validated_csv: "outputs/results/records_validated.csv"
+  run_log: "outputs/logs/run_log.jsonl"
+
+steps:
+  audit:
+    enabled: true
+  parse:
+    enabled: true
+    limit: 20
+  route_sections:
+    enabled: true
+    rules: "configs/section_rules.yaml"
+  extract:
+    enabled: true
+    prompt: "prompts/prompt_final.md"
+  validate:
+    enabled: true
+  report:
+    enabled: true
+```
+
+## 14.4 用 Vibe Coding 实现端到端入口
+
+当让 AI coding agent 写“粘合代码”时，必须提供：
+
+- 当前文件树；
+- 已有模块名称；
+- 输入输出路径；
+- 不允许改动的文件；
+- 验收命令。
+
+Prompt 模板：
+
+```text
+你是我的 Python 项目助教。请根据 workflow_design.md 帮我实现 pipeline_run.py。
+
+限制：
+1. 不要重写已有业务函数，只负责串联已有模块。
+2. 每一步都写日志到 outputs/logs/run_log.jsonl。
+3. 每一步失败时不要静默跳过，要记录错误并返回非零退出码。
+4. 支持步骤：audit、parse、route、extract、validate、report、all。
+5. 支持 --limit 参数，便于小样本测试。
+6. 请给出每个命令的运行示例。
+```
+
+### 推荐运行命令
+
+```bash
+python pipeline_run.py --config configs/workflow.yaml --step audit
+python pipeline_run.py --config configs/workflow.yaml --step parse --limit 10
+python pipeline_run.py --config configs/workflow.yaml --step all --limit 10
+```
+
+运行后至少生成：
+
+```text
+outputs/logs/run_log.jsonl
+outputs/results/extract_results.jsonl
+outputs/results/records_validated.csv
+outputs/reports/summary_report.md
+```
+
+## 14.5 日志设计
+
+`run_log.jsonl` 每一行建议是一个 JSON 对象：
+
+```json
+{"time": "2026-04-29T10:00:00", "step": "parse", "doc_id": "000001_20240101_xxx", "status": "success", "elapsed": 2.31, "error": null}
+```
+
+日志不是装饰品。它回答：
+
+- 哪一步失败；
+- 哪个文件失败；
+- 为什么失败；
+- 是否可以重跑；
+- 展示时能否证明系统跑过。
+
+## 课堂练习
+
+1. 每组画出自己的 workflow 图。
+2. 填写节点表，明确每个节点输入输出。
+3. 写 `configs/workflow.yaml`。
+4. 让 AI coding agent 评审 workflow，指出缺失节点和风险。
+5. 实现 `pipeline_run.py` 的最小版本。
+6. 用 `--limit 5` 跑通端到端小样本。
+
+## 课后提交
+
+Deliverable 14：
+
+```text
+workflow_design.md
+workflow_graph.png 或 workflow_graph.md
+configs/workflow.yaml
+pipeline_run.py
+src/workflow/
+outputs/logs/run_log.jsonl
+outputs/results/extract_results.jsonl
+outputs/results/records_validated.csv
+outputs/reports/summary_report.md
+ai_worklog_week14.md
+```
+
+## 常见错误
+
+- 只有脚本，没有统一入口；
+- workflow 图和代码不一致；
+- 没有日志；
+- 失败后整个程序中断且没有记录；
+- 抽取、校验、汇总混在一个超长脚本里；
+- 只在一条样本上成功，批处理就失败；
+- `pipeline_run.py` 依赖本地绝对路径；
+- 输出文件散落在项目根目录。
+
+## 教师提示
+
+教师可以要求学生现场运行：
+
+```bash
+python pipeline_run.py --config configs/workflow.yaml --step all --limit 3
+```
+
+然后检查：
+
+1. 是否生成日志；
+2. 是否生成抽取结果；
+3. 是否有校验结果；
+4. 如果某条失败，日志是否说明原因；
+5. 学生能否说清每个节点做了什么。

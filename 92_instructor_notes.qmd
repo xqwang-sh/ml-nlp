@@ -1,0 +1,234 @@
+---
+title: "教师提示与演示建议"
+---
+
+## 教学节奏建议
+
+后半程 6 周的关键是每周都有可检查产物，而不是只讲概念。
+
+| 周次 | 课堂重点 | 当周检查点 |
+|---|---|---|
+| Week 11 | 巨潮数据观察、选题、工具安装、项目骨架 | 选题卡、工具检查、`run.py --help` |
+| Week 12 | 抓取规格、metadata、PDF 下载、数据审计 | `metadata.csv`、PDF 样本、数据检查报告 |
+| Week 13 | LLM API、Pydantic、MinerU、Section 检查 | Schema、解析样本、section report、baseline results |
+| Week 14 | 通用 workflow、端到端运行 | workflow design、`pipeline_run.py --limit 10` |
+| Week 15 | 评估、优化、skills/rules、展示工程化 | eval report、optimization log、final repo checklist |
+| Week 16 | 展示、答辩、考试复习 | demo、证据链、答辩 |
+
+## 教师示例项目建议
+
+推荐教师使用“股东减持公告核心字段抽取”作为演示项目，原因是：
+
+- 公告标题容易检索；
+- 字段较明确；
+- 单公告即可完成基础抽取；
+- 可以自然引出证据、日期、比例和主体识别问题；
+- 不需要复杂多公告匹配，适合作为入门 demo。
+
+示例字段：
+
+| 字段 | 类型 | 说明 |
+|---|---|---|
+| company_name | str | 上市公司名称 |
+| stock_code | str | 证券代码 |
+| announcement_date | str | 公告日期 |
+| shareholder_name | str | 减持股东 |
+| shareholder_type | enum | 控股股东、实控人、董监高、其他 |
+| reduction_amount_text | str | 减持数量原文 |
+| reduction_ratio_text | str | 减持比例原文 |
+| reduction_period | str | 减持期间 |
+| reason | str | 减持原因 |
+| evidence_text | str | 原文证据 |
+
+## 课堂演示脚本
+
+### 演示一：Week 11 选题观察
+
+1. 打开巨潮资讯网；
+2. 搜索“减持计划”；
+3. 展示 3 个公告标题；
+4. 打开一个 PDF；
+5. 让学生说出可能字段；
+6. 将“公告类型 -> 金融问题 -> 字段 -> 输出形式”写在黑板或投影上。
+
+### 演示二：Vibe Coding 最小骨架
+
+1. 准备一个空文件夹；
+2. 给 AI coding agent 一个小 prompt：只生成 `run.py --help`；
+3. 运行命令；
+4. 故意删除一个依赖或路径；
+5. 把报错贴回 AI；
+6. 重新运行；
+7. 记录到 `ai_worklog.md`。
+
+演示重点不是代码多复杂，而是让学生看到“生成、运行、报错、修复、验证”的闭环。
+
+### 演示三：Section 误定位
+
+准备一份年报或长公告，让关键词命中目录页。展示：
+
+- 自动规则找到的位置；
+- 为什么它其实是目录；
+- 如何增加排除词和最小长度；
+- 修改后再跑；
+- 在 section check report 中记录问题。
+
+这是非常有效的失败案例，能帮助学生理解“解析结果不等于可用数据”。
+
+### 演示四：Pydantic 校验失败
+
+让模型输出一个错误 JSON，例如：
+
+```json
+{"event_type": "share reduction", "page_no": "第一页"}
+```
+
+然后用 schema 要求：
+
+- `event_type` 必须是中文枚举；
+- `page_no` 必须是整数或 null。
+
+展示 validation error，并说明如何把错误用于 prompt 修改。
+
+## 常见失败案例库
+
+### 失败案例一：选题过大
+
+表现：
+
+- 题目是“上市公司年报文本分析”；
+- 没有具体章节；
+- 字段无法列出；
+- 数据量目标不现实。
+
+处理：
+
+- 限定行业、年份、公告章节；
+- 将任务改成结构化抽取，而不是泛泛总结；
+- 要求学生画出最终输出表。
+
+### 失败案例二：metadata 不完整
+
+表现：
+
+- 只有 PDF 文件夹；
+- 文件名是 `1.pdf`、`2.pdf`；
+- 不知道对应公司、公告标题和日期。
+
+处理：
+
+- 要求补 `metadata.csv`；
+- 建立 `doc_id`；
+- 每个 PDF 都能回到巨潮 URL。
+
+### 失败案例三：Section 没检查
+
+表现：
+
+- 抽取结果看起来完整；
+- 但 evidence 来自目录或错误章节；
+- 学生无法指出原文位置。
+
+处理：
+
+- 增加 section check report；
+- 抽查 10 条；
+- 错误类型分类。
+
+### 失败案例四：Prompt 让模型编造
+
+表现：
+
+- 模型输出字段完整；
+- 原文中没有对应信息；
+- evidence_text 是改写或不存在的句子。
+
+处理：
+
+- 加 null rule；
+- 强制 evidence 原文引用；
+- 增加 evidence 字符串匹配检查；
+- 对失败样本写反例。
+
+### 失败案例五：展示不可复现
+
+表现：
+
+- PPT 很完整；
+- 现场无法运行；
+- 输出依赖临时文件或绝对路径。
+
+处理：
+
+- 要求准备 `demo_script.md`；
+- 使用 `--limit 3` 小样本 demo；
+- 所有输出写入 `outputs/`。
+
+## 每周检查清单
+
+### Week 11
+
+- [ ] 每组至少观察 5 份巨潮公告；
+- [ ] 选题有明确金融问题；
+- [ ] 字段至少 4–6 个；
+- [ ] 项目骨架可运行；
+- [ ] 工具安装有记录；
+- [ ] 没有真实 API Key。
+
+### Week 12
+
+- [ ] 有 `crawl_spec.md`；
+- [ ] 有 `metadata.csv`；
+- [ ] PDF 路径可追溯；
+- [ ] 有限速；
+- [ ] 有失败记录；
+- [ ] 难度声明合理。
+
+### Week 13
+
+- [ ] LLM API 最小调用成功；
+- [ ] 有 Pydantic schema；
+- [ ] 有 MinerU 解析样本；
+- [ ] 有 section rules；
+- [ ] 有 section check report；
+- [ ] 有 baseline 抽取结果；
+- [ ] 有 validation errors 记录。
+
+### Week 14
+
+- [ ] workflow 图和代码一致；
+- [ ] 每个节点有输入输出；
+- [ ] `pipeline_run.py` 可运行；
+- [ ] 有 `run_log.jsonl`；
+- [ ] 小样本端到端跑通。
+
+### Week 15
+
+- [ ] 有人工评估样本；
+- [ ] 错误类型分类；
+- [ ] 有 prompt/schema/section 优化记录；
+- [ ] 有 AGENTS.md 或 CODING_RULES.md；
+- [ ] final repo 有 README 和 demo script。
+
+### Week 16
+
+- [ ] 展示包含完整链路；
+- [ ] 至少两个字段有 evidence；
+- [ ] 能回答 section 如何检查；
+- [ ] 能说明 AI coding agent 的帮助和错误；
+- [ ] 最终材料完整。
+
+## 评分提醒
+
+评分时不要只看页面漂亮或模型输出流畅。优先看：
+
+1. 选题是否真实服务金融问题；
+2. 数据是否可追溯；
+3. 字段是否清楚；
+4. 抽取是否有证据；
+5. 错误是否被记录；
+6. 系统是否可复现；
+7. 学生是否能解释关键决策。
+
+如果一个项目结果不完美，但证据链、评估和错误分析非常扎实，应给予较高评价。反之，如果只展示成功样例、没有日志和评估，即使结果看起来完整，也应谨慎评分。
+

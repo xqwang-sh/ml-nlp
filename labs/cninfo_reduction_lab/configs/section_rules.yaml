@@ -1,0 +1,13 @@
+target_sections:
+  shareholder_reduction:
+    include_keywords:
+      - "减持计划"
+      - "减持股份"
+      - "减持期间"
+      - "减持方式"
+      - "减持数量"
+    exclude_keywords:
+      - "目录"
+      - "备查文件"
+    min_chars: 60
+    page_expansion: 0

@@ -1,0 +1,380 @@
+---
+title: "Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查"
+---
+
+## 本周目标
+
+Week 13 的任务是把 PDF 变成可处理文本，并把“想抽取的字段”变成可验证的结构化输出。
+
+完成本周后，学生应该能够：
+
+1. 用硅基流动或千问官方 API 跑通最小 LLM 调用；
+2. 用 `.env` 管理 API Key；
+3. 用 Pydantic 写项目字段 Schema；
+4. 用 MinerU API 或 MinerU 输出解析 PDF；
+5. 对自动识别的 section 做人工检查和规则修正；
+6. 输出带证据的结构化抽取结果。
+
+## 本周主线
+
+```text
+PDF
+  -> MinerU 解析
+  -> Markdown / JSON
+  -> Section Routing
+  -> Section Checking
+  -> LLM 抽取
+  -> Pydantic 校验
+  -> 带 evidence 的结果
+```
+
+## 13.1 LLM API 最小调用
+
+### API 调用的通用结构
+
+无论使用硅基流动、千问官方 API，还是其他兼容服务，基本概念都类似：
+
+| 参数 | 含义 |
+|---|---|
+| `base_url` | API 服务地址 |
+| `api_key` | 身份凭证，必须从环境变量读取 |
+| `model` | 使用的模型名称 |
+| `messages` | 给模型的输入消息 |
+| `temperature` | 随机性，结构化抽取建议设为 0 |
+| `max_tokens` | 最大输出长度 |
+
+### `.env.example`
+
+`.env.example` 只写变量名和占位符，不写真实 Key：
+
+```text
+LLM_PROVIDER=siliconflow
+LLM_BASE_URL=https://api.siliconflow.cn/v1
+LLM_API_KEY=your_key_here
+LLM_MODEL=your_model_here
+
+QWEN_API_KEY=your_qwen_key_here
+MINERU_API_KEY=your_mineru_key_here
+```
+
+真实 `.env` 不得提交到 Git 或作业平台。
+
+### `model_config.yaml`
+
+```yaml
+provider: "your_provider"
+model: "your_model_here"
+base_url_env: "LLM_BASE_URL"
+api_key_env: "LLM_API_KEY"
+temperature: 0
+max_tokens: 2048
+timeout_seconds: 60
+```
+
+### 最小 API 连通性检查
+
+讲义目录中的 `starter_example/` 已提供一个最小连通性脚本。它不绑定具体厂商，只要求服务兼容常见的 `/chat/completions` 调用形式。
+
+```bash
+cd starter_example
+python3 -m pip install -r requirements.txt
+cp .env.example .env
+# 在 .env 中填入真实 LLM_BASE_URL、LLM_API_KEY、LLM_MODEL
+python3 src/hello_llm.py --config configs/model_config.yaml
+```
+
+如果暂时没有真实 API Key，本步骤可以先跳过，但正式项目必须至少完成一次 API 连通性检查并记录在 `ai_worklog` 中。
+
+### 为什么要封装 `llm_client.py`
+
+不要把 API 调用散落在多个脚本中。统一封装有三个好处：
+
+- 便于切换 provider 或 model；
+- 便于统一日志和错误处理；
+- 便于测试“API 是否能连通”。
+
+常见报错包括：
+
+- API Key 无效；
+- model 名称错误；
+- base_url 错误；
+- 网络或超时；
+- 返回内容不是 JSON；
+- 输出太长被截断。
+
+## 13.2 Pydantic Schema 与结构化抽取
+
+### 为什么先定义 Schema
+
+Pydantic Schema 是字段契约。它能告诉模型、代码和评分标准：结果应该长什么样。
+
+先定义 Schema 的好处：
+
+- 明确字段；
+- 限制类型；
+- 便于验证；
+- 便于评分；
+- 便于根据错误修复 prompt；
+- 避免“这次字段叫 amount，下次叫 money”的混乱。
+
+### 常用字段类型
+
+| 类型 | 用法 |
+|---|---|
+| `str` | 公司名、公告标题、原文金额 |
+| `int` | 页码、次数、年限 |
+| `float` | 标准化金额、比例 |
+| `Optional` | 可能缺失的字段 |
+| `Literal` | 枚举值，如事件类型 |
+| `list` | 多个主体、多个问题、多个证据 |
+| 嵌套模型 | 证据、金额、日期范围等复杂对象 |
+
+### Null Rule
+
+不确定时输出 `null`，不能编造。
+
+这是金融公告抽取中非常重要的规则。模型如果根据常识补全字段，结果看起来完整，但实际不可用。
+
+### 示例：股东减持公告 Schema
+
+```python
+from typing import Optional, Literal
+from pydantic import BaseModel, Field
+
+
+class Evidence(BaseModel):
+    text: str = Field(description="支持字段的公告原文")
+    page_no: Optional[int] = Field(default=None, description="证据所在页码")
+
+
+class ShareholderReduction(BaseModel):
+    company_name: str = Field(description="上市公司名称")
+    stock_code: Optional[str] = Field(default=None, description="证券代码")
+    announcement_date: Optional[str] = Field(default=None, description="YYYY-MM-DD")
+    shareholder_name: Optional[str] = Field(default=None, description="减持股东名称")
+    shareholder_type: Optional[Literal["控股股东", "实际控制人", "董监高", "其他股东"]] = None
+    reduction_method: Optional[str] = Field(default=None, description="集中竞价、大宗交易等")
+    reduction_amount_text: Optional[str] = Field(default=None, description="公告原文中的减持数量")
+    reduction_ratio_text: Optional[str] = Field(default=None, description="公告原文中的减持比例")
+    reduction_period: Optional[str] = Field(default=None, description="减持期间原文")
+    reason: Optional[str] = Field(default=None, description="减持原因")
+    evidence: Evidence
+```
+
+金额和比例建议先保留原文，再逐步做标准化。直接要求模型输出标准化数值，容易在单位、万股、亿元、百分比上出错。
+
+## 13.3 MinerU API 文档解析
+
+MinerU 的作用是把 PDF 转为 Markdown、JSON 或其他更容易处理的文本格式。与普通 PDF 文本提取相比，公告 PDF 常见的难点包括：
+
+- 表格；
+- 页眉页脚；
+- 多栏排版；
+- 目录；
+- 标题层级；
+- 跨页段落；
+- 扫描件或复杂版式。
+
+MinerU 输出仍然需要检查。不要把解析结果当作绝对正确。
+
+### 解析检查表
+
+```markdown
+# Parse Check
+
+## Document
+- doc_id:
+- title:
+- pdf_path:
+- parsed_path:
+
+## Page Check
+- 页码是否保留：
+- 是否有乱码：
+- 表格是否完整：
+- 标题层级是否合理：
+- 目录是否混入正文：
+
+## Target Content
+- 目标章节是否出现：
+- 关键字段是否能在解析文本中找到：
+- 是否需要人工修正：
+```
+
+### 解析日志
+
+每次解析至少记录：
+
+```text
+doc_id, pdf_path, parsed_path, status, error_message, parse_time
+```
+
+## 13.4 Section Routing 与 Section Checking
+
+### 两者的区别
+
+```text
+Section Routing：自动找到可能相关的章节。
+Section Checking：检查找到的章节是否真的对，必要时修正规则。
+```
+
+Routing 是程序行为，Checking 是质量控制。一个项目可以有简单的 Routing，但不能没有 Checking。
+
+### 为什么 section 不容易
+
+- 标题写法不统一；
+- 目录页会误匹配；
+- 年报章节很长；
+- 表格和段落混合；
+- 有些公告没有清晰标题；
+- 同一个关键词可能出现在“释义”“风险提示”“目录”等无关位置。
+
+### `section_rules.yaml` 示例
+
+```yaml
+target_sections:
+  risk_factors:
+    include_keywords:
+      - "风险因素"
+      - "可能面对的风险"
+      - "公司面临的风险"
+    exclude_keywords:
+      - "目录"
+      - "释义"
+      - "重要提示"
+    min_chars: 500
+    page_expansion: 1
+
+  shareholder_reduction:
+    include_keywords:
+      - "减持计划"
+      - "减持股份"
+      - "减持情况"
+    exclude_keywords:
+      - "目录"
+      - "备查文件"
+    min_chars: 200
+    page_expansion: 0
+```
+
+### Section 检查表
+
+```csv
+doc_id,title,target_section,found,section_title,page_start,page_end,quality_issue,notes
+```
+
+`quality_issue` 可以使用：
+
+- `ok`
+- `not_found`
+- `toc_mismatch`
+- `too_short`
+- `table_broken`
+- `wrong_section`
+- `page_missing`
+- `needs_manual_review`
+
+## 13.5 章节级抽取与证据回填
+
+不要把整篇年报直接交给 LLM 抽取所有字段。应先定位目标章节，再把相关文本送入模型。
+
+每条结果至少包含：
+
+- `value`；
+- `evidence_text`；
+- `page_no`；
+- `confidence`。
+
+提示词模板：
+
+```text
+你将收到公告中的一个目标章节。请只根据输入文本抽取字段。
+如果字段不存在，输出 null。
+不得根据常识补全。
+每个字段必须给出 evidence_text。
+evidence_text 必须是输入文本中的原文片段。
+输出必须是合法 JSON，并符合给定字段说明。
+```
+
+### Baseline 抽取流程
+
+1. 随机选取 5–10 份已解析 PDF；
+2. 用 section rules 找目标章节；
+3. 人工检查 section 是否正确；
+4. 对正确 section 调用 LLM 抽取；
+5. 用 Pydantic 校验；
+6. 把校验失败写入 `validation_errors.jsonl`；
+7. 人工检查 evidence 是否来自输入。
+
+## 课堂练习
+
+1. 创建 `.env.example` 和 `configs/model_config.yaml`。
+2. 跑通一次 `hello_llm.py`。
+3. 为本组选题写 `src/schemas.py`。
+4. 解析 3–5 份 PDF，并填写 `parse_check.md`。
+5. 写第一版 `section_rules.yaml`。
+6. 抽取 5 条 baseline 结果，记录 Pydantic 错误。
+
+## Week 13 常见环境问题
+
+| 问题 | 常见表现 | 建议处理 |
+|---|---|---|
+| `.env` 没读到 | 提示 missing API key | 确认 `.env` 在项目根目录，变量名和 `model_config.yaml` 一致 |
+| `base_url` 错误 | 404、connection error | 检查是否以 `/v1` 结尾，脚本会自动拼接 `/chat/completions` |
+| model 名称错误 | provider 返回 model not found | 到所用平台复制模型名称，不要凭记忆手写 |
+| JSON 不合法 | Pydantic 无法解析 | 保存原始输出，用 JSON 修复 prompt 或降低 temperature |
+| PDF 无法解析 | parsed text 为空或乱码 | 先换 3–5 份样本测试，保留失败记录，必要时标记人工复核 |
+| section 命中目录 | evidence 来自目录页 | 增加 exclude keywords、最小长度和人工 section check |
+
+## 课后提交
+
+Deliverable 13：
+
+```text
+.env.example
+configs/model_config.yaml
+src/llm_client.py
+src/schemas.py
+src/parse_with_mineru.py
+data/parsed/parsed_docs_sample.jsonl
+parse_check.md
+section_rules.yaml
+src/route_sections.py
+section_check_report.md
+extract_results_v1.jsonl
+validation_errors.jsonl
+ai_worklog_week13.md
+```
+
+建议解析样本规模：
+
+| 难度 | Week 13 解析样本要求 |
+|---|---|
+| 基础 | 至少 10–20 份 PDF 完成 MinerU 解析与抽样检查 |
+| 标准 | 至少 20–40 份 PDF 完成 MinerU 解析与抽样检查 |
+| 挑战 | 至少 40 份 PDF 或 20 对匹配样本完成解析与检查 |
+
+## 常见错误
+
+- API Key 写进代码；
+- Prompt 没有 Schema；
+- 模型输出 JSON 但无法被 Pydantic 解析；
+- MinerU 解析结果没有检查；
+- section 命中了目录而不是正文；
+- evidence_text 是模型编造的，不在输入中；
+- page_no 缺失或错误；
+- 把整篇长 PDF 一次性塞给模型；
+- 没有保存 validation error。
+
+## 教师提示
+
+本周教师可以抽查一条结果，要求学生现场指出：
+
+1. 原 PDF 文件；
+2. MinerU 解析片段；
+3. section 检查记录；
+4. LLM 输出；
+5. Pydantic 校验结果；
+6. evidence_text 在原文中的位置。
+
+如果这条链断了，说明系统还不能被信任。

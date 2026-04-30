@@ -1,0 +1,11 @@
+target_sections:
+  default:
+    include_keywords:
+      - "减持"
+      - "回购"
+      - "风险"
+    exclude_keywords:
+      - "目录"
+      - "释义"
+    min_chars: 60
+    page_expansion: 0

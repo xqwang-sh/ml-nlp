@@ -1,0 +1,1382 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "模块 B：金融文本智能项目",
+    "section": "",
+    "text": "0.1 学习路线\n本讲义用于《数据挖掘与机器学习》课程 Week 11–16，即后半程的金融文本智能项目模块。\n模块 B 的核心任务是：每个小组从巨潮资讯网公开公告中选择一个金融文本分析问题，使用受控 vibe coding 搭建一个小型、可复现、可检查的文本智能系统。最终成果不是一份单纯的文字报告，而是一套包含数据、代码、schema、prompt、解析结果、抽取结果、评估报告和展示材料的项目。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>前言</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#学习路线",
+    "href": "index.html#学习路线",
+    "title": "模块 B：金融文本智能项目",
+    "section": "",
+    "text": "模块导论与考核说明\nWeek 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门\nWeek 12：用 Vibe Coding 抓取巨潮公告数据\nLab Week 12：Metadata、样本下载与数据检查示范\nWeek 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查\nLab Week 13：Section、Schema 与 Evidence 示范\nWeek 14：通用工作流框架与项目端到端串联\nLab Week 14：Workflow 一键串联示范\nWeek 15：评估、提示词优化、Skills 与展示工程化\nWeek 16：项目展示、答辩与期末考试说明",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>前言</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#配套材料",
+    "href": "index.html#配套材料",
+    "title": "模块 B：金融文本智能项目",
+    "section": "0.2 配套材料",
+    "text": "0.2 配套材料\n\n模板与材料清单：给学生直接复制使用的项目模板、配置模板、prompt 模板、starter example、labs 和提交清单。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>前言</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#使用说明",
+    "href": "index.html#使用说明",
+    "title": "模块 B：金融文本智能项目",
+    "section": "0.3 使用说明",
+    "text": "0.3 使用说明\n本目录是一个独立的 Quarto book，不依赖现有 handouts 目录。进入本目录后可以运行：\nquarto render\n渲染结果会输出到本目录下的 _book/。",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>前言</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html",
+    "href": "00_intro_and_assessment.html",
+    "title": "2  模块导论与考核说明",
+    "section": "",
+    "text": "2.1 为什么金融学生需要学习文本智能\n金融市场中大量重要信息并不以整洁表格出现，而是写在公告、年报、问询函回复、投资者关系活动记录和监管文件中。投资者、分析师、监管者和企业管理者都需要从这些文本中提取事实、识别风险、比较公司、追踪事件进展。\n本模块关注的不是“让大模型写一段总结”，而是把公告中的关键信息变成可校验、可比较、可复用的结构化结果。例如：\n一个可信的金融文本智能系统应当能回答三个问题：",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#为什么金融学生需要学习文本智能",
+    "href": "00_intro_and_assessment.html#为什么金融学生需要学习文本智能",
+    "title": "2  模块导论与考核说明",
+    "section": "",
+    "text": "从减持公告中抽取股东名称、减持比例、减持期间和减持原因；\n从年报风险因素中抽取风险类别、风险描述和管理层应对；\n从问询函与回复中判断监管问题是否被公司逐项回应；\n从回购方案、进展和结果公告中构建事件时间线。\n\n\n\n结果从哪里来？\n字段是否符合事先定义？\n错了以后怎么发现和改进？",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#为什么使用巨潮公告",
+    "href": "00_intro_and_assessment.html#为什么使用巨潮公告",
+    "title": "2  模块导论与考核说明",
+    "section": "2.2 为什么使用巨潮公告",
+    "text": "2.2 为什么使用巨潮公告\n巨潮资讯网是上市公司公开披露信息的重要入口。它适合本课程项目，原因有三点：\n\n公开性：项目主数据来自公开可访问的信息披露材料。\n金融含义明确：公告类型对应真实金融问题，如治理、风险、分红、回购、诉讼、业绩预告等。\n工程挑战适中：PDF、长文本、表格、标题层级和证据回填都能训练学生完整处理真实任务。\n\n所有小组的项目主数据必须来自巨潮资讯网。教师给出的选题池只是参考，学生可以自拟题目，但必须证明巨潮上能找到足够样本。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#为什么不训练大模型",
+    "href": "00_intro_and_assessment.html#为什么不训练大模型",
+    "title": "2  模块导论与考核说明",
+    "section": "2.3 为什么不训练大模型",
+    "text": "2.3 为什么不训练大模型\n本课程对象是金融学本科三年级学生。后半程目标不是训练一个大模型，而是学会把已有工具组合成一个可复现的金融文本智能项目。\n项目技术链条包括：\n巨潮公告数据\n  -&gt; PDF 文档解析\n  -&gt; 章节定位与检查\n  -&gt; LLM API 调用\n  -&gt; Pydantic Schema 校验\n  -&gt; 工作流串联\n  -&gt; 人工评估与优化\n这条链路更接近金融机构和研究团队在真实项目中的工作方式：先定义问题和字段，再用 API 与工作流解决具体任务。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#本课程中的-vibe-coding",
+    "href": "00_intro_and_assessment.html#本课程中的-vibe-coding",
+    "title": "2  模块导论与考核说明",
+    "section": "2.4 本课程中的 Vibe Coding",
+    "text": "2.4 本课程中的 Vibe Coding\n本课程采用受控 Vibe Coding。AI coding agent 是开发助理，不是项目负责人。\n学生负责：\n\n定义金融问题；\n判断公告数据是否匹配；\n设计字段、schema、验收标准；\n运行代码、检查输出、记录错误；\n解释项目方法与结果。\n\nAI coding agent 可以帮助：\n\n生成项目骨架；\n写小模块代码；\n解释报错；\n补充日志与测试；\n重构重复代码；\n帮助整理 README 与展示材料。\n\n受控 vibe coding 的基本流程是：\nSpec -&gt; Plan -&gt; Generate -&gt; Run -&gt; Repair -&gt; Review\n也就是先写清规格，再让 AI 提供计划或代码；学生必须本地运行、修复报错、检查结果，并在 ai_worklog.md 中记录过程。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#项目最终成果",
+    "href": "00_intro_and_assessment.html#项目最终成果",
+    "title": "2  模块导论与考核说明",
+    "section": "2.5 项目最终成果",
+    "text": "2.5 项目最终成果\nWeek 16 结束时，每组应提交一个可复现项目。最低要求包括：\nREADME.md\nrequirements.txt\n.env.example\nAGENTS.md 或 CODING_RULES.md\nconfigs/\ndata/metadata.csv\nsrc/\npipeline_run.py 或 run.py\noutputs/sample_outputs/\nlogs/sample_run_log.jsonl\neval_report_final.md\ndemo_script.md\nfinal_slides.pdf\nai_usage_statement.md\nai_worklog_all.md\n展示时必须能演示一条证据链：从某一份巨潮公告 PDF 出发，经过解析、章节定位、字段抽取、Pydantic 校验和人工评估，最后生成结构化结果。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#与课程总评的关系",
+    "href": "00_intro_and_assessment.html#与课程总评的关系",
+    "title": "2  模块导论与考核说明",
+    "section": "2.6 与课程总评的关系",
+    "text": "2.6 与课程总评的关系\n若课程总评采用以下结构：\n考勤 10%\n项目一：结构化建模 20%\n项目二：金融文本分析 20%\n期末考试 50%\n则本讲义主要负责：\n\n项目二：金融文本智能项目；\n期末考试中模块 B 相关内容。\n\n项目二内部采用 100 分制，最后折算到课程总评中的项目二部分。期末考试覆盖全课程，模块 B 可能以概念题、简答题、案例分析题形式出现。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#项目二评分公式",
+    "href": "00_intro_and_assessment.html#项目二评分公式",
+    "title": "2  模块导论与考核说明",
+    "section": "2.7 项目二评分公式",
+    "text": "2.7 项目二评分公式\n项目二内部得分建议使用：\n项目二内部得分 = min(100, 基础质量分 + 挑战分 × 难度系数)\n其中：\n\n基础质量分：80 分；\n挑战分：20 分；\n难度系数：0.9 / 1.0 / 1.1。\n\n不建议把总分全部乘以难度系数。这样可以鼓励挑战，也避免基础组选题做得扎实的同学被过度惩罚。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#基础质量分-rubric",
+    "href": "00_intro_and_assessment.html#基础质量分-rubric",
+    "title": "2  模块导论与考核说明",
+    "section": "2.8 基础质量分 Rubric",
+    "text": "2.8 基础质量分 Rubric\n\n\n\n\n\n\n\n\n\n维度\n分值\n优秀表现\n常见扣分\n\n\n\n\n选题与金融问题定义\n10\n问题清楚，巨潮数据匹配，输出有金融意义\n题目太泛，只是“总结公告”\n\n\n数据来源与元数据规范\n10\nmetadata.csv 完整，PDF 可定位，日志清楚\n数据来源不清、PDF 缺失\n\n\nVibe coding 过程规范\n10\n有 AI worklog，能解释 AI 帮了什么和学生如何验证\n只有代码，无过程记录\n\n\nLLM API 与 Pydantic Schema\n15\nAPI 可运行，Schema 清晰，字段类型合理\nJSON 随意，字段不稳定\n\n\nMinerU 解析与 Section 检查\n15\n有解析结果和 section 检查报告\n盲目信任解析结果\n\n\n工作流串联与工程复现\n10\n有统一入口、日志、可重复运行\n只有零散脚本\n\n\n评估与优化\n10\n有人工样本、错误分类和优化记录\n无评估，只展示成功样例",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#挑战分-rubric",
+    "href": "00_intro_and_assessment.html#挑战分-rubric",
+    "title": "2  模块导论与考核说明",
+    "section": "2.9 挑战分 Rubric",
+    "text": "2.9 挑战分 Rubric\n\n\n\n\n\n\n\n\n维度\n分值\n说明\n\n\n\n\n数据规模与质量\n8\n达到所选档位的数据量，去重、失败记录、样本覆盖合理\n\n\n任务复杂度\n8\n多字段、多文档匹配、时间线、闭环、评分、复杂 section 等\n\n\n自主性与创新性\n4\n自拟题目、有金融洞察、有独特输出形式",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#难度档位",
+    "href": "00_intro_and_assessment.html#难度档位",
+    "title": "2  模块导论与考核说明",
+    "section": "2.10 难度档位",
+    "text": "2.10 难度档位\n\n\n\n\n\n\n\n\n\n档位\n系数\n参考数据量\n典型任务\n\n\n\n\n基础档\n0.9\n30–60 份 PDF 或公告记录\n单公告类型，4–6 个字段，不要求跨公告匹配，顺序工作流即可\n\n\n标准档\n1.0\n80–150 份 PDF，或 30–50 组事件\n单一复杂公告类型或两个相关公告类型，6–10 个字段，有 section 检查、证据回填和评估\n\n\n挑战档\n1.1\n150+ 份 PDF，或 50+ 组多文档匹配事件\n多公告类型、多阶段事件、闭环分析、时间线、评分，10 个以上字段\n\n\n\n数据量不是唯一标准。若选题需要多公告匹配、跨期追踪、复杂表格解析或人工标注评估，即使 PDF 数量不特别大，也可申请挑战档。\n\n2.10.1 基础档保底路径\n对只有 Python 基础、第一次使用 AI coding agent 的小组，建议先完成以下保底路径：\n单一公告类型\n  -&gt; 30 份左右公告或一批可检查样本\n  -&gt; 4–6 个核心字段\n  -&gt; metadata + PDF/解析文本可追溯\n  -&gt; section 检查\n  -&gt; Pydantic 校验\n  -&gt; 10 条左右人工评估\n基础档不追求复杂多公告匹配，也不要求把所有环节都自动化到完美。只要能证明数据真实、字段清楚、结果有证据、错误有记录，就可以形成合格项目。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#选题通过标准",
+    "href": "00_intro_and_assessment.html#选题通过标准",
+    "title": "2  模块导论与考核说明",
+    "section": "2.11 选题通过标准",
+    "text": "2.11 选题通过标准\n学生自拟题目需要通过以下检查：\n\n\n\n维度\n通过标准\n\n\n\n\n巨潮数据可获得\n能在巨潮找到足够样本\n\n\n金融问题清楚\n有风险、合规、治理、业绩、分红、市场沟通等金融含义\n\n\n字段可结构化\n能写成 JSON / CSV，能判断对错\n\n\n证据可追溯\n能提供公告标题、日期、页码、原文片段\n\n\n6 周可完成\n工作量合理，不依赖不可控数据\n\n\n难度可声明\n能说明为何是 0.9 / 1.0 / 1.1",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#参考选题池",
+    "href": "00_intro_and_assessment.html#参考选题池",
+    "title": "2  模块导论与考核说明",
+    "section": "2.12 参考选题池",
+    "text": "2.12 参考选题池\n\n\n\n\n\n\n\n\n\n编号\n参考题目\n默认难度\n可降级或升级方式\n\n\n\n\n1\n年报“风险因素”结构化抽取与横向比较\n标准\n单行业少量公司可降为基础；跨年度风险变化可升为挑战\n\n\n2\n审计意见与关键审计事项 KAM 抽取\n标准\n只抽审计意见可降级；KAM 类型比较与证据评分可升级\n\n\n3\n现金分红与股东回报政策追踪\n基础/标准\n只抽利润分配预案为基础；结合年报现金流为标准\n\n\n4\n股份回购公告要素抽取与时间线\n基础/挑战\n只抽方案为基础；方案、进展、结果匹配为挑战\n\n\n5\n股东增减持事件抽取与风险提示卡\n基础\n字段相对规则，适合基础组\n\n\n6\n股权激励方案“可比化”分析\n标准/挑战\n抽要素为标准；考核条件评分为挑战\n\n\n7\n关联交易与对外担保公告合规扫描\n标准/挑战\n单类公告为标准；双类公告加规则校验为挑战\n\n\n8\n重大合同 / 中标公告信息抽取\n基础\n金额、客户、周期字段较直接\n\n\n9\n诉讼仲裁公告风险台账\n标准\n案由、标的额、阶段可抽；利润影响需要判断\n\n\n10\n问询函 / 关注函与回复闭环分析\n挑战\n需要监管问题和公司回复匹配\n\n\n11\n业绩预告 vs 快报 vs 年报差异跟踪\n挑战\n多公告、多时间点、数值标准化和差异计算\n\n\n12\n投资者关系活动记录问答结构化\n标准/挑战\n抽 Q&A 为标准；跨期口径一致性为挑战",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#期末考试范围",
+    "href": "00_intro_and_assessment.html#期末考试范围",
+    "title": "2  模块导论与考核说明",
+    "section": "2.13 期末考试范围",
+    "text": "2.13 期末考试范围\n期末考试覆盖全课程，模块 B 相关内容约占期末考试 30%，具体以正式试卷为准。\n模块 B 不考具体工具安装命令，也不要求背诵 API 代码。重点考察学生是否理解金融文本智能项目的关键概念、流程设计和错误分析。案例分析题会与同学们做过的项目类型相关。\n\n\n\n\n\n\n\n\n\n部分\n预计题量\n模块 B 占期末比例\n考查重点\n\n\n\n\n客观题\n2–4 小题\n约 8%–10%\n基本概念、术语辨析、流程顺序\n\n\n简答题\n1 小题\n约 8%–10%\n为什么这样设计、如何避免常见错误\n\n\n案例分析题\n1 小题\n约 10%–12%\n结合金融公告项目，分析数据、schema、section、workflow 或评估问题\n\n\n\n模块 B 考点包括：Vibe coding、AI coding agent、巨潮数据与 metadata、LLM API、Prompt、Pydantic Schema、MinerU、Section Routing / Checking、Evidence、Workflow、Human-in-the-loop、Evaluation metrics、Hallucination、Null rule、Skills / Rules。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "00_intro_and_assessment.html#合规与安全",
+    "href": "00_intro_and_assessment.html#合规与安全",
+    "title": "2  模块导论与考核说明",
+    "section": "2.14 合规与安全",
+    "text": "2.14 合规与安全\n本项目只面向公开可访问数据。必须遵守：\n\n不绕过登录、验证码或访问限制；\n抓取脚本必须限速，并保留日志；\nAPI Key 必须放入 .env，不得提交到 Git 或作业平台；\n不把模型输出当作未经验证的事实；\n每个关键字段都应能回到公告原文或明确标注 null；\n使用 AI coding agent 的过程必须保留 ai_worklog.md 或等价记录。",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>模块导论与考核说明</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html",
+    "href": "11_project_start_and_vibe_coding.html",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "",
+    "text": "3.1 本周目标\nWeek 11 的核心是先看数据、定问题、装工具、建骨架。\n完成本周后，学生应该能够：",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#本周目标",
+    "href": "11_project_start_and_vibe_coding.html#本周目标",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "",
+    "text": "在巨潮资讯网上观察不同公告类型；\n从公告类型出发提出一个金融文本分析选题；\n理解教师给出的选题只是参考，能够自拟题目；\n安装 TRAE，或确认 Claude Code / Codex / Kimi Code 等工具可用；\n使用 AI coding agent 建立最小项目骨架；\n写出 topic_proposal.md 和 cninfo_data_discovery.md。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#为什么本周先看数据",
+    "href": "11_project_start_and_vibe_coding.html#为什么本周先看数据",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.2 为什么本周先看数据",
+    "text": "3.2 为什么本周先看数据\n很多项目失败，不是因为模型不够强，而是因为一开始没有弄清楚数据长什么样。\n例如，“分析年报风险”听起来很合理，但如果没有进一步限定行业、年份、风险章节、字段和输出形式，就会变成一个过大的题目。相反，“抽取新能源行业 2022–2025 年年报风险因素中的供应链风险、价格风险和政策风险，并比较风险表述变化”就更容易落地。\n本周的基本原则是：\n公告类型 -&gt; 金融问题 -&gt; 目标字段 -&gt; 结构化输出 -&gt; 难度档位",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#巨潮数据地图与选题发现",
+    "href": "11_project_start_and_vibe_coding.html#巨潮数据地图与选题发现",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.3 11.1 巨潮数据地图与选题发现",
+    "text": "3.3 11.1 巨潮数据地图与选题发现\n\n3.3.1 巨潮在本项目中的角色\n巨潮资讯网提供上市公司公告查询和 PDF 下载入口。本项目的主数据必须来自巨潮公告。其他资料可以作为背景知识，但不能替代项目主数据。\n学生需要观察的公告类型包括：\n\n定期报告：年报、半年报、季报；\n临时公告：回购、增减持、重大合同、诉讼仲裁、关联交易、担保、分红、股权激励；\n监管互动：问询函、关注函、回复公告；\n投资者关系活动记录。\n\n\n\n3.3.2 从公告类型到项目问题\n一个好选题不是“做某类公告总结”，而是回答一个具体金融问题。\n示例：\n观察：很多公司披露“关于股东减持计划的公告”。\n金融问题：大股东减持是否可能形成市场风险信号？\n目标字段：股东名称、减持数量、减持比例、减持期间、减持原因、是否为控股股东。\n输出形式：股东减持事件台账 + 风险提示卡。\n难度：基础档 0.9。\n再看一个更复杂的例子：\n观察：上市公司会先披露回购方案，之后披露进展公告和结果公告。\n金融问题：公司回购计划是否按承诺执行？回购金额与上限差距多大？\n目标字段：方案日期、计划金额区间、计划股份数量、进展金额、最终完成金额、完成比例。\n输出形式：回购生命周期时间线 + 完成度统计。\n难度：挑战档 1.1。\n\n\n3.3.3 课堂活动：巨潮数据观察\n每组选择两个候选方向，打开 5–10 份公告，完成 cninfo_data_discovery.md。\n建议记录：\n# 巨潮数据探索记录\n\n## 方向 A\n- 关键词：\n- 公告类型：\n- 示例公司/代码：\n- 示例标题：\n- PDF 是否可下载：是/否\n- 可能字段：\n- 金融问题：\n- 风险点：\n\n## 方向 B\n- 关键词：\n- 公告类型：\n- 示例公司/代码：\n- 示例标题：\n- PDF 是否可下载：是/否\n- 可能字段：\n- 金融问题：\n- 风险点：\n\n## 初步选择\n我们更倾向于：\n理由：",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#vibe-coding-工具安装与工作流",
+    "href": "11_project_start_and_vibe_coding.html#vibe-coding-工具安装与工作流",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.4 11.2 Vibe Coding 工具安装与工作流",
+    "text": "3.4 11.2 Vibe Coding 工具安装与工作流\n\n3.4.1 工具选择\n默认推荐使用 TRAE。已经拥有 Claude Code、Codex、Kimi Code 或其他 AI coding agent 的学生可以继续使用原工具。\n课程不以工具品牌评分。评分只看：\n\n项目是否可复现；\nAI 使用过程是否有记录；\n学生是否能解释关键代码；\n结果是否有证据和评估。\n\n\n\n3.4.2 安装与检查\n本周每位学生至少完成一次工具检查：\n# 工具安装与检查\n\n- 使用工具：TRAE / Claude Code / Codex / Kimi Code / 其他\n- 操作系统：\n- 是否能打开项目目录：是/否\n- 是否能生成 run.py：是/否\n- 是否成功运行 python run.py --help：是/否\n- 遇到的问题：\n\n\n3.4.3 受控 Vibe Coding 六步法\nSpec -&gt; Plan -&gt; Generate -&gt; Run -&gt; Repair -&gt; Review\n\n\n\n步骤\n学生要做什么\n\n\n\n\nSpec\n写清任务、输入、输出、约束和验收标准\n\n\nPlan\n让 AI 先给实现计划，不急着写代码\n\n\nGenerate\n让 AI 只生成一个小模块\n\n\nRun\n学生在本地运行命令\n\n\nRepair\n把完整报错贴回 AI，让它只修改必要部分\n\n\nReview\n检查输出、记录过程、解释关键代码\n\n\n\n\n\n3.4.4 为什么不能让 AI 一次性写完整项目\n一条 prompt 让 AI “帮我做一个巨潮公告分析项目”，通常会导致：\n\n文件结构看起来完整，但无法运行；\n字段定义不稳定；\nAPI Key 处理不安全；\n数据来源和合规边界不清；\n学生无法解释代码；\n错误难以定位。\n\n因此本课程要求把任务拆成小模块。每次只让 AI 处理一个可验证的步骤。\n\n\n3.4.5 Prompt 对比\n坏 prompt：\n帮我做一个巨潮公告分析项目。\n好 prompt：\n请只帮我生成一个 run.py，使它支持 python run.py --help，并显示本项目可用命令。\n不要生成其他文件。请给出运行命令和最小测试。\n更完整的开发 prompt：\n你是我的 Python 项目助教。请帮我创建一个最小可运行的课程项目骨架，\n但不要实现业务逻辑。\n\n背景：金融文本智能课程，数据来自巨潮资讯网 PDF。\n要求：\n1. 创建标准目录：data、src、configs、outputs、tests。\n2. 写一个 run.py，支持 python run.py --help。\n3. 写 README.md，说明项目目标、目录结构和运行方法。\n4. 写 .env.example，但不要出现真实 API Key。\n5. 写 ai_worklog.md 模板。\n6. 不要抓取数据，不要调用 LLM，不要写复杂功能。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#最小项目骨架",
+    "href": "11_project_start_and_vibe_coding.html#最小项目骨架",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.5 11.3 最小项目骨架",
+    "text": "3.5 11.3 最小项目骨架\n本周建议项目结构如下：\nproject_name/\n  README.md\n  ai_worklog.md\n  .env.example\n  requirements.txt\n  configs/\n    task.yaml\n  data/\n    metadata/\n    pdf/\n    parsed/\n  src/\n    __init__.py\n    cninfo/\n    llm/\n    mineru/\n    workflow/\n    evaluation/\n  outputs/\n    logs/\n    results/\n    reports/\n  tests/\n本周不要求抓取大量数据。项目骨架的验收标准是：\n\npython run.py --help 可以运行；\nREADME 能说明项目目标和目录；\n.env.example 只有变量名和占位符；\n有 ai_worklog.md 或周记录模板；\n不包含真实 API Key。\n\n如果学生第一次使用 AI coding agent，可以先运行讲义目录中的离线 starter：\ncd starter_example\npython3 -m pip install -r requirements.txt\npython3 run.py all\nstarter 的作用是帮助学生看懂项目链路，不是最终答案。正式项目仍需替换为本组选题、真实 metadata、真实 PDF 或解析文本。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#选题可行性工作坊",
+    "href": "11_project_start_and_vibe_coding.html#选题可行性工作坊",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.6 11.4 选题可行性工作坊",
+    "text": "3.6 11.4 选题可行性工作坊\n每组需要把“看到的数据”转化为可执行项目。选题四问：\n\n数据来自巨潮哪类公告？\n字段是否能结构化？\n证据是否能追溯？\n六周是否做得完？\n\n\n3.6.1 绿灯、黄灯、红灯\n\n\n\n\n\n\n\n\n状态\n判断标准\n教师反馈\n\n\n\n\n绿灯\n数据可获得，字段清楚，金融问题明确，工作量合适\n可以进入 Week 12 抓取\n\n\n黄灯\n方向有价值，但字段、数据量或范围需要收缩\n修改后再确认\n\n\n红灯\n数据不是巨潮来源，题目过大或字段无法判断对错\n换题或大幅重做\n\n\n\n\n\n3.6.2 topic_proposal.md 模板\n# Topic Proposal\n\n## 项目题目\n\n## 金融问题\n\n## 巨潮数据来源\n\n## 公告类型\n\n## 示例公告\n| 公司 | 代码 | 标题 | 日期 | URL |\n|---|---|---|---|---|\n\n## 目标字段\n| 字段 | 类型 | 是否必填 | 金融含义 | 证据来源 |\n|---|---|---|---|---|\n\n## 最终输出形式\n\n## 难度档位\n- 0.9 / 1.0 / 1.1\n- 理由：\n\n## 风险与备选方案",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#课堂练习",
+    "href": "11_project_start_and_vibe_coding.html#课堂练习",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.7 课堂练习",
+    "text": "3.7 课堂练习\n\n每组在巨潮上检索两个候选方向。\n每组打开至少 5 份公告，记录标题、日期、PDF 链接和可能字段。\n使用 AI coding agent 生成最小项目骨架。\n运行 python run.py --help，截图或记录输出。\n与教师进行 3–5 分钟选题确认。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#课后提交",
+    "href": "11_project_start_and_vibe_coding.html#课后提交",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.8 课后提交",
+    "text": "3.8 课后提交\nDeliverable 11：\nteam_info.md\ncninfo_data_discovery.md\ntopic_ideas.md\ntopic_proposal.md\noutput_sample.md\nproject_skeleton/\nAGENTS.md 或 CODING_RULES.md\ntool_setup_check.md\nai_worklog_week11.md",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#常见错误",
+    "href": "11_project_start_and_vibe_coding.html#常见错误",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.9 常见错误",
+    "text": "3.9 常见错误\n\n选题太大，例如“分析所有上市公司年报风险”；\n选题太空，例如“总结公司公告”；\n数据不是巨潮来源；\n字段无法判断对错；\n没有证据页码或原文片段；\n过早写代码，没搞清公告类型；\n让 AI 一次性生成整个项目；\nAPI Key 出现在 README、截图或代码里。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "11_project_start_and_vibe_coding.html#教师提示",
+    "href": "11_project_start_and_vibe_coding.html#教师提示",
+    "title": "3  Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门",
+    "section": "3.10 教师提示",
+    "text": "3.10 教师提示\n本周教师应重点追问三个问题：\n\n你们为什么选择这个公告类型？\n你们最终输出的表格或 JSON 长什么样？\n哪些字段最容易判断错？\n\n如果学生回答不出第三个问题，说明他们还没有真正理解任务边界，应先缩小选题。",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Week 11：项目启动、巨潮数据观察与受控 Vibe Coding 入门</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html",
+    "href": "12_cninfo_crawling_with_vibe_coding.html",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "",
+    "text": "4.1 本周目标\nWeek 12 的任务是把选题转化为数据计划，并用受控 vibe coding 完成公告列表获取、PDF 下载、metadata 规范化和数据质量检查。\n完成本周后，学生应该能够：",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#本周目标",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#本周目标",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "",
+    "text": "把选题翻译成抓取规格；\n用 AI coding agent 辅助生成或修改抓取脚本；\n生成 metadata.csv；\n下载 PDF 并做质量检查；\n根据数据规模和任务复杂度确认项目难度档位。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#为什么-metadata-是项目起点",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#为什么-metadata-是项目起点",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.2 为什么 metadata 是项目起点",
+    "text": "4.2 为什么 metadata 是项目起点\n金融文本项目的第一张表不是抽取结果表，而是 metadata.csv。它记录每一份公告从哪里来、是什么、是否下载成功、后续解析文件在哪里。\n如果没有规范 metadata，后续会出现：\n\nPDF 文件和公告标题对不上；\n抽取结果无法追溯来源；\n评估样本无法抽样；\n失败样本无法复查；\n展示时无法证明数据来自巨潮。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#从选题到抓取规格",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#从选题到抓取规格",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.3 12.1 从选题到抓取规格",
+    "text": "4.3 12.1 从选题到抓取规格\n在写代码之前，每组先完成 crawl_spec.md。抓取规格至少说明：\n\n股票池或行业范围；\n时间范围；\n公告关键词；\n公告类型；\n数据量目标；\n是否需要多公告匹配；\n限速和失败记录方式。\n\n\n4.3.1 metadata.csv 字段\n最低字段建议：\ndoc_id\nstock_code\nstock_name\nmarket\nannouncement_title\nannouncement_type\npublish_date\nurl\npdf_url\nlocal_pdf_path\ndownload_status\nsource\ncrawl_time\nerror_message\nnotes\n其中 doc_id 可以由股票代码、日期和标题哈希组成。source 统一填 cninfo。download_status 用于记录 success、failed、skipped 等状态。\n\n\n4.3.2 crawl_config.yaml 示例\nproject_name: \"shareholder_reduction_events\"\nsource: \"cninfo\"\nkeywords:\n  - \"减持\"\n  - \"减持计划\"\n  - \"减持股份\"\nmarkets:\n  - \"sz\"\n  - \"sh\"\ndate_range:\n  start: \"2022-01-01\"\n  end: \"2025-12-31\"\nmax_records: 100\nsleep_seconds: 1.5\noutput:\n  metadata: \"data/metadata/metadata.csv\"\n  pdf_dir: \"data/pdf\"\n  failed_downloads: \"outputs/logs/failed_downloads.csv\"",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#用-ai-coding-agent-写抓取模块",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#用-ai-coding-agent-写抓取模块",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.4 12.2 用 AI Coding Agent 写抓取模块",
+    "text": "4.4 12.2 用 AI Coding Agent 写抓取模块\n推荐把抓取任务拆成五个小模块：\nload_config.py\nsearch_announcements.py\ndownload_pdfs.py\nnormalize_metadata.py\ncheck_dataset.py\n不要让 AI 一次性写完整爬虫。每次只生成一个可运行、可检查的小模块。\n\n4.4.1 Prompt A：生成元数据抓取模块\n请根据 crawl_spec.md 写一个 Python 脚本 src/crawl_cninfo.py。\n脚本只负责生成 metadata.csv，不下载 PDF。\n\n输入：\n- configs/crawl.yaml\n\n输出：\n- data/metadata/metadata.csv\n\n要求：\n1. 字段包含 stock_code、stock_name、announcement_title、publish_date、pdf_url、source。\n2. 每次请求之间 sleep，sleep_seconds 从配置读取。\n3. 如果请求失败，记录 error_message。\n4. 不要绕过登录、验证码或访问限制。\n5. 给出运行命令和最小测试。\n\n\n4.4.2 Prompt B：生成 PDF 下载模块\n请写 src/download_pdfs.py，读取 data/metadata/metadata.csv 中的 pdf_url，\n下载到 data/pdf/。\n\n要求：\n1. 支持限速和重试。\n2. 如果本地文件已存在，跳过下载并记录 skipped。\n3. 失败记录写入 outputs/logs/failed_downloads.csv。\n4. 不要把下载失败静默忽略。\n5. 给出运行命令。\n\n\n4.4.3 Prompt C：生成数据检查模块\n请写 src/check_dataset.py，检查 metadata.csv 中每条记录是否有本地 PDF，\n是否存在重复记录，标题是否匹配本组选题关键词。\n\n输出：\n- outputs/reports/dataset_check_report.md\n\n报告至少包含：\n1. 总记录数\n2. PDF 成功下载数\n3. 缺失 PDF 数\n4. 重复 doc_id 数\n5. 可能不相关公告样例",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#运行调试与记录",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#运行调试与记录",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.5 12.3 运行、调试与记录",
+    "text": "4.5 12.3 运行、调试与记录\n学生必须记录完整过程：\n\n给 AI 的 prompt；\nAI 生成或修改的文件；\n实际运行命令；\n报错与修复；\n抽样检查结果。\n\n推荐运行顺序：\npython src/crawl_cninfo.py --config configs/crawl.yaml --limit 10\npython src/download_pdfs.py --metadata data/metadata/metadata.csv --limit 10\npython src/check_dataset.py --metadata data/metadata/metadata.csv\n先抓 5–10 条测试数据，检查标题和 PDF 是否符合选题，再扩大到计划数据量。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#数据审计",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#数据审计",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.6 12.4 数据审计",
+    "text": "4.6 12.4 数据审计\n抓到数据后，必须做数据审计。审计清单：\n\nmetadata.csv 是否有重复；\nPDF 是否能打开；\n标题是否真的属于目标公告；\n是否存在大量不可解析或非 PDF；\n是否存在同名不同公告、补充公告、修订公告；\n数据量是否支持最终分析；\n失败下载是否有记录；\n文件命名是否能追溯到 doc_id。\n\n\n4.6.1 dataset_check_report.md 建议结构\n# Dataset Check Report\n\n## Summary\n- Total records:\n- Downloaded PDFs:\n- Failed downloads:\n- Duplicate doc_id:\n- Potentially irrelevant records:\n\n## Keyword Match\n\n## Missing Files\n\n## Duplicate Records\n\n## Sample Inspection\n| doc_id | title | pdf_ok | relevant | notes |\n|---|---|---|---|---|\n\n## Risks",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#难度确认",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#难度确认",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.7 12.5 难度确认",
+    "text": "4.7 12.5 难度确认\nWeek 12 结束时，每组需要提交难度声明。难度可以在 Week 15 根据实际完成情况调整，但必须说明理由。\n\n\n\n\n\n\n\n\n\n难度\n系数\n数据量\n任务复杂度\n\n\n\n\n基础\n0.9\n30–60 PDF\n单公告类型、4–6 字段、无多文档匹配\n\n\n标准\n1.0\n80–150 PDF 或 30–50 组事件\n复杂公告或两个相关公告类型，有 section 检查与评估\n\n\n挑战\n1.1\n150+ PDF 或 50+ 组匹配事件\n闭环、时间线、预告差异、多阶段事件\n\n\n\n数据量不是唯一标准。如果公告本身非常复杂，数据量可以略低；如果只是简单公告，数据量需要达到对应档位。\n\n4.7.1 difficulty_declaration.md 模板\n# 难度申请\n\n- 申请难度：基础 / 标准 / 挑战\n- 系数：0.9 / 1.0 / 1.1\n- 数据量：\n- 公告类型：\n- 是否多公告匹配：\n- 字段数量：\n- 主要挑战：\n- 我们认为该难度合理的理由：",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#课堂练习",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#课堂练习",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.8 课堂练习",
+    "text": "4.8 课堂练习\n\n将 Week 11 的选题写成 crawl_spec.md。\n根据抓取规格写 configs/crawl.yaml。\n使用 AI coding agent 生成最小抓取模块。\n先抓取 5–10 条记录。\n人工检查标题、日期、PDF 链接和下载文件。\n完成第一版 dataset_check_report.md。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#课后提交",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#课后提交",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.9 课后提交",
+    "text": "4.9 课后提交\nDeliverable 12：\ncrawl_spec.md\nconfigs/crawl.yaml\nsrc/crawl_cninfo.py\nsrc/download_pdfs.py\nsrc/check_dataset.py\ndata/metadata/metadata.csv\ndata/pdf/  # PDF 样本或完整数据集\noutputs/logs/crawl_log.jsonl\noutputs/logs/failed_downloads.csv\noutputs/reports/dataset_check_report.md\ndifficulty_declaration.md\nai_worklog_week12.md",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#常见错误",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#常见错误",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.10 常见错误",
+    "text": "4.10 常见错误\n\n没有限速；\n只下载 PDF，没有 metadata；\nmetadata 字段不全；\n数据中混入大量不相关公告；\n文件命名混乱；\n失败记录没有保存；\n难度档位只看数据量，不看任务复杂度；\n抓取脚本依赖本地绝对路径；\n把临时测试文件当作最终数据。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "12_cninfo_crawling_with_vibe_coding.html#教师提示",
+    "href": "12_cninfo_crawling_with_vibe_coding.html#教师提示",
+    "title": "4  Week 12：用 Vibe Coding 抓取巨潮公告数据",
+    "section": "4.11 教师提示",
+    "text": "4.11 教师提示\n教师本周不应只检查“是否下载了很多 PDF”，而要抽查：\n\nmetadata.csv 能否定位到原公告；\n文件路径是否和 metadata 一致；\n失败下载是否有记录；\n数据是否真的服务选题；\n学生是否知道脚本在哪里限速。",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>Week 12：用 Vibe Coding 抓取巨潮公告数据</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html",
+    "href": "labs/week12_metadata_demo.html",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "",
+    "text": "5.1 Lab 目标\n本 lab 演示 Week 12 的真实巨潮数据链路：\n示范项目只访问巨潮公开公告查询接口和公开 PDF 地址，不使用登录态，不绕过验证码或访问限制。默认只抓取 5 条记录，并在请求之间限速，便于课堂稳定演示。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#lab-目标",
+    "href": "labs/week12_metadata_demo.html#lab-目标",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "",
+    "text": "抓取规格 -&gt; 巨潮公告查询接口 -&gt; metadata.csv -&gt; PDF 下载 -&gt; dataset_check_report.md",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#示例项目位置",
+    "href": "labs/week12_metadata_demo.html#示例项目位置",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.2 示例项目位置",
+    "text": "5.2 示例项目位置\ncd labs/cninfo_reduction_lab",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#抓取规格",
+    "href": "labs/week12_metadata_demo.html#抓取规格",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.3 1. 抓取规格",
+    "text": "5.3 1. 抓取规格\n查看配置：\ncat configs/crawl.yaml\n这里的关键字段包括：\n\nkeywords：公告关键词；\ndate_range：时间范围；\nsleep_seconds：真实抓取时的限速参数；\nendpoint：巨潮公开公告查询接口；\nquery.max_records：课堂默认最多抓取 5 条；\noutput.metadata：标准 metadata 输出位置；\noutput.pdf_dir：PDF 或样本文本保存位置。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#生成-metadata",
+    "href": "labs/week12_metadata_demo.html#生成-metadata",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.4 2. 生成 metadata",
+    "text": "5.4 2. 生成 metadata\n运行：\npython3 src/crawl_cninfo.py\n输出：\ndata/metadata/metadata.csv\n课堂讲解重点：\n\ndoc_id 是后续所有步骤的主键；\nurl 和 pdf_url 用于追溯来源；\nlocal_pdf_path 让 PDF 文件和 metadata 对应；\ndownload_status 记录下载状态；\nerror_message 不能静默为空，失败时要写清原因。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#下载-pdf",
+    "href": "labs/week12_metadata_demo.html#下载-pdf",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.5 3. 下载 PDF",
+    "text": "5.5 3. 下载 PDF\n运行：\npython3 src/download_pdfs.py\n这个脚本会下载 metadata 中的公开 PDF，并保存到 data/pdf/。脚本会检查下载 URL 是否属于巨潮域名，避免把任意外部 URL 传给下载函数。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#数据检查",
+    "href": "labs/week12_metadata_demo.html#数据检查",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.6 4. 数据检查",
+    "text": "5.6 4. 数据检查\n运行：\npython3 src/check_dataset.py\n输出：\noutputs/reports/dataset_check_report.md\n课堂讲解重点：\n\n是否有重复 doc_id；\nmetadata 中记录的文件是否真的存在；\n标题是否包含本组选题关键词；\n下载失败是否写入日志；\n只有 PDF 文件夹而没有 metadata，是不合格的数据提交。",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week12_metadata_demo.html#给学生的观察任务",
+    "href": "labs/week12_metadata_demo.html#给学生的观察任务",
+    "title": "5  Lab Week 12：Metadata、PDF 下载与数据检查示范",
+    "section": "5.7 5. 给学生的观察任务",
+    "text": "5.7 5. 给学生的观察任务\n请学生打开：\ndata/metadata/metadata.csv\noutputs/reports/dataset_check_report.md\n回答：\n\n哪个字段能证明数据来自巨潮？\n哪个字段能定位本地文件？\n如果某个 PDF 下载失败，应记录在哪里？\n如果标题不含“减持”，后续抽取会有什么风险？",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Lab Week 12：Metadata、PDF 下载与数据检查示范</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html",
+    "href": "13_llm_pydantic_mineru_section_checking.html",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "",
+    "text": "6.1 本周目标\nWeek 13 的任务是把 PDF 变成可处理文本，并把“想抽取的字段”变成可验证的结构化输出。\n完成本周后，学生应该能够：",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#本周目标",
+    "href": "13_llm_pydantic_mineru_section_checking.html#本周目标",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "",
+    "text": "用硅基流动或千问官方 API 跑通最小 LLM 调用；\n用 .env 管理 API Key；\n用 Pydantic 写项目字段 Schema；\n用 MinerU API 或 MinerU 输出解析 PDF；\n对自动识别的 section 做人工检查和规则修正；\n输出带证据的结构化抽取结果。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#本周主线",
+    "href": "13_llm_pydantic_mineru_section_checking.html#本周主线",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.2 本周主线",
+    "text": "6.2 本周主线\nPDF\n  -&gt; MinerU 解析\n  -&gt; Markdown / JSON\n  -&gt; Section Routing\n  -&gt; Section Checking\n  -&gt; LLM 抽取\n  -&gt; Pydantic 校验\n  -&gt; 带 evidence 的结果",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#llm-api-最小调用",
+    "href": "13_llm_pydantic_mineru_section_checking.html#llm-api-最小调用",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.3 13.1 LLM API 最小调用",
+    "text": "6.3 13.1 LLM API 最小调用\n\n6.3.1 API 调用的通用结构\n无论使用硅基流动、千问官方 API，还是其他兼容服务，基本概念都类似：\n\n\n\n参数\n含义\n\n\n\n\nbase_url\nAPI 服务地址\n\n\napi_key\n身份凭证，必须从环境变量读取\n\n\nmodel\n使用的模型名称\n\n\nmessages\n给模型的输入消息\n\n\ntemperature\n随机性，结构化抽取建议设为 0\n\n\nmax_tokens\n最大输出长度\n\n\n\n\n\n6.3.2 .env.example\n.env.example 只写变量名和占位符，不写真实 Key：\nLLM_PROVIDER=siliconflow\nLLM_BASE_URL=https://api.siliconflow.cn/v1\nLLM_API_KEY=your_key_here\nLLM_MODEL=your_model_here\n\nQWEN_API_KEY=your_qwen_key_here\nMINERU_API_KEY=your_mineru_key_here\n真实 .env 不得提交到 Git 或作业平台。\n\n\n6.3.3 model_config.yaml\nprovider: \"your_provider\"\nmodel: \"your_model_here\"\nbase_url_env: \"LLM_BASE_URL\"\napi_key_env: \"LLM_API_KEY\"\ntemperature: 0\nmax_tokens: 2048\ntimeout_seconds: 60\n\n\n6.3.4 最小 API 连通性检查\n讲义目录中的 starter_example/ 已提供一个最小连通性脚本。它不绑定具体厂商，只要求服务兼容常见的 /chat/completions 调用形式。\ncd starter_example\npython3 -m pip install -r requirements.txt\ncp .env.example .env\n# 在 .env 中填入真实 LLM_BASE_URL、LLM_API_KEY、LLM_MODEL\npython3 src/hello_llm.py --config configs/model_config.yaml\n如果暂时没有真实 API Key，本步骤可以先跳过，但正式项目必须至少完成一次 API 连通性检查并记录在 ai_worklog 中。\n\n\n6.3.5 为什么要封装 llm_client.py\n不要把 API 调用散落在多个脚本中。统一封装有三个好处：\n\n便于切换 provider 或 model；\n便于统一日志和错误处理；\n便于测试“API 是否能连通”。\n\n常见报错包括：\n\nAPI Key 无效；\nmodel 名称错误；\nbase_url 错误；\n网络或超时；\n返回内容不是 JSON；\n输出太长被截断。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#pydantic-schema-与结构化抽取",
+    "href": "13_llm_pydantic_mineru_section_checking.html#pydantic-schema-与结构化抽取",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.4 13.2 Pydantic Schema 与结构化抽取",
+    "text": "6.4 13.2 Pydantic Schema 与结构化抽取\n\n6.4.1 为什么先定义 Schema\nPydantic Schema 是字段契约。它能告诉模型、代码和评分标准：结果应该长什么样。\n先定义 Schema 的好处：\n\n明确字段；\n限制类型；\n便于验证；\n便于评分；\n便于根据错误修复 prompt；\n避免“这次字段叫 amount，下次叫 money”的混乱。\n\n\n\n6.4.2 常用字段类型\n\n\n\n类型\n用法\n\n\n\n\nstr\n公司名、公告标题、原文金额\n\n\nint\n页码、次数、年限\n\n\nfloat\n标准化金额、比例\n\n\nOptional\n可能缺失的字段\n\n\nLiteral\n枚举值，如事件类型\n\n\nlist\n多个主体、多个问题、多个证据\n\n\n嵌套模型\n证据、金额、日期范围等复杂对象\n\n\n\n\n\n6.4.3 Null Rule\n不确定时输出 null，不能编造。\n这是金融公告抽取中非常重要的规则。模型如果根据常识补全字段，结果看起来完整，但实际不可用。\n\n\n6.4.4 示例：股东减持公告 Schema\nfrom typing import Optional, Literal\nfrom pydantic import BaseModel, Field\n\n\nclass Evidence(BaseModel):\n    text: str = Field(description=\"支持字段的公告原文\")\n    page_no: Optional[int] = Field(default=None, description=\"证据所在页码\")\n\n\nclass ShareholderReduction(BaseModel):\n    company_name: str = Field(description=\"上市公司名称\")\n    stock_code: Optional[str] = Field(default=None, description=\"证券代码\")\n    announcement_date: Optional[str] = Field(default=None, description=\"YYYY-MM-DD\")\n    shareholder_name: Optional[str] = Field(default=None, description=\"减持股东名称\")\n    shareholder_type: Optional[Literal[\"控股股东\", \"实际控制人\", \"董监高\", \"其他股东\"]] = None\n    reduction_method: Optional[str] = Field(default=None, description=\"集中竞价、大宗交易等\")\n    reduction_amount_text: Optional[str] = Field(default=None, description=\"公告原文中的减持数量\")\n    reduction_ratio_text: Optional[str] = Field(default=None, description=\"公告原文中的减持比例\")\n    reduction_period: Optional[str] = Field(default=None, description=\"减持期间原文\")\n    reason: Optional[str] = Field(default=None, description=\"减持原因\")\n    evidence: Evidence\n金额和比例建议先保留原文，再逐步做标准化。直接要求模型输出标准化数值，容易在单位、万股、亿元、百分比上出错。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#mineru-api-文档解析",
+    "href": "13_llm_pydantic_mineru_section_checking.html#mineru-api-文档解析",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.5 13.3 MinerU API 文档解析",
+    "text": "6.5 13.3 MinerU API 文档解析\nMinerU 的作用是把 PDF 转为 Markdown、JSON 或其他更容易处理的文本格式。与普通 PDF 文本提取相比，公告 PDF 常见的难点包括：\n\n表格；\n页眉页脚；\n多栏排版；\n目录；\n标题层级；\n跨页段落；\n扫描件或复杂版式。\n\nMinerU 输出仍然需要检查。不要把解析结果当作绝对正确。\n\n6.5.1 解析检查表\n# Parse Check\n\n## Document\n- doc_id:\n- title:\n- pdf_path:\n- parsed_path:\n\n## Page Check\n- 页码是否保留：\n- 是否有乱码：\n- 表格是否完整：\n- 标题层级是否合理：\n- 目录是否混入正文：\n\n## Target Content\n- 目标章节是否出现：\n- 关键字段是否能在解析文本中找到：\n- 是否需要人工修正：\n\n\n6.5.2 解析日志\n每次解析至少记录：\ndoc_id, pdf_path, parsed_path, status, error_message, parse_time",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#section-routing-与-section-checking",
+    "href": "13_llm_pydantic_mineru_section_checking.html#section-routing-与-section-checking",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.6 13.4 Section Routing 与 Section Checking",
+    "text": "6.6 13.4 Section Routing 与 Section Checking\n\n6.6.1 两者的区别\nSection Routing：自动找到可能相关的章节。\nSection Checking：检查找到的章节是否真的对，必要时修正规则。\nRouting 是程序行为，Checking 是质量控制。一个项目可以有简单的 Routing，但不能没有 Checking。\n\n\n6.6.2 为什么 section 不容易\n\n标题写法不统一；\n目录页会误匹配；\n年报章节很长；\n表格和段落混合；\n有些公告没有清晰标题；\n同一个关键词可能出现在“释义”“风险提示”“目录”等无关位置。\n\n\n\n6.6.3 section_rules.yaml 示例\ntarget_sections:\n  risk_factors:\n    include_keywords:\n      - \"风险因素\"\n      - \"可能面对的风险\"\n      - \"公司面临的风险\"\n    exclude_keywords:\n      - \"目录\"\n      - \"释义\"\n      - \"重要提示\"\n    min_chars: 500\n    page_expansion: 1\n\n  shareholder_reduction:\n    include_keywords:\n      - \"减持计划\"\n      - \"减持股份\"\n      - \"减持情况\"\n    exclude_keywords:\n      - \"目录\"\n      - \"备查文件\"\n    min_chars: 200\n    page_expansion: 0\n\n\n6.6.4 Section 检查表\ndoc_id,title,target_section,found,section_title,page_start,page_end,quality_issue,notes\nquality_issue 可以使用：\n\nok\nnot_found\ntoc_mismatch\ntoo_short\ntable_broken\nwrong_section\npage_missing\nneeds_manual_review",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#章节级抽取与证据回填",
+    "href": "13_llm_pydantic_mineru_section_checking.html#章节级抽取与证据回填",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.7 13.5 章节级抽取与证据回填",
+    "text": "6.7 13.5 章节级抽取与证据回填\n不要把整篇年报直接交给 LLM 抽取所有字段。应先定位目标章节，再把相关文本送入模型。\n每条结果至少包含：\n\nvalue；\nevidence_text；\npage_no；\nconfidence。\n\n提示词模板：\n你将收到公告中的一个目标章节。请只根据输入文本抽取字段。\n如果字段不存在，输出 null。\n不得根据常识补全。\n每个字段必须给出 evidence_text。\nevidence_text 必须是输入文本中的原文片段。\n输出必须是合法 JSON，并符合给定字段说明。\n\n6.7.1 Baseline 抽取流程\n\n随机选取 5–10 份已解析 PDF；\n用 section rules 找目标章节；\n人工检查 section 是否正确；\n对正确 section 调用 LLM 抽取；\n用 Pydantic 校验；\n把校验失败写入 validation_errors.jsonl；\n人工检查 evidence 是否来自输入。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#课堂练习",
+    "href": "13_llm_pydantic_mineru_section_checking.html#课堂练习",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.8 课堂练习",
+    "text": "6.8 课堂练习\n\n创建 .env.example 和 configs/model_config.yaml。\n跑通一次 hello_llm.py。\n为本组选题写 src/schemas.py。\n解析 3–5 份 PDF，并填写 parse_check.md。\n写第一版 section_rules.yaml。\n抽取 5 条 baseline 结果，记录 Pydantic 错误。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#week-13-常见环境问题",
+    "href": "13_llm_pydantic_mineru_section_checking.html#week-13-常见环境问题",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.9 Week 13 常见环境问题",
+    "text": "6.9 Week 13 常见环境问题\n\n\n\n\n\n\n\n\n问题\n常见表现\n建议处理\n\n\n\n\n.env 没读到\n提示 missing API key\n确认 .env 在项目根目录，变量名和 model_config.yaml 一致\n\n\nbase_url 错误\n404、connection error\n检查是否以 /v1 结尾，脚本会自动拼接 /chat/completions\n\n\nmodel 名称错误\nprovider 返回 model not found\n到所用平台复制模型名称，不要凭记忆手写\n\n\nJSON 不合法\nPydantic 无法解析\n保存原始输出，用 JSON 修复 prompt 或降低 temperature\n\n\nPDF 无法解析\nparsed text 为空或乱码\n先换 3–5 份样本测试，保留失败记录，必要时标记人工复核\n\n\nsection 命中目录\nevidence 来自目录页\n增加 exclude keywords、最小长度和人工 section check",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#课后提交",
+    "href": "13_llm_pydantic_mineru_section_checking.html#课后提交",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.10 课后提交",
+    "text": "6.10 课后提交\nDeliverable 13：\n.env.example\nconfigs/model_config.yaml\nsrc/llm_client.py\nsrc/schemas.py\nsrc/parse_with_mineru.py\ndata/parsed/parsed_docs_sample.jsonl\nparse_check.md\nsection_rules.yaml\nsrc/route_sections.py\nsection_check_report.md\nextract_results_v1.jsonl\nvalidation_errors.jsonl\nai_worklog_week13.md\n建议解析样本规模：\n\n\n\n难度\nWeek 13 解析样本要求\n\n\n\n\n基础\n至少 10–20 份 PDF 完成 MinerU 解析与抽样检查\n\n\n标准\n至少 20–40 份 PDF 完成 MinerU 解析与抽样检查\n\n\n挑战\n至少 40 份 PDF 或 20 对匹配样本完成解析与检查",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#常见错误",
+    "href": "13_llm_pydantic_mineru_section_checking.html#常见错误",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.11 常见错误",
+    "text": "6.11 常见错误\n\nAPI Key 写进代码；\nPrompt 没有 Schema；\n模型输出 JSON 但无法被 Pydantic 解析；\nMinerU 解析结果没有检查；\nsection 命中了目录而不是正文；\nevidence_text 是模型编造的，不在输入中；\npage_no 缺失或错误；\n把整篇长 PDF 一次性塞给模型；\n没有保存 validation error。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "13_llm_pydantic_mineru_section_checking.html#教师提示",
+    "href": "13_llm_pydantic_mineru_section_checking.html#教师提示",
+    "title": "6  Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查",
+    "section": "6.12 教师提示",
+    "text": "6.12 教师提示\n本周教师可以抽查一条结果，要求学生现场指出：\n\n原 PDF 文件；\nMinerU 解析片段；\nsection 检查记录；\nLLM 输出；\nPydantic 校验结果；\nevidence_text 在原文中的位置。\n\n如果这条链断了，说明系统还不能被信任。",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html",
+    "href": "labs/week13_schema_section_demo.html",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "",
+    "text": "7.1 Lab 目标\n本 lab 演示 Week 13 的最小抽取链路：\n课堂上先用规则抽取做 baseline，能让学生看懂字段、证据和校验。正式项目中可以把 extract_fields.py 替换为 LLM API 抽取，但输出仍应通过同一个 Pydantic schema。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#lab-目标",
+    "href": "labs/week13_schema_section_demo.html#lab-目标",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "",
+    "text": "真实巨潮 PDF -&gt; parsed_docs.jsonl -&gt; section routing -&gt; rule-based baseline -&gt; Pydantic validation",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#解析样本文本",
+    "href": "labs/week13_schema_section_demo.html#解析样本文本",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "7.2 1. 解析样本文本",
+    "text": "7.2 1. 解析样本文本\n运行：\npython3 src/parse_docs.py\n输出：\ndata/parsed/parsed_docs.jsonl\n这里用 pdftotext 或 pypdf 把真实 PDF 转为文本，并整理成接近 MinerU 输出的结构：每个文档包含 doc_id、title、pdf_path 和 pages。正式项目如果使用 MinerU API，可以保持后续 route_sections.py 的输入结构不变。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#section-routing",
+    "href": "labs/week13_schema_section_demo.html#section-routing",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "7.3 2. Section Routing",
+    "text": "7.3 2. Section Routing\n查看规则：\ncat configs/section_rules.yaml\n运行：\npython3 src/route_sections.py\n输出：\ndata/parsed/sections.jsonl\noutputs/reports/section_check_report.csv\n课堂讲解重点：\n\nRouting 只是“自动找候选章节”；\nChecking 是人工检查候选章节是否真的正确；\n目录、释义、备查文件等位置可能误命中；\nquality_issue 应记录 ok、not_found、too_short、wrong_section 等状态。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#schema",
+    "href": "labs/week13_schema_section_demo.html#schema",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "7.4 3. Schema",
+    "text": "7.4 3. Schema\n查看：\ncat src/schemas.py\n本 demo 的核心 schema 是：\nclass ShareholderReductionExtract(BaseModel):\n    doc_id: str\n    company_name: str\n    event_type: Literal[\"股东减持\"]\n    shareholder_name: Optional[str] = None\n    reduction_method: Optional[str] = None\n    reduction_amount_text: Optional[str] = None\n    reduction_ratio_text: Optional[str] = None\n    reduction_period: Optional[str] = None\n    reason: Optional[str] = None\n    evidence: Evidence\n课堂讲解重点：\n\nOptional 表示允许缺失；\nLiteral 用来限制枚举值；\nevidence.text 必须来自原文；\n不确定时输出 null，不能编造。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#抽取与校验",
+    "href": "labs/week13_schema_section_demo.html#抽取与校验",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "7.5 4. 抽取与校验",
+    "text": "7.5 4. 抽取与校验\n运行：\npython3 src/extract_fields.py\npython3 src/validate_results.py\n输出：\noutputs/results/extract_results.jsonl\noutputs/results/records_validated.csv\noutputs/logs/validation_errors.jsonl\n本 demo 使用简单规则抽取，因此结果不会完美。课堂上应特别观察错误字段，把它作为“为什么需要 LLM + evidence + 人工评估”的例子。正式项目可以把 extract_fields.py 替换为 LLM API 调用，但输出仍应通过同一个 Pydantic schema。",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week13_schema_section_demo.html#给学生的观察任务",
+    "href": "labs/week13_schema_section_demo.html#给学生的观察任务",
+    "title": "7  Lab Week 13：Section、Schema 与 Evidence 示范",
+    "section": "7.6 5. 给学生的观察任务",
+    "text": "7.6 5. 给学生的观察任务\n请学生打开一条 records_validated.csv，追溯：\nrecords_validated.csv\n  -&gt; extract_results.jsonl\n  -&gt; sections.jsonl\n  -&gt; parsed_docs.jsonl\n  -&gt; data/pdf/*.pdf\n  -&gt; metadata.csv\n回答：\n\n哪个字段最容易抽错？\nevidence 是否真的出现在原文里？\n如果模型抽不出减持原因，应该输出什么？\n如果 section 命中错误，会对抽取结果造成什么影响？",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Lab Week 13：Section、Schema 与 Evidence 示范</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html",
+    "href": "14_workflow_framework.html",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "",
+    "text": "8.1 本周目标\nWeek 14 只学习通用工作流思想，并用普通 Python 把各组项目串成可运行流程。\n完成本周后，学生应该能够：",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#本周目标",
+    "href": "14_workflow_framework.html#本周目标",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "",
+    "text": "把本组项目拆成节点；\n为每个节点写清输入、输出、成功标准和失败处理；\n画出自己的 workflow；\n用 pipeline_run.py 或等价入口串起项目；\n在小样本上跑通端到端流程。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#为什么需要-workflow",
+    "href": "14_workflow_framework.html#为什么需要-workflow",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.2 为什么需要 Workflow",
+    "text": "8.2 为什么需要 Workflow\nWeek 12 和 Week 13 产生了多个脚本：抓取、下载、检查、解析、section routing、抽取、校验。若这些脚本只是散落在项目里，别人很难复现，学生自己也很难定位错误。\nWorkflow 的目的不是使用某个高级框架，而是让项目步骤变得清楚、可重跑、可检查。\n一个通用流程可以写成：\nmetadata.csv\n  -&gt; check_dataset\n  -&gt; parse_pdf\n  -&gt; route_sections\n  -&gt; extract_fields\n  -&gt; validate_results\n  -&gt; aggregate_report\n  -&gt; final_outputs",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#工作流的基本要素",
+    "href": "14_workflow_framework.html#工作流的基本要素",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.3 14.1 工作流的基本要素",
+    "text": "8.3 14.1 工作流的基本要素\n每个节点都应有五个要素：\n\n\n\n要素\n说明\n\n\n\n\n输入\n文件、配置、参数\n\n\n输出\n中间结果或最终结果\n\n\n日志\n成功、失败、耗时、错误原因\n\n\n校验\n如何知道这一步做对了\n\n\n可重跑\n同样输入能否复现同样输出\n\n\n\n\n8.3.1 推荐通用流程\nCollect -&gt; Audit -&gt; Parse -&gt; Inspect/Route -&gt; Extract -&gt; Validate -&gt; Aggregate -&gt; Report\n\n\n\n节点\n作用\n\n\n\n\nCollect\n获取公告列表和 PDF\n\n\nAudit\n检查 metadata、PDF、重复和相关性\n\n\nParse\n用 MinerU 解析 PDF\n\n\nInspect/Route\n定位目标章节并人工抽查\n\n\nExtract\n调用 LLM 抽取字段\n\n\nValidate\n用 Pydantic 校验结果\n\n\nAggregate\n汇总为 CSV、JSONL 或分析表\n\n\nReport\n生成评估报告和展示材料",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#五种工作流模式",
+    "href": "14_workflow_framework.html#五种工作流模式",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.4 14.2 五种工作流模式",
+    "text": "8.4 14.2 五种工作流模式\n\n8.4.1 顺序流水线\n最基础的模式，适合基础档项目。\nmetadata -&gt; parse -&gt; extract -&gt; validate -&gt; report\n例子：重大合同公告核心字段抽取。每份 PDF 独立处理，不需要和其他公告匹配。\n\n\n8.4.2 条件分支\n根据数据或结果进入不同路径。\nif section_found:\n    extract_fields\nelse:\n    mark_manual_review\n例子：年报风险因素抽取。若没有找到目标章节，进入人工复核列表。\n\n\n8.4.3 失败重试\n对不稳定节点进行有限重试。\nparse_pdf -&gt; if failed retry 2 times -&gt; log failure\n例子：MinerU API 超时、网络波动、PDF 临时下载失败。\n\n\n8.4.4 Reviewer-Revise\n先抽取，再让另一个检查环节判断结果是否合格，必要时修正。\nextract -&gt; review_schema_and_evidence -&gt; revise_or_accept\n例子：模型抽取了金额，但 evidence_text 不包含该金额，进入修复 prompt。\n\n\n8.4.5 Human-in-the-loop\n某些节点必须人工确认。\nroute_sections -&gt; sample_check_by_human -&gt; update_rules -&gt; continue\n例子：问询函和回复闭环匹配，自动规则可能误匹配，需要人工抽样确认。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#workflow-design",
+    "href": "14_workflow_framework.html#workflow-design",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.5 14.3 Workflow Design",
+    "text": "8.5 14.3 Workflow Design\n每组先写 workflow_design.md，再写代码。\n模板：\n# Workflow Design\n\n## 项目目标\n\n## 总流程图\nCollect -&gt; Audit -&gt; Parse -&gt; Inspect/Route -&gt; Extract -&gt; Validate -&gt; Aggregate -&gt; Report\n\n## 节点表\n| 节点 | 输入 | 输出 | 成功标准 | 失败处理 | 日志 |\n|---|---|---|---|---|---|\n\n## 人工检查点\n\n## 配置文件\n- configs/workflow.yaml\n\n## 最小运行命令\n```bash\npython pipeline_run.py --config configs/workflow.yaml --limit 10\n```\n\n8.5.1 workflow.yaml 示例\nproject_name: \"shareholder_reduction_events\"\npaths:\n  metadata: \"data/metadata/metadata.csv\"\n  pdf_dir: \"data/pdf\"\n  parsed_dir: \"data/parsed\"\n  section_report: \"outputs/reports/section_check_report.csv\"\n  results_jsonl: \"outputs/results/extract_results.jsonl\"\n  validated_csv: \"outputs/results/records_validated.csv\"\n  run_log: \"outputs/logs/run_log.jsonl\"\n\nsteps:\n  audit:\n    enabled: true\n  parse:\n    enabled: true\n    limit: 20\n  route_sections:\n    enabled: true\n    rules: \"configs/section_rules.yaml\"\n  extract:\n    enabled: true\n    prompt: \"prompts/prompt_final.md\"\n  validate:\n    enabled: true\n  report:\n    enabled: true",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#用-vibe-coding-实现端到端入口",
+    "href": "14_workflow_framework.html#用-vibe-coding-实现端到端入口",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.6 14.4 用 Vibe Coding 实现端到端入口",
+    "text": "8.6 14.4 用 Vibe Coding 实现端到端入口\n当让 AI coding agent 写“粘合代码”时，必须提供：\n\n当前文件树；\n已有模块名称；\n输入输出路径；\n不允许改动的文件；\n验收命令。\n\nPrompt 模板：\n你是我的 Python 项目助教。请根据 workflow_design.md 帮我实现 pipeline_run.py。\n\n限制：\n1. 不要重写已有业务函数，只负责串联已有模块。\n2. 每一步都写日志到 outputs/logs/run_log.jsonl。\n3. 每一步失败时不要静默跳过，要记录错误并返回非零退出码。\n4. 支持步骤：audit、parse、route、extract、validate、report、all。\n5. 支持 --limit 参数，便于小样本测试。\n6. 请给出每个命令的运行示例。\n\n8.6.1 推荐运行命令\npython pipeline_run.py --config configs/workflow.yaml --step audit\npython pipeline_run.py --config configs/workflow.yaml --step parse --limit 10\npython pipeline_run.py --config configs/workflow.yaml --step all --limit 10\n运行后至少生成：\noutputs/logs/run_log.jsonl\noutputs/results/extract_results.jsonl\noutputs/results/records_validated.csv\noutputs/reports/summary_report.md",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#日志设计",
+    "href": "14_workflow_framework.html#日志设计",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.7 14.5 日志设计",
+    "text": "8.7 14.5 日志设计\nrun_log.jsonl 每一行建议是一个 JSON 对象：\n{\"time\": \"2026-04-29T10:00:00\", \"step\": \"parse\", \"doc_id\": \"000001_20240101_xxx\", \"status\": \"success\", \"elapsed\": 2.31, \"error\": null}\n日志不是装饰品。它回答：\n\n哪一步失败；\n哪个文件失败；\n为什么失败；\n是否可以重跑；\n展示时能否证明系统跑过。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#课堂练习",
+    "href": "14_workflow_framework.html#课堂练习",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.8 课堂练习",
+    "text": "8.8 课堂练习\n\n每组画出自己的 workflow 图。\n填写节点表，明确每个节点输入输出。\n写 configs/workflow.yaml。\n让 AI coding agent 评审 workflow，指出缺失节点和风险。\n实现 pipeline_run.py 的最小版本。\n用 --limit 5 跑通端到端小样本。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#课后提交",
+    "href": "14_workflow_framework.html#课后提交",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.9 课后提交",
+    "text": "8.9 课后提交\nDeliverable 14：\nworkflow_design.md\nworkflow_graph.png 或 workflow_graph.md\nconfigs/workflow.yaml\npipeline_run.py\nsrc/workflow/\noutputs/logs/run_log.jsonl\noutputs/results/extract_results.jsonl\noutputs/results/records_validated.csv\noutputs/reports/summary_report.md\nai_worklog_week14.md",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#常见错误",
+    "href": "14_workflow_framework.html#常见错误",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.10 常见错误",
+    "text": "8.10 常见错误\n\n只有脚本，没有统一入口；\nworkflow 图和代码不一致；\n没有日志；\n失败后整个程序中断且没有记录；\n抽取、校验、汇总混在一个超长脚本里；\n只在一条样本上成功，批处理就失败；\npipeline_run.py 依赖本地绝对路径；\n输出文件散落在项目根目录。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "14_workflow_framework.html#教师提示",
+    "href": "14_workflow_framework.html#教师提示",
+    "title": "8  Week 14：通用工作流框架与项目端到端串联",
+    "section": "8.11 教师提示",
+    "text": "8.11 教师提示\n教师可以要求学生现场运行：\npython pipeline_run.py --config configs/workflow.yaml --step all --limit 3\n然后检查：\n\n是否生成日志；\n是否生成抽取结果；\n是否有校验结果；\n如果某条失败，日志是否说明原因；\n学生能否说清每个节点做了什么。",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Week 14：通用工作流框架与项目端到端串联</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html",
+    "href": "labs/week14_workflow_demo.html",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "",
+    "text": "9.1 Lab 目标\n本 lab 演示 Week 14 的端到端 workflow：\n重点不是代码复杂，而是让学生看到每一步都有输入、输出、日志和可检查结果。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#lab-目标",
+    "href": "labs/week14_workflow_demo.html#lab-目标",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "",
+    "text": "metadata -&gt; download -&gt; audit -&gt; parse -&gt; route -&gt; extract -&gt; validate",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#查看-workflow-配置",
+    "href": "labs/week14_workflow_demo.html#查看-workflow-配置",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.2 1. 查看 workflow 配置",
+    "text": "9.2 1. 查看 workflow 配置\ncat configs/workflow.yaml\n课堂讲解重点：\n\npaths.metadata：metadata 输入；\npaths.parsed_dir：解析结果目录；\npaths.section_report：section 检查报告；\npaths.extract_results：抽取 JSONL；\npaths.validated_results：最终可读 CSV；\npaths.run_log：运行日志。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#一键运行",
+    "href": "labs/week14_workflow_demo.html#一键运行",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.3 2. 一键运行",
+    "text": "9.3 2. 一键运行\npython3 src/pipeline_run.py --step all\n输出示例：\n[metadata] metadata rows=2\n[download] download rows=2, failures=0\n[audit] dataset report=outputs/reports/dataset_check_report.md\n[parse] parsed docs=2\n[route] sections=2\n[extract] extract records=2\n[validate] valid=2, errors=0",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#单步运行",
+    "href": "labs/week14_workflow_demo.html#单步运行",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.4 3. 单步运行",
+    "text": "9.4 3. 单步运行\n如果某一步失败，学生不应重新跑所有东西，而应先定位问题。\npython3 src/pipeline_run.py --step route\npython3 src/pipeline_run.py --step extract\npython3 src/pipeline_run.py --step validate",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#检查日志",
+    "href": "labs/week14_workflow_demo.html#检查日志",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.5 4. 检查日志",
+    "text": "9.5 4. 检查日志\n打开：\noutputs/logs/run_log.jsonl\n每一行应说明：\n\n哪一步；\n是否成功；\n处理了多少记录；\n如果失败，错误原因是什么。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#给学生的观察任务",
+    "href": "labs/week14_workflow_demo.html#给学生的观察任务",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.6 5. 给学生的观察任务",
+    "text": "9.6 5. 给学生的观察任务\n请学生画出本 demo 的 workflow，并补充每个节点的输入输出：\n\n\n\n\n\n\n\n\n\n节点\n输入\n输出\n检查方式\n\n\n\n\nmetadata\n巨潮查询接口\nmetadata.csv\n字段是否完整\n\n\ndownload\nmetadata.csv\ndata/pdf/*.pdf\n文件是否存在\n\n\naudit\nmetadata + pdf\ndataset report\n缺失/重复/关键词\n\n\nparse\npdf text\nparsed_docs.jsonl\n页码和正文\n\n\nroute\nparsed docs + rules\nsections.jsonl\nsection check\n\n\nextract\nsections\nextract_results.jsonl\n字段和 evidence\n\n\nvalidate\nextract results + schema\nrecords_validated.csv\nPydantic",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "labs/week14_workflow_demo.html#正式项目如何替换-demo",
+    "href": "labs/week14_workflow_demo.html#正式项目如何替换-demo",
+    "title": "9  Lab Week 14：Workflow 一键串联示范",
+    "section": "9.7 6. 正式项目如何替换 demo",
+    "text": "9.7 6. 正式项目如何替换 demo\n\n\n\nDemo 环节\n正式项目替换\n\n\n\n\ncrawl_cninfo.py\n调整关键词、时间范围、股票池、公告类型\n\n\ndownload_pdfs.py\n保留限速、失败记录和域名检查\n\n\nparse_docs.py\n可替换为 MinerU API / MinerU 输出标准化\n\n\nextract_fields.py 规则抽取\nLLM API + prompt + schema\n\n\n默认 5 条公告\n按项目难度扩展数据量\n\n\n\n替换后仍应保留 workflow 的基本形状：输入、输出、日志、校验和可重跑。",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Lab Week 14：Workflow 一键串联示范</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html",
+    "href": "15_evaluation_prompt_skills_optimization.html",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "",
+    "text": "10.1 本周目标\nWeek 15 的任务是把“系统能跑”推进到“结果可信、过程可复现、错误可解释”。\n完成本周后，学生应该能够：",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#本周目标",
+    "href": "15_evaluation_prompt_skills_optimization.html#本周目标",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "",
+    "text": "设计轻量人工评估；\n识别错误来源；\n优化 prompt、schema、section rules 和 workflow；\n编写项目 rules / skills，让 AI coding agent 更稳定地帮助项目；\n整理 final repo、demo 和 slides。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#评估框架",
+    "href": "15_evaluation_prompt_skills_optimization.html#评估框架",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.2 15.1 评估框架",
+    "text": "10.2 15.1 评估框架\n金融文本智能项目不能只展示成功样例。评估要回答：系统在多少样本上可靠，错误主要来自哪里，下一步应该改什么。\n本课程建议五类指标：\n\n\n\n\n\n\n\n\n指标\n问题\n示例\n\n\n\n\nData Quality\n抓到的数据是否真的属于目标任务？\n标题匹配率、PDF 可打开率、重复率\n\n\nSection Quality\n目标章节是否找对？\n关键章节找到率、页码正确率、表格损坏率\n\n\nExtraction Quality\n字段是否抽对？\n字段准确率、缺失率、格式错误率\n\n\nEvidence Quality\n证据是否支持字段？\nevidence 命中率、页码正确率\n\n\nPipeline Stability\n工作流是否稳定？\n批处理成功率、失败重试率、平均耗时\n\n\n\n\n10.2.1 轻量人工评估\n每组抽样人工标注：\n\n\n\n难度\n人工标注建议\n\n\n\n\n基础\n10–15 份 PDF\n\n\n标准\n15–25 份 PDF\n\n\n挑战\n25+ 份 PDF 或 10+ 对匹配样本\n\n\n\n评估表字段：\ndoc_id,field_name,predicted_value,gold_value,is_correct,evidence_correct,error_type,notes\nerror_type 建议使用固定枚举：\n\ndata_error\nparse_error\nsection_error\nprompt_error\nschema_error\nhallucination\nnormalization_error\nworkflow_error\nhuman_label_unclear",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#错误驱动优化",
+    "href": "15_evaluation_prompt_skills_optimization.html#错误驱动优化",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.3 15.2 错误驱动优化",
+    "text": "10.3 15.2 错误驱动优化\n优化不是盲目换模型，也不是只改 prompt。先判断错误来自哪里。\n\n\n\n\n\n\n\n\n\n错误类型\n表现\n可能原因\n修复方法\n\n\n\n\n抓取错误\n标题不相关，PDF 缺失\n关键词过宽、下载失败未记录\n收窄关键词、补充失败日志、人工抽查\n\n\nPDF 解析错误\n表格丢列、页码错乱\nPDF 版式复杂，解析结果未检查\n换解析策略、保留原 PDF、标记人工复核\n\n\nSection 错误\n命中目录或无关章节\ninclude 过宽，exclude 不足\n加排除词、页码扩展、最小长度规则\n\n\nPrompt 错误\n字段解释不清，输出不稳定\n字段定义模糊，没有 null rule\n重写字段说明，加 JSON 示例\n\n\nSchema 错误\nPydantic 大量失败\n类型过窄或字段设计不合理\n拆分原文值和标准化值，调整枚举\n\n\n模型幻觉\nevidence 不在输入中\n没有强制证据规则\n要求 evidence 原文匹配，失败则 null\n\n\n工作流失败\n单条能跑，批量失败\n路径、缓存、异常处理混乱\n加统一入口、日志、重试和断点\n\n\n展示不可复现\nDemo 依赖临时文件\nREADME 不完整，命令不清\n固化配置、准备 sample outputs",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#prompt-优化",
+    "href": "15_evaluation_prompt_skills_optimization.html#prompt-优化",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.4 15.3 Prompt 优化",
+    "text": "10.4 15.3 Prompt 优化\nPrompt 优化应围绕具体错误进行。\n有效做法：\n\n字段定义更具体；\n给出枚举值；\n日期和金额格式统一；\n不确定输出 null；\nevidence 必须来自输入文本；\nfew-shot 示例只放 1–2 个，避免过长；\n对失败案例写反例提示；\n将长任务拆成分类、抽取、验证三个小任务。\n\n\n10.4.1 抽取 Prompt 模板\n你是金融公告结构化抽取助手。\n\n任务：\n请只根据输入文本抽取字段，输出合法 JSON。\n\n规则：\n1. 不得根据常识补全。\n2. 不确定或文本中不存在时输出 null。\n3. 每个关键字段必须提供 evidence_text。\n4. evidence_text 必须是输入文本中的原文片段。\n5. 日期使用 YYYY-MM-DD；无法标准化则保留原文并在标准化字段输出 null。\n6. 金额先保留原文表达，不要自行换算单位，除非文本明确。\n\n输入文本：\n{section_text}\n\n字段说明：\n{schema_description}\n\n\n10.4.2 JSON 修复 Prompt\n当模型输出无法通过 Pydantic 校验时，可以让模型只修复格式：\n下面是模型输出和 Pydantic 校验错误。\n请只修复 JSON，使其符合 schema。\n不得添加输入文本中没有的信息。\n\n原始输出：\n{raw_output}\n\n校验错误：\n{validation_error}\n\nSchema：\n{json_schema}",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#schema-优化",
+    "href": "15_evaluation_prompt_skills_optimization.html#schema-优化",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.5 15.4 Schema 优化",
+    "text": "10.5 15.4 Schema 优化\n常见优化方式：\n\n将模糊字段拆分为原文值和标准化值；\n对枚举字段使用 Literal；\n对证据使用嵌套模型；\n将多主体字段设计为 list；\n保存 validation error，用于下一轮 prompt 改进。\n\n示例：\nclass MoneyValue(BaseModel):\n    raw_text: Optional[str] = None\n    amount: Optional[float] = None\n    unit: Optional[Literal[\"元\", \"万元\", \"亿元\"]] = None\n    evidence_text: Optional[str] = None\n这样比只写一个 amount: float 更稳健，因为公告中金额单位经常变化。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#section-优化",
+    "href": "15_evaluation_prompt_skills_optimization.html#section-优化",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.6 15.5 Section 优化",
+    "text": "10.6 15.5 Section 优化\nSection 优化不是追求自动化到完全不看，而是减少明显误定位。\n可用策略：\n\n增加关键词和同义词；\n增加排除词，如“目录”“释义”“声明”；\n设置最小内容长度；\n对跨页章节设置页码扩展；\n对表格损坏建立手工兜底逻辑；\n将 section preview 输出给人工快速检查。\n\n每次修改 section rules 后，应重新跑一小批样本，并更新 section_check_report.md。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#skills-rules",
+    "href": "15_evaluation_prompt_skills_optimization.html#skills-rules",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.7 15.6 Skills / Rules",
+    "text": "10.7 15.6 Skills / Rules\n这里的 skills 不是给最终 LLM 抽取字段的 prompt，而是给“帮你写代码的 AI coding agent”的长期项目说明。不同工具叫法可能不同：TRAE 可使用 Rules & Skills；Claude Code / Kimi Code 有类似能力；Codex 可用 AGENTS.md 存放项目说明和工作规则。\n它们的作用是减少重复解释，让 AI 每次写代码时都遵守项目边界。\n\n10.7.1 层次一：项目规则文件\nAGENTS.md、CODING_RULES.md 或 CLAUDE.md 建议包含：\n# Agent Instructions for CNINFO Project\n\n## Project Goal\n本项目从巨潮资讯网公告 PDF 中抽取结构化金融事件信息。\n\n## Data Rules\n- 主数据必须来自巨潮资讯网公开公告。\n- 不绕过登录、验证码或访问限制。\n- 原始 PDF 不得修改。\n\n## Secret Rules\n- 不要把 API Key 写入代码。\n- 不要提交 .env。\n- 只维护 .env.example。\n\n## Coding Rules\n- 每个脚本必须支持命令行运行。\n- 所有输出写入 outputs/。\n- 所有错误写入 outputs/logs/。\n- 修改代码后必须说明运行哪个命令验证。\n\n## Extraction Rules\n- 字段值必须来自公告文本。\n- 每个关键字段要有 evidence_text。\n- 无法判断时输出 null。\n- 抽取结果必须通过 Pydantic 校验。\n\n\n10.7.2 层次二：任务 Prompt 模板\n例如：\n\n帮我改抓取脚本；\n帮我修 JSON validation 错误；\n帮我写 section checker；\n帮我审查 README 是否可复现。\n\n每个任务 prompt 都要说明输入、输出、约束和验收命令。\n\n\n10.7.3 层次三：可复用 Skill\n如果工具支持 skill，可以建立：\nskills/cninfo-crawler/SKILL.md\nskills/mineru-parser/SKILL.md\nskills/section-checker/SKILL.md\nskills/pydantic-extractor/SKILL.md\nskills/evaluator/SKILL.md\n每个 skill 包含：\n\n什么时候使用；\n输入文件；\n输出文件；\n不允许做什么；\n验收命令。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#展示工程化",
+    "href": "15_evaluation_prompt_skills_optimization.html#展示工程化",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.8 15.7 展示工程化",
+    "text": "10.8 15.7 展示工程化\n最终 repo 至少包含：\nREADME.md\nrequirements.txt\n.env.example\nAGENTS.md 或 CODING_RULES.md\nconfigs/\ndata/metadata.csv\nsrc/\npipeline_run.py\noutputs/sample_outputs/\nlogs/sample_run_log.jsonl\neval_report_final.md\ndemo_script.md\nfinal_slides.pdf\nai_usage_statement.md\nREADME 必须写清：\n\n项目目标；\n数据来源；\n目录结构；\n安装依赖；\n配置 .env；\n最小运行命令；\n输出文件说明；\n评估结果摘要。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#课堂练习",
+    "href": "15_evaluation_prompt_skills_optimization.html#课堂练习",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.9 课堂练习",
+    "text": "10.9 课堂练习\n\n抽样人工评估 5 条结果。\n将错误按类型分类。\n根据错误修改 prompt、schema 或 section rules。\n编写 AGENTS.md 或 CODING_RULES.md。\n让 AI coding agent 作为 reviewer 检查最终 repo。\n准备 3 分钟 demo 脚本。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#课后提交",
+    "href": "15_evaluation_prompt_skills_optimization.html#课后提交",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.10 课后提交",
+    "text": "10.10 课后提交\nDeliverable 15：\nfinal_repo/ 或 final.zip\neval_report_final.md\noptimization_log.md\nAGENTS.md / CODING_RULES.md / skills/\ndemo_script.md\nfinal_slides.pdf\nai_usage_statement.md\nai_worklog_all.md\n最终项目目录建议：\nfinal_repo/\n  README.md\n  requirements.txt\n  .env.example\n  AGENTS.md\n  configs/\n    task.yaml\n    crawl_config.yaml\n    model_config.yaml\n  data/\n    metadata/metadata.csv\n    parsed/parsed_docs_sample.jsonl\n  prompts/\n    prompt_v1.md\n    prompt_final.md\n  src/\n    cninfo/\n    llm/\n    mineru/\n    workflow/\n    evaluation/\n  outputs/\n    logs/\n    results/\n    reports/\n  tests/\n  ai_worklog_all.md\n  ai_usage_statement.md\n  final_slides.pdf",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#常见错误",
+    "href": "15_evaluation_prompt_skills_optimization.html#常见错误",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.11 常见错误",
+    "text": "10.11 常见错误\n\n只展示成功案例；\n没有人工评估；\n优化只改 prompt，不查 section 和数据；\nAI 使用过程不可追踪；\nREADME 缺少复现命令；\nDemo 依赖临时文件或本地绝对路径；\nevaluation 只写“效果不错”，没有样本和错误类型；\nskills/rules 写成空泛口号，没有项目约束。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "15_evaluation_prompt_skills_optimization.html#教师提示",
+    "href": "15_evaluation_prompt_skills_optimization.html#教师提示",
+    "title": "10  Week 15：评估、提示词优化、Skills 与展示工程化",
+    "section": "10.12 教师提示",
+    "text": "10.12 教师提示\n本周教师可以要求每组展示一个失败案例。好的项目不是没有失败，而是能说清：\n\n失败在哪里；\n为什么失败；\n如何发现；\n如何修复；\n修复后是否真的改善。",
+    "crumbs": [
+      "<span class='chapter-number'>10</span>  <span class='chapter-title'>Week 15：评估、提示词优化、Skills 与展示工程化</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html",
+    "href": "16_presentation_and_exam_review.html",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "",
+    "text": "11.1 本周目标\nWeek 16 是项目二的收尾周。本周需要完成三件事：\n展示和答辩检查的是学生是否真正理解：",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#本周目标",
+    "href": "16_presentation_and_exam_review.html#本周目标",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "",
+    "text": "完成小组项目展示与答辩；\n提交最终项目仓库与展示材料；\n明确期末考试中模块 B 的考查范围和题型比例。\n\n\n\n数据从哪里来；\n字段为什么这样设计；\nPDF 解析和 section 定位哪里可能错；\n模型输出如何校验；\n评估结果说明了什么；\nAI coding agent 帮了什么，又错在哪里。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#展示安排",
+    "href": "16_presentation_and_exam_review.html#展示安排",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.2 展示安排",
+    "text": "11.2 展示安排\n如果班级约 10 组，可以安排：\n\n\n\n课次\n安排\n\n\n\n\n16.1\n4 组展示，每组 10–12 分钟 + Q&A 3–5 分钟\n\n\n16.2\n3 组展示，每组 10–12 分钟 + Q&A 3–5 分钟\n\n\n16.3\n3 组展示 + 教师总结 + 期末考试模块 B 说明\n\n\n\n教师可根据实际组数调整时间，但每组必须有问答环节。展示超时会影响评分，因为项目表达能力也是本项目的一部分。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#展示内容要求",
+    "href": "16_presentation_and_exam_review.html#展示内容要求",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.3 展示内容要求",
+    "text": "11.3 展示内容要求\n每组 slides 建议 8–10 页。不要把展示做成工具安装汇报，也不要只展示最终表格。推荐结构如下：\n\n\n\n\n\n\n\n\n页码\n内容\n必须讲清楚什么\n\n\n\n\n1\n题目与金融问题\n研究什么公告，解决什么金融问题\n\n\n2\n巨潮数据来源\n入口、关键词、公告类型、时间范围、样本规模\n\n\n3\n难度档位\n申请 0.9 / 1.0 / 1.1 的理由\n\n\n4\n字段与 Schema\n核心字段、字段类型、null rule、证据字段\n\n\n5\nPDF 解析与 Section 检查\nMinerU 解析结果、目标章节如何定位、人工检查结果\n\n\n6\nWorkflow\n从 metadata 到 final result 的流程图\n\n\n7\nDemo\n展示一个公告从 PDF 到结构化结果\n\n\n8\n评估结果\n人工评估样本、主要指标、典型错误\n\n\n9\n优化过程\n改过哪些 prompt、schema、section rules 或 workflow\n\n\n10\nVibe Coding 反思\nAI 帮助了什么，学生如何验证，AI 出过什么错",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#demo-要求",
+    "href": "16_presentation_and_exam_review.html#demo-要求",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.4 Demo 要求",
+    "text": "11.4 Demo 要求\nDemo 不要求现场跑完整数据集，但必须展示一条完整证据链：\n一份巨潮公告 PDF\n  -&gt; metadata 记录\n  -&gt; MinerU 解析片段\n  -&gt; section 定位结果\n  -&gt; LLM 抽取结果\n  -&gt; Pydantic 校验结果\n  -&gt; final result\n  -&gt; evidence_text / page_no\n最低要求：\n\n展示 1 份原始 PDF；\n展示该 PDF 在 metadata.csv 中的记录；\n展示解析后的目标文本片段；\n展示 section 检查记录；\n展示抽取 JSON 或 JSONL；\n展示 Pydantic 校验是否通过；\n展示最终表格中的对应行；\n至少解释 2 个关键字段的 evidence_text。\n\n如果现场网络或 API 不稳定，可以使用提前保存的小样本输出，但必须能说明这些输出如何由项目代码生成。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#最终仓库要求",
+    "href": "16_presentation_and_exam_review.html#最终仓库要求",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.5 最终仓库要求",
+    "text": "11.5 最终仓库要求\n最终提交应是一个可以复现的小项目，而不是只有 PPT。\n最低目录结构：\nfinal_repo/\n  README.md\n  requirements.txt\n  .env.example\n  AGENTS.md 或 CODING_RULES.md\n  configs/\n    task.yaml 或 workflow.yaml\n    crawl_config.yaml\n    model_config.yaml\n    section_rules.yaml\n  data/\n    metadata/metadata.csv\n    parsed/parsed_docs_sample.jsonl\n  prompts/\n    prompt_v1.md\n    prompt_final.md\n  src/\n    cninfo/\n    llm/\n    mineru/\n    workflow/\n    evaluation/\n  outputs/\n    logs/sample_run_log.jsonl\n    results/final_results.csv 或 final_results.jsonl\n    reports/eval_report_final.md\n  tests/ 或 sample_checks/\n  pipeline_run.py 或 run.py\n  demo_script.md\n  final_slides.pdf\n  ai_usage_statement.md\n  ai_worklog_all.md\n\n11.5.1 README 必须包含\n\n项目题目和金融问题；\n数据来源与公告范围；\n目录结构；\n环境安装方法；\n.env.example 中变量说明；\n最小运行命令；\n输出文件说明；\n评估结果摘要；\n主要局限。\n\n\n\n11.5.2 .env.example 必须包含\n只写变量名和占位符，不得写真实 Key：\nLLM_PROVIDER=your_provider\nLLM_BASE_URL=your_base_url\nLLM_API_KEY=your_key_here\nLLM_MODEL=your_model_here\nMINERU_API_KEY=your_key_here\n真实 .env 不得提交。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#最终提交清单",
+    "href": "16_presentation_and_exam_review.html#最终提交清单",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.6 最终提交清单",
+    "text": "11.6 最终提交清单\nfinal_repo/ 或 final.zip\nREADME.md\nrequirements.txt\n.env.example\nconfigs/\npipeline_run.py 或 run.py\nsrc/\ndata/metadata/metadata.csv\noutputs/logs/sample_run_log.jsonl\noutputs/results/final_results.csv 或 final_results.jsonl\noutputs/reports/eval_report_final.md\ndemo_script.md\nfinal_slides.pdf\nai_usage_statement.md\nai_worklog_all.md\n提交前自查：\n\nmetadata.csv 能追溯到巨潮公告；\nPDF 样本或解析样本能对应 metadata；\n核心字段有 Pydantic Schema；\n至少有一份 section 检查报告；\n最终结果包含 evidence；\n有人工评估与错误分类；\n有运行日志；\nREADME 写明复现命令；\n没有提交真实 API Key；\nAI 使用过程有记录。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#展示评分-rubric",
+    "href": "16_presentation_and_exam_review.html#展示评分-rubric",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.7 展示评分 Rubric",
+    "text": "11.7 展示评分 Rubric\n\n\n\n\n\n\n\n\n维度\n分值\n评价标准\n\n\n\n\n金融问题表达\n3\n能讲清为什么该公告任务有价值\n\n\n方法链路表达\n3\n能讲清数据、API、Schema、MinerU、Section、Workflow 如何串联\n\n\nDemo 与证据链\n4\n能展示一个 PDF 到结构化结果的过程；字段有证据文本和页码\n\n\n评估与局限\n3\n能说明系统好坏、失败案例和下一步优化\n\n\nVibe Coding 反思\n2\n能说明 AI 帮了什么、错在哪里、学生如何验证",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#答辩关注点",
+    "href": "16_presentation_and_exam_review.html#答辩关注点",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.8 答辩关注点",
+    "text": "11.8 答辩关注点\n答辩会围绕项目本身提问，不要求背诵工具文档。常见关注点包括：\n\n选题是否有金融意义；\n数据量与难度档位是否匹配；\n字段设计是否合理；\nsection 是否真的找对；\nevidence 是否支持字段值；\nPydantic 发现过哪些错误；\nworkflow 哪一步最容易失败；\nAI coding agent 生成的内容如何被验证；\n如果换一批公告，项目是否还能复现。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#常见展示问题",
+    "href": "16_presentation_and_exam_review.html#常见展示问题",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.9 常见展示问题",
+    "text": "11.9 常见展示问题\n\n展示时间花在背景介绍，Demo 不完整；\n只给最终表格，不展示证据链；\n只展示成功案例，没有失败样本；\n无法说明 section 是如何检查的；\n无法解释 Pydantic 校验错误；\n把 AI 生成代码等同于自己完成项目；\n难度申请和实际完成程度不匹配；\n最终 repo 缺少运行命令；\n提交材料中出现真实 API Key。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "16_presentation_and_exam_review.html#期末考试说明",
+    "href": "16_presentation_and_exam_review.html#期末考试说明",
+    "title": "11  Week 16：项目展示、答辩与期末考试说明",
+    "section": "11.10 期末考试说明",
+    "text": "11.10 期末考试说明\n期末考试覆盖全课程，模块 B 只占其中一部分。模块 B 相关内容约占期末考试 30%，具体以正式试卷为准。\n模块 B 题目只考察课程中反复使用的核心概念、流程设计和项目错误分析，不考具体工具安装命令，不要求背诵 API 代码。\n\n\n\n\n\n\n\n\n\n部分\n预计题量\n模块 B 占期末比例\n考查重点\n\n\n\n\n客观题\n2–4 小题\n约 8%–10%\n基本概念、术语辨析、流程顺序\n\n\n简答题\n1 小题\n约 8%–10%\n为什么这样设计、如何避免常见错误\n\n\n案例分析题\n1 小题\n约 10%–12%\n结合金融公告项目，分析数据、schema、section、workflow 或评估问题\n\n\n\n\n11.10.1 考点范围\n\nVibe coding 与学生责任；\nAI coding agent 的作用和边界；\n巨潮数据抓取与 metadata；\nLLM API 的基本组成；\nPrompt 与结构化输出；\nPydantic Schema；\nMinerU 文档解析；\nSection Routing / Section Checking；\nEvidence / 证据回填；\nWorkflow 设计；\nHuman-in-the-loop；\nEvaluation metrics；\nHallucination；\nNull rule；\nSkills / Rules。\n\n案例分析题会与同学们做过的项目类型相关，例如公告抓取、PDF 解析、section 检查、字段抽取、证据回填、workflow 复现或评估错误分析。考试不会要求复现某个小组的具体代码。",
+    "crumbs": [
+      "<span class='chapter-number'>11</span>  <span class='chapter-title'>Week 16：项目展示、答辩与期末考试说明</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html",
+    "href": "90_templates_and_materials.html",
+    "title": "12  模板与材料清单",
+    "section": "",
+    "text": "12.1 学生模板总览\n本章汇总学生可直接复制使用的模板。课程项目中建议把模板放入项目根目录或 templates/ 目录。",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#学生模板总览",
+    "href": "90_templates_and_materials.html#学生模板总览",
+    "title": "12  模板与材料清单",
+    "section": "",
+    "text": "templates/\n  team_info.md\n  tool_setup_check.md\n  cninfo_data_discovery.md\n  topic_ideas.md\n  topic_proposal.md\n  output_sample.md\n  crawl_spec.md\n  difficulty_declaration.md\n  ai_worklog_weekXX.md\n  AGENTS.md\n  CODING_RULES.md\n  model_config.yaml\n  parse_check.md\n  section_rules.yaml\n  workflow_design.md\n  workflow.yaml\n  eval_report_template.md\n  ai_usage_statement.md\n  presentation_checklist.md",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#课堂-labs",
+    "href": "90_templates_and_materials.html#课堂-labs",
+    "title": "12  模板与材料清单",
+    "section": "12.2 课堂 Labs",
+    "text": "12.2 课堂 Labs\nlabs/ 目录提供 Week 12–14 的贯穿示范。它使用“股东减持公告核心字段抽取”作为小样例，真实访问巨潮公开公告查询接口并下载公开 PDF。默认只抓取 5 条记录，便于课堂控制。\nlabs/\n  week12_metadata_demo.qmd\n  week13_schema_section_demo.qmd\n  week14_workflow_demo.qmd\n  cninfo_reduction_lab/\n运行示范项目：\ncd labs/cninfo_reduction_lab\npython3 src/pipeline_run.py --step all",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#team_info.md",
+    "href": "90_templates_and_materials.html#team_info.md",
+    "title": "12  模板与材料清单",
+    "section": "12.3 team_info.md",
+    "text": "12.3 team_info.md\n# Team Info\n\n## 小组名称\n\n## 成员与分工\n| 姓名 | 学号 | 角色 | 主要负责内容 |\n|---|---|---|---|\n\n## 联系方式\n\n## 初步选题方向",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#tool_setup_check.md",
+    "href": "90_templates_and_materials.html#tool_setup_check.md",
+    "title": "12  模板与材料清单",
+    "section": "12.4 tool_setup_check.md",
+    "text": "12.4 tool_setup_check.md\n# Tool Setup Check\n\n- 使用工具：TRAE / Claude Code / Codex / Kimi Code / 其他\n- 操作系统：\n- Python 版本：\n- 是否能打开项目目录：是/否\n- 是否能运行 `python run.py --help`：是/否\n- 是否能运行 starter example：是/否\n- 是否已创建 `.env.example`：是/否\n- 是否确认 `.env` 不提交：是/否\n\n## 遇到的问题\n| 问题 | 报错信息 | 解决方式 |\n|---|---|---|",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#cninfo_data_discovery.md",
+    "href": "90_templates_and_materials.html#cninfo_data_discovery.md",
+    "title": "12  模板与材料清单",
+    "section": "12.5 cninfo_data_discovery.md",
+    "text": "12.5 cninfo_data_discovery.md\n# 巨潮数据探索记录\n\n## 方向 A\n- 关键词：\n- 公告类型：\n- 示例公司/代码：\n- 示例标题：\n- PDF 是否可下载：是/否\n- 可能字段：\n- 金融问题：\n- 风险点：\n\n## 方向 B\n- 关键词：\n- 公告类型：\n- 示例公司/代码：\n- 示例标题：\n- PDF 是否可下载：是/否\n- 可能字段：\n- 金融问题：\n- 风险点：\n\n## 初步选择\n我们更倾向于：\n理由：",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#topic_proposal.md",
+    "href": "90_templates_and_materials.html#topic_proposal.md",
+    "title": "12  模板与材料清单",
+    "section": "12.6 topic_proposal.md",
+    "text": "12.6 topic_proposal.md\n# Topic Proposal\n\n## 项目题目\n\n## 金融问题\n\n## 巨潮数据来源\n\n## 公告类型\n\n## 示例公告\n| 公司 | 代码 | 标题 | 日期 | URL |\n|---|---|---|---|---|\n\n## 目标字段\n| 字段 | 类型 | 是否必填 | 金融含义 | 证据来源 |\n|---|---|---|---|---|\n\n## 最终输出形式\n\n## 难度档位\n- 0.9 / 1.0 / 1.1\n- 理由：\n\n## 风险与备选方案",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#topic_ideas.md",
+    "href": "90_templates_and_materials.html#topic_ideas.md",
+    "title": "12  模板与材料清单",
+    "section": "12.7 topic_ideas.md",
+    "text": "12.7 topic_ideas.md\n# Topic Ideas\n\n## 候选方向 1\n- 公告类型：\n- 关键词：\n- 金融问题：\n- 可能字段：\n- 预计输出：\n- 主要风险：\n\n## 候选方向 2\n- 公告类型：\n- 关键词：\n- 金融问题：\n- 可能字段：\n- 预计输出：\n- 主要风险：\n\n## 初步排序\n1.\n2.",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#output_sample.md",
+    "href": "90_templates_and_materials.html#output_sample.md",
+    "title": "12  模板与材料清单",
+    "section": "12.8 output_sample.md",
+    "text": "12.8 output_sample.md\n# Output Sample\n\n## 目标输出说明\n- CSV / JSONL / 风险卡 / 时间线 / 其他：\n- 每条记录对应的公告粒度：\n- 每条记录是否需要 evidence：\n\n## 示例表格\n| doc_id | company_name | field_1 | field_2 | evidence_text | page_no |\n|---|---|---|---|---|---:|\n\n## 字段解释\n| 字段 | 类型 | 是否必填 | 金融含义 | 如何判断对错 |\n|---|---|---|---|---|",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#crawl_spec.md",
+    "href": "90_templates_and_materials.html#crawl_spec.md",
+    "title": "12  模板与材料清单",
+    "section": "12.9 crawl_spec.md",
+    "text": "12.9 crawl_spec.md\n# Crawl Spec\n\n## 项目名称\n\n## 数据来源\n巨潮资讯网公开公告。\n\n## 抓取范围\n- 股票池或行业：\n- 时间范围：\n- 市场：\n- 公告类型：\n- 关键词：\n\n## 数据量目标\n\n## metadata 字段\n\n## PDF 保存规则\n\n## 限速与失败处理\n\n## 合规说明\n- 不绕过登录、验证码或访问限制。\n- 保留日志。\n- 只抓取公开可访问数据。",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#difficulty_declaration.md",
+    "href": "90_templates_and_materials.html#difficulty_declaration.md",
+    "title": "12  模板与材料清单",
+    "section": "12.10 difficulty_declaration.md",
+    "text": "12.10 difficulty_declaration.md\n# 难度申请\n\n- 申请难度：基础 / 标准 / 挑战\n- 系数：0.9 / 1.0 / 1.1\n- 数据量：\n- 公告类型：\n- 是否多公告匹配：\n- 字段数量：\n- 主要挑战：\n- 我们认为该难度合理的理由：",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#ai_worklog_weekxx.md",
+    "href": "90_templates_and_materials.html#ai_worklog_weekxx.md",
+    "title": "12  模板与材料清单",
+    "section": "12.11 ai_worklog_weekXX.md",
+    "text": "12.11 ai_worklog_weekXX.md\n# AI Worklog Week XX\n\n## 使用的工具\nTRAE / Claude Code / Codex / Kimi Code / 其他\n\n## 本周让 AI 帮助的任务\n\n## 我给 AI 的上下文\n\n## AI 生成或修改的文件\n\n## 我实际运行的命令\n\n## 报错与修复\n\n## 我人工检查了什么\n\n## 我理解的关键代码",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#agents.md-coding_rules.md",
+    "href": "90_templates_and_materials.html#agents.md-coding_rules.md",
+    "title": "12  模板与材料清单",
+    "section": "12.12 AGENTS.md / CODING_RULES.md",
+    "text": "12.12 AGENTS.md / CODING_RULES.md\n# Agent Instructions for CNINFO Project\n\n## Project Goal\n本项目从巨潮资讯网公告 PDF 中抽取结构化金融事件信息。\n\n## Data Rules\n- 主数据必须来自巨潮资讯网公开公告。\n- 不绕过登录、验证码或访问限制。\n- 原始 PDF 不得修改。\n\n## Secret Rules\n- 不要把 API Key 写入代码。\n- 不要提交 .env。\n- 只维护 .env.example。\n\n## Coding Rules\n- 每个脚本必须支持命令行运行。\n- 所有输出写入 outputs/。\n- 所有错误写入 outputs/logs/。\n- 修改代码后必须说明运行哪个命令验证。\n\n## Extraction Rules\n- 字段值必须来自公告文本。\n- 每个关键字段要有 evidence_text。\n- 无法判断时输出 null。\n- 抽取结果必须通过 Pydantic 校验。",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#model_config.yaml",
+    "href": "90_templates_and_materials.html#model_config.yaml",
+    "title": "12  模板与材料清单",
+    "section": "12.13 model_config.yaml",
+    "text": "12.13 model_config.yaml\nprovider: \"your_provider\"\nmodel: \"your_model_here\"\nbase_url_env: \"LLM_BASE_URL\"\napi_key_env: \"LLM_API_KEY\"\ntemperature: 0\nmax_tokens: 1024\ntimeout_seconds: 60",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#parse_check.md",
+    "href": "90_templates_and_materials.html#parse_check.md",
+    "title": "12  模板与材料清单",
+    "section": "12.14 parse_check.md",
+    "text": "12.14 parse_check.md\n# Parse Check\n\n## Document\n- doc_id:\n- title:\n- pdf_path:\n- parsed_path:\n\n## Page Check\n- 页码是否保留：\n- 是否有乱码：\n- 表格是否完整：\n- 标题层级是否合理：\n- 目录是否混入正文：\n\n## Target Content\n- 目标章节是否出现：\n- 关键字段是否能在解析文本中找到：\n- 是否需要人工修正：",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#section_rules.yaml",
+    "href": "90_templates_and_materials.html#section_rules.yaml",
+    "title": "12  模板与材料清单",
+    "section": "12.15 section_rules.yaml",
+    "text": "12.15 section_rules.yaml\ntarget_sections:\n  risk_factors:\n    include_keywords:\n      - \"风险因素\"\n      - \"可能面对的风险\"\n      - \"公司面临的风险\"\n    exclude_keywords:\n      - \"目录\"\n      - \"释义\"\n      - \"重要提示\"\n    min_chars: 500\n    page_expansion: 1\n\n  shareholder_reduction:\n    include_keywords:\n      - \"减持计划\"\n      - \"减持股份\"\n      - \"减持情况\"\n    exclude_keywords:\n      - \"目录\"\n      - \"备查文件\"\n    min_chars: 200\n    page_expansion: 0",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#workflow_design.md",
+    "href": "90_templates_and_materials.html#workflow_design.md",
+    "title": "12  模板与材料清单",
+    "section": "12.16 workflow_design.md",
+    "text": "12.16 workflow_design.md\n# Workflow Design\n\n## 项目目标\n\n## 节点表\n| 节点 | 输入 | 输出 | 成功标准 | 失败处理 | 日志 |\n|---|---|---|---|---|---|\n\n## 流程图\n\n## 人工检查点\n\n## 最小运行命令",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#workflow.yaml",
+    "href": "90_templates_and_materials.html#workflow.yaml",
+    "title": "12  模板与材料清单",
+    "section": "12.17 workflow.yaml",
+    "text": "12.17 workflow.yaml\nproject_name: \"your_project_name\"\npaths:\n  metadata: \"data/metadata/metadata.csv\"\n  pdf_dir: \"data/pdf\"\n  parsed_dir: \"data/parsed\"\n  results_jsonl: \"outputs/results/extract_results.jsonl\"\n  validated_csv: \"outputs/results/records_validated.csv\"\n  run_log: \"outputs/logs/run_log.jsonl\"\n\nsteps:\n  audit:\n    enabled: true\n  parse:\n    enabled: true\n  route_sections:\n    enabled: true\n    rules: \"configs/section_rules.yaml\"\n  extract:\n    enabled: true\n    prompt: \"prompts/prompt_final.md\"\n  validate:\n    enabled: true\n  report:\n    enabled: true",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#eval_report_template.md",
+    "href": "90_templates_and_materials.html#eval_report_template.md",
+    "title": "12  模板与材料清单",
+    "section": "12.18 eval_report_template.md",
+    "text": "12.18 eval_report_template.md\n# Evaluation Report\n\n## 评估样本\n\n## Data Quality\n\n## Section Quality\n\n## Extraction Quality\n\n## Evidence Quality\n\n## Pipeline Stability\n\n## 错误分类\n| 错误类型 | 数量 | 示例 | 修复策略 |\n|---|---:|---|---|\n\n## 优化前后对比\n\n## 局限性",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#ai_usage_statement.md",
+    "href": "90_templates_and_materials.html#ai_usage_statement.md",
+    "title": "12  模板与材料清单",
+    "section": "12.19 ai_usage_statement.md",
+    "text": "12.19 ai_usage_statement.md\n# AI Usage Statement\n\n## 使用的 AI coding agent\n\n## AI 帮助完成的内容\n\n## 学生人工完成的内容\n\n## 我们如何验证 AI 生成内容\n\n## 发现过的 AI 错误\n\n## API Key 与数据合规说明",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#展示检查表",
+    "href": "90_templates_and_materials.html#展示检查表",
+    "title": "12  模板与材料清单",
+    "section": "12.20 展示检查表",
+    "text": "12.20 展示检查表\n# Presentation Checklist\n\n- [ ] 题目与金融问题清楚\n- [ ] 说明巨潮数据来源\n- [ ] 说明数据量与难度档位\n- [ ] 展示 Schema\n- [ ] 展示 MinerU 解析与 Section 检查\n- [ ] 展示 Workflow\n- [ ] 展示一个 PDF 到结构化结果的 Demo\n- [ ] 展示 evidence_text\n- [ ] 展示评估结果和失败案例\n- [ ] 说明 Vibe Coding 过程\n- [ ] 准备答辩问题",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#starter-code-建议",
+    "href": "90_templates_and_materials.html#starter-code-建议",
+    "title": "12  模板与材料清单",
+    "section": "12.21 Starter Code 建议",
+    "text": "12.21 Starter Code 建议\n教师可以发轻量 starter，而不是完整答案。当前 starter_example/ 默认离线运行，不访问真实网站，不调用真实 LLM API。它先让学生看懂项目链路，再去替换真实巨潮数据和 API。\nstarter_example/\n  README.md\n  run.py\n  .env.example\n  requirements.txt\n  configs/\n    workflow.yaml\n    model_config.yaml\n    section_rules.yaml\n  data/\n    metadata/metadata.csv\n    parsed/parsed_docs_sample.jsonl\n  src/\n    common.py\n    crawl_cninfo.py\n    download_pdfs.py\n    check_dataset.py\n    llm_client.py\n    hello_llm.py\n    schemas.py\n    parse_with_mineru.py\n    route_sections.py\n    extract_fields.py\n    validate_results.py\n    report_results.py\n  pipeline_run.py\n推荐学生先运行：\ncd starter_example\npython3 -m pip install -r requirements.txt\npython3 run.py all\n若需要检查真实 LLM API，再复制 .env.example 为 .env，填入真实 key 后运行：\npython3 src/hello_llm.py --config configs/model_config.yaml\nStarter code 不应包含真实 API Key，也不应鼓励绕过访问限制。",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#教师材料清单",
+    "href": "90_templates_and_materials.html#教师材料清单",
+    "title": "12  模板与材料清单",
+    "section": "12.22 教师材料清单",
+    "text": "12.22 教师材料清单\n\n12.22.1 Week 11\n\n巨潮官网入口；\n3–5 个公告样例；\nTRAE 安装说明；\nClaude Code / Codex / Kimi Code 可选说明；\nVibe coding prompt 模板；\ntopic_proposal.md 模板。\n\n\n\n12.22.2 Week 12\n\ncrawl_spec.md 模板；\nconfigs/crawl.yaml 示例；\nmetadata 样例；\nfailed_downloads 样例；\n难度声明表。\n\n\n\n12.22.3 Week 13\n\n硅基流动 API 示例；\n千问官方 API 示例；\n.env.example；\nPydantic schema 示例；\nMinerU API 示例；\nsection rules 示例；\nsection check report 示例。\n\n\n\n12.22.4 Week 14\n\nworkflow design 模板；\nworkflow.yaml 示例；\npipeline_run 示例；\n五种工作流模式图。\n\n\n\n12.22.5 Week 15\n\neval report 模板；\nprompt 优化前后案例；\nAGENTS.md / CODING_RULES.md 示例；\nskill 示例；\nfinal repo checklist。\n\n\n\n12.22.6 Week 16\n\npresentation checklist；\n项目评分表；\n答辩问题库；\n期末考试模块 B 复习提纲。",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  },
+  {
+    "objectID": "90_templates_and_materials.html#参考链接",
+    "href": "90_templates_and_materials.html#参考链接",
+    "title": "12  模板与材料清单",
+    "section": "12.23 参考链接",
+    "text": "12.23 参考链接\n\n巨潮资讯网：https://www.cninfo.com.cn/\nTRAE 官方文档：https://docs.trae.ai/\nClaude Code Docs：https://code.claude.com/docs/\nOpenAI Codex CLI：https://developers.openai.com/codex/cli\nOpenAI Codex AGENTS.md：https://developers.openai.com/codex/guides/agents-md\nKimi Code Docs：https://www.kimi.com/code/docs/en/\n硅基流动文档：https://docs.siliconflow.cn/\n阿里云百炼 / 千问文档：https://www.alibabacloud.com/help/en/model-studio/\nPydantic 文档：https://pydantic.dev/\nMinerU 文档：https://opendatalab.github.io/MinerU/\nMinerU API 文档：https://mineru.net/apiManage/docs",
+    "crumbs": [
+      "<span class='chapter-number'>12</span>  <span class='chapter-title'>模板与材料清单</span>"
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+project_name: "cninfo_shareholder_reduction_lab"
+source: "cninfo"
+endpoint: "https://www.cninfo.com.cn/new/hisAnnouncement/query"
+pdf_base_url: "https://static.cninfo.com.cn/"
+keywords:
+  - "减持计划"
+query:
+  column: "szse"
+  tab_name: "fulltext"
+  page_size: 10
+  max_records: 5
+date_range:
+  start: "2024-01-01"
+  end: "2024-12-31"
+request:
+  sleep_seconds: 1.2
+  timeout_seconds: 20
+  user_agent: "Mozilla/5.0 (Course demo; contact: teacher)"
+output:
+  metadata: "data/metadata/metadata.csv"
+  pdf_dir: "data/pdf"
+  failed_downloads: "outputs/logs/failed_downloads.csv"

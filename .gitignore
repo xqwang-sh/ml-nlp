@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+
+.quarto/
+outputs/
+logs/
+
+starter_example/outputs/
+starter_example/data/parsed/parsed_docs.jsonl
+starter_example/data/parsed/sections.jsonl
+
+labs/cninfo_reduction_lab/data/
+labs/cninfo_reduction_lab/outputs/
+

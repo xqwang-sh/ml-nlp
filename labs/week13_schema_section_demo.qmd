@@ -1,0 +1,127 @@
+---
+title: "Lab Week 13：Section、Schema 与 Evidence 示范"
+---
+
+## Lab 目标
+
+本 lab 演示 Week 13 的最小抽取链路：
+
+```text
+真实巨潮 PDF -> parsed_docs.jsonl -> section routing -> rule-based baseline -> Pydantic validation
+```
+
+课堂上先用规则抽取做 baseline，能让学生看懂字段、证据和校验。正式项目中可以把 `extract_fields.py` 替换为 LLM API 抽取，但输出仍应通过同一个 Pydantic schema。
+
+## 1. 解析样本文本
+
+运行：
+
+```bash
+python3 src/parse_docs.py
+```
+
+输出：
+
+```text
+data/parsed/parsed_docs.jsonl
+```
+
+这里用 `pdftotext` 或 `pypdf` 把真实 PDF 转为文本，并整理成接近 MinerU 输出的结构：每个文档包含 `doc_id`、`title`、`pdf_path` 和 `pages`。正式项目如果使用 MinerU API，可以保持后续 `route_sections.py` 的输入结构不变。
+
+## 2. Section Routing
+
+查看规则：
+
+```bash
+cat configs/section_rules.yaml
+```
+
+运行：
+
+```bash
+python3 src/route_sections.py
+```
+
+输出：
+
+```text
+data/parsed/sections.jsonl
+outputs/reports/section_check_report.csv
+```
+
+课堂讲解重点：
+
+- Routing 只是“自动找候选章节”；
+- Checking 是人工检查候选章节是否真的正确；
+- 目录、释义、备查文件等位置可能误命中；
+- `quality_issue` 应记录 `ok`、`not_found`、`too_short`、`wrong_section` 等状态。
+
+## 3. Schema
+
+查看：
+
+```bash
+cat src/schemas.py
+```
+
+本 demo 的核心 schema 是：
+
+```python
+class ShareholderReductionExtract(BaseModel):
+    doc_id: str
+    company_name: str
+    event_type: Literal["股东减持"]
+    shareholder_name: Optional[str] = None
+    reduction_method: Optional[str] = None
+    reduction_amount_text: Optional[str] = None
+    reduction_ratio_text: Optional[str] = None
+    reduction_period: Optional[str] = None
+    reason: Optional[str] = None
+    evidence: Evidence
+```
+
+课堂讲解重点：
+
+- `Optional` 表示允许缺失；
+- `Literal` 用来限制枚举值；
+- `evidence.text` 必须来自原文；
+- 不确定时输出 `null`，不能编造。
+
+## 4. 抽取与校验
+
+运行：
+
+```bash
+python3 src/extract_fields.py
+python3 src/validate_results.py
+```
+
+输出：
+
+```text
+outputs/results/extract_results.jsonl
+outputs/results/records_validated.csv
+outputs/logs/validation_errors.jsonl
+```
+
+本 demo 使用简单规则抽取，因此结果不会完美。课堂上应特别观察错误字段，把它作为“为什么需要 LLM + evidence + 人工评估”的例子。正式项目可以把 `extract_fields.py` 替换为 LLM API 调用，但输出仍应通过同一个 Pydantic schema。
+
+## 5. 给学生的观察任务
+
+请学生打开一条 `records_validated.csv`，追溯：
+
+```text
+records_validated.csv
+  -> extract_results.jsonl
+  -> sections.jsonl
+  -> parsed_docs.jsonl
+  -> data/pdf/*.pdf
+  -> metadata.csv
+```
+
+回答：
+
+1. 哪个字段最容易抽错？
+2. evidence 是否真的出现在原文里？
+3. 如果模型抽不出减持原因，应该输出什么？
+4. 如果 section 命中错误，会对抽取结果造成什么影响？

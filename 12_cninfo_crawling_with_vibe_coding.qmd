@@ -1,0 +1,287 @@
+---
+title: "Week 12：用 Vibe Coding 抓取巨潮公告数据"
+---
+
+## 本周目标
+
+Week 12 的任务是把选题转化为数据计划，并用受控 vibe coding 完成公告列表获取、PDF 下载、metadata 规范化和数据质量检查。
+
+完成本周后，学生应该能够：
+
+1. 把选题翻译成抓取规格；
+2. 用 AI coding agent 辅助生成或修改抓取脚本；
+3. 生成 `metadata.csv`；
+4. 下载 PDF 并做质量检查；
+5. 根据数据规模和任务复杂度确认项目难度档位。
+
+## 为什么 metadata 是项目起点
+
+金融文本项目的第一张表不是抽取结果表，而是 `metadata.csv`。它记录每一份公告从哪里来、是什么、是否下载成功、后续解析文件在哪里。
+
+如果没有规范 metadata，后续会出现：
+
+- PDF 文件和公告标题对不上；
+- 抽取结果无法追溯来源；
+- 评估样本无法抽样；
+- 失败样本无法复查；
+- 展示时无法证明数据来自巨潮。
+
+## 12.1 从选题到抓取规格
+
+在写代码之前，每组先完成 `crawl_spec.md`。抓取规格至少说明：
+
+- 股票池或行业范围；
+- 时间范围；
+- 公告关键词；
+- 公告类型；
+- 数据量目标；
+- 是否需要多公告匹配；
+- 限速和失败记录方式。
+
+### `metadata.csv` 字段
+
+最低字段建议：
+
+```text
+doc_id
+stock_code
+stock_name
+market
+announcement_title
+announcement_type
+publish_date
+url
+pdf_url
+local_pdf_path
+download_status
+source
+crawl_time
+error_message
+notes
+```
+
+其中 `doc_id` 可以由股票代码、日期和标题哈希组成。`source` 统一填 `cninfo`。`download_status` 用于记录 `success`、`failed`、`skipped` 等状态。
+
+### `crawl_config.yaml` 示例
+
+```yaml
+project_name: "shareholder_reduction_events"
+source: "cninfo"
+keywords:
+  - "减持"
+  - "减持计划"
+  - "减持股份"
+markets:
+  - "sz"
+  - "sh"
+date_range:
+  start: "2022-01-01"
+  end: "2025-12-31"
+max_records: 100
+sleep_seconds: 1.5
+output:
+  metadata: "data/metadata/metadata.csv"
+  pdf_dir: "data/pdf"
+  failed_downloads: "outputs/logs/failed_downloads.csv"
+```
+
+## 12.2 用 AI Coding Agent 写抓取模块
+
+推荐把抓取任务拆成五个小模块：
+
+```text
+load_config.py
+search_announcements.py
+download_pdfs.py
+normalize_metadata.py
+check_dataset.py
+```
+
+不要让 AI 一次性写完整爬虫。每次只生成一个可运行、可检查的小模块。
+
+### Prompt A：生成元数据抓取模块
+
+```text
+请根据 crawl_spec.md 写一个 Python 脚本 src/crawl_cninfo.py。
+脚本只负责生成 metadata.csv，不下载 PDF。
+
+输入：
+- configs/crawl.yaml
+
+输出：
+- data/metadata/metadata.csv
+
+要求：
+1. 字段包含 stock_code、stock_name、announcement_title、publish_date、pdf_url、source。
+2. 每次请求之间 sleep，sleep_seconds 从配置读取。
+3. 如果请求失败，记录 error_message。
+4. 不要绕过登录、验证码或访问限制。
+5. 给出运行命令和最小测试。
+```
+
+### Prompt B：生成 PDF 下载模块
+
+```text
+请写 src/download_pdfs.py，读取 data/metadata/metadata.csv 中的 pdf_url，
+下载到 data/pdf/。
+
+要求：
+1. 支持限速和重试。
+2. 如果本地文件已存在，跳过下载并记录 skipped。
+3. 失败记录写入 outputs/logs/failed_downloads.csv。
+4. 不要把下载失败静默忽略。
+5. 给出运行命令。
+```
+
+### Prompt C：生成数据检查模块
+
+```text
+请写 src/check_dataset.py，检查 metadata.csv 中每条记录是否有本地 PDF，
+是否存在重复记录，标题是否匹配本组选题关键词。
+
+输出：
+- outputs/reports/dataset_check_report.md
+
+报告至少包含：
+1. 总记录数
+2. PDF 成功下载数
+3. 缺失 PDF 数
+4. 重复 doc_id 数
+5. 可能不相关公告样例
+```
+
+## 12.3 运行、调试与记录
+
+学生必须记录完整过程：
+
+1. 给 AI 的 prompt；
+2. AI 生成或修改的文件；
+3. 实际运行命令；
+4. 报错与修复；
+5. 抽样检查结果。
+
+推荐运行顺序：
+
+```bash
+python src/crawl_cninfo.py --config configs/crawl.yaml --limit 10
+python src/download_pdfs.py --metadata data/metadata/metadata.csv --limit 10
+python src/check_dataset.py --metadata data/metadata/metadata.csv
+```
+
+先抓 5–10 条测试数据，检查标题和 PDF 是否符合选题，再扩大到计划数据量。
+
+## 12.4 数据审计
+
+抓到数据后，必须做数据审计。审计清单：
+
+- `metadata.csv` 是否有重复；
+- PDF 是否能打开；
+- 标题是否真的属于目标公告；
+- 是否存在大量不可解析或非 PDF；
+- 是否存在同名不同公告、补充公告、修订公告；
+- 数据量是否支持最终分析；
+- 失败下载是否有记录；
+- 文件命名是否能追溯到 `doc_id`。
+
+### `dataset_check_report.md` 建议结构
+
+```markdown
+# Dataset Check Report
+
+## Summary
+- Total records:
+- Downloaded PDFs:
+- Failed downloads:
+- Duplicate doc_id:
+- Potentially irrelevant records:
+
+## Keyword Match
+
+## Missing Files
+
+## Duplicate Records
+
+## Sample Inspection
+| doc_id | title | pdf_ok | relevant | notes |
+|---|---|---|---|---|
+
+## Risks
+```
+
+## 12.5 难度确认
+
+Week 12 结束时，每组需要提交难度声明。难度可以在 Week 15 根据实际完成情况调整，但必须说明理由。
+
+| 难度 | 系数 | 数据量 | 任务复杂度 |
+|---|---:|---|---|
+| 基础 | 0.9 | 30–60 PDF | 单公告类型、4–6 字段、无多文档匹配 |
+| 标准 | 1.0 | 80–150 PDF 或 30–50 组事件 | 复杂公告或两个相关公告类型，有 section 检查与评估 |
+| 挑战 | 1.1 | 150+ PDF 或 50+ 组匹配事件 | 闭环、时间线、预告差异、多阶段事件 |
+
+数据量不是唯一标准。如果公告本身非常复杂，数据量可以略低；如果只是简单公告，数据量需要达到对应档位。
+
+### `difficulty_declaration.md` 模板
+
+```markdown
+# 难度申请
+
+- 申请难度：基础 / 标准 / 挑战
+- 系数：0.9 / 1.0 / 1.1
+- 数据量：
+- 公告类型：
+- 是否多公告匹配：
+- 字段数量：
+- 主要挑战：
+- 我们认为该难度合理的理由：
+```
+
+## 课堂练习
+
+1. 将 Week 11 的选题写成 `crawl_spec.md`。
+2. 根据抓取规格写 `configs/crawl.yaml`。
+3. 使用 AI coding agent 生成最小抓取模块。
+4. 先抓取 5–10 条记录。
+5. 人工检查标题、日期、PDF 链接和下载文件。
+6. 完成第一版 `dataset_check_report.md`。
+
+## 课后提交
+
+Deliverable 12：
+
+```text
+crawl_spec.md
+configs/crawl.yaml
+src/crawl_cninfo.py
+src/download_pdfs.py
+src/check_dataset.py
+data/metadata/metadata.csv
+data/pdf/  # PDF 样本或完整数据集
+outputs/logs/crawl_log.jsonl
+outputs/logs/failed_downloads.csv
+outputs/reports/dataset_check_report.md
+difficulty_declaration.md
+ai_worklog_week12.md
+```
+
+## 常见错误
+
+- 没有限速；
+- 只下载 PDF，没有 metadata；
+- metadata 字段不全；
+- 数据中混入大量不相关公告；
+- 文件命名混乱；
+- 失败记录没有保存；
+- 难度档位只看数据量，不看任务复杂度；
+- 抓取脚本依赖本地绝对路径；
+- 把临时测试文件当作最终数据。
+
+## 教师提示
+
+教师本周不应只检查“是否下载了很多 PDF”，而要抽查：
+
+1. `metadata.csv` 能否定位到原公告；
+2. 文件路径是否和 metadata 一致；
+3. 失败下载是否有记录；
+4. 数据是否真的服务选题；
+5. 学生是否知道脚本在哪里限速。
+
