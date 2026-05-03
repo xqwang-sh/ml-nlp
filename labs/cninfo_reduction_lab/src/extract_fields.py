@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import json
+import os
 import re
+
+import requests
+from dotenv import load_dotenv
 
 from common import read_jsonl, read_yaml, write_jsonl
 
@@ -34,7 +39,7 @@ def first_match(patterns: list[str], text: str) -> str | None:
     return None
 
 
-def extract_one(section: dict) -> dict:
+def extract_one_rule(section: dict) -> dict:
     text = section["section_text"]
     compact = normalize_for_regex(text)
     company_name = section.get("stock_name") or section["title"].split("关于")[0]
@@ -123,14 +128,112 @@ def extract_one(section: dict) -> dict:
     }
 
 
-def extract_fields(config_path: str) -> list[dict]:
+def strip_json_fence(text: str) -> str:
+    text = text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?", "", text, flags=re.I).strip()
+        text = re.sub(r"```$", "", text).strip()
+    return text
+
+
+def call_llm(messages: list[dict], config: dict) -> str:
+    load_dotenv()
+    llm = config.get("extract", {}).get("llm", {})
+    base_url = os.getenv(llm.get("base_url_env", "LLM_BASE_URL"), "").rstrip("/")
+    api_key = os.getenv(llm.get("api_key_env", "LLM_API_KEY"), "")
+    model = os.getenv(llm.get("model_env", "LLM_MODEL"), "")
+    if not base_url:
+        raise RuntimeError("Missing LLM_BASE_URL. For SiliconFlow use https://api.siliconflow.cn/v1")
+    if not api_key or api_key == "your_key_here":
+        raise RuntimeError("Missing real LLM_API_KEY.")
+    if not model or model == "your_model_here":
+        raise RuntimeError("Missing real LLM_MODEL.")
+
+    response = requests.post(
+        f"{base_url}/chat/completions",
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": model,
+            "messages": messages,
+            "temperature": float(llm.get("temperature", 0)),
+            "max_tokens": int(llm.get("max_tokens", 2048)),
+        },
+        timeout=int(llm.get("timeout_seconds", 60)),
+    )
+    response.raise_for_status()
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
+
+
+def extract_one_llm(section: dict, config: dict) -> dict:
+    schema_hint = {
+        "doc_id": section["doc_id"],
+        "stock_code": section.get("stock_code"),
+        "company_name": section.get("stock_name"),
+        "event_type": "股东减持",
+        "shareholder_name": None,
+        "reduction_method": None,
+        "reduction_amount_text": None,
+        "reduction_ratio_text": None,
+        "reduction_period": None,
+        "reason": None,
+        "evidence": {"text": "", "page_no": section.get("page_no")},
+    }
+    prompt = f"""你是金融公告结构化抽取助手。请只根据输入文本抽取字段。
+
+规则：
+1. 只输出合法 JSON，不要输出解释。
+2. 不确定或原文不存在的字段输出 null。
+3. 字段值必须来自输入文本或题头元数据，不得根据常识补全。
+4. evidence.text 必须是输入文本中的连续原文片段。
+5. 输出字段必须与 JSON 模板一致。
+
+JSON 模板：
+{json.dumps(schema_hint, ensure_ascii=False)}
+
+题头元数据：
+doc_id={section["doc_id"]}
+stock_code={section.get("stock_code")}
+company_name={section.get("stock_name")}
+title={section["title"]}
+page_no={section.get("page_no")}
+
+输入文本：
+{section["section_text"][:12000]}
+"""
+    content = call_llm(
+        [
+            {"role": "system", "content": "你只输出合法 JSON。"},
+            {"role": "user", "content": prompt},
+        ],
+        config,
+    )
+    result = json.loads(strip_json_fence(content))
+    result.setdefault("doc_id", section["doc_id"])
+    result.setdefault("stock_code", section.get("stock_code"))
+    result.setdefault("company_name", section.get("stock_name"))
+    result.setdefault("event_type", "股东减持")
+    result.setdefault("evidence", {"text": section["section_text"][:80], "page_no": section.get("page_no")})
+    return result
+
+
+def extract_fields(config_path: str, method: str | None = None) -> list[dict]:
     config = read_yaml(config_path)
     sections_path = config["paths"].get("sections_jsonl", "data/parsed/sections.jsonl")
     output_path = config["paths"]["extract_results"]
+    method = method or config.get("extract", {}).get("provider", "rule")
     results = []
     for section in read_jsonl(sections_path):
         if section["found"]:
-            results.append(extract_one(section))
+            if method == "rule":
+                results.append(extract_one_rule(section))
+            elif method == "llm":
+                results.append(extract_one_llm(section, config))
+            else:
+                raise ValueError(f"Unknown extraction method: {method}")
     write_jsonl(output_path, results)
     return results
 
@@ -138,8 +241,9 @@ def extract_fields(config_path: str) -> list[dict]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extract demo fields with simple rules.")
     parser.add_argument("--config", default="configs/workflow.yaml")
+    parser.add_argument("--method", choices=["rule", "llm"], default=None)
     args = parser.parse_args()
-    results = extract_fields(args.config)
+    results = extract_fields(args.config, args.method)
     print(f"Extracted {len(results)} records.")
 
 

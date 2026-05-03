@@ -3,6 +3,7 @@ paths:
   metadata: "data/metadata/metadata.csv"
   pdf_dir: "data/pdf"
   parsed_dir: "data/parsed"
+  markdown_dir: "data/parsed/markdown"
   sections_jsonl: "data/parsed/sections.jsonl"
   section_rules: "configs/section_rules.yaml"
   dataset_report: "outputs/reports/dataset_check_report.md"
@@ -11,3 +12,22 @@ paths:
   validated_results: "outputs/results/records_validated.csv"
   validation_errors: "outputs/logs/validation_errors.jsonl"
   run_log: "outputs/logs/run_log.jsonl"
+parse:
+  provider: "mineru"
+  allow_local_fallback: true
+  mineru:
+    api_base_url: "https://mineru.net"
+    api_key_env: "MINERU_API_KEY"
+    model_version: "vlm"
+    language: "ch"
+    poll_interval_seconds: 3
+    timeout_seconds: 600
+extract:
+  provider: "rule"
+  llm:
+    base_url_env: "LLM_BASE_URL"
+    api_key_env: "LLM_API_KEY"
+    model_env: "LLM_MODEL"
+    temperature: 0
+    max_tokens: 2048
+    timeout_seconds: 60

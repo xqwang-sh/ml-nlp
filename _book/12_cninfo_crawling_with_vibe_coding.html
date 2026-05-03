@@ -173,13 +173,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -224,23 +224,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">4.1</span> 本周目标</a></li>
   <li><a href="#为什么-metadata-是项目起点" id="toc-为什么-metadata-是项目起点" class="nav-link" data-scroll-target="#为什么-metadata-是项目起点"><span class="header-section-number">4.2</span> 为什么 metadata 是项目起点</a></li>
-  <li><a href="#从选题到抓取规格" id="toc-从选题到抓取规格" class="nav-link" data-scroll-target="#从选题到抓取规格"><span class="header-section-number">4.3</span> 12.1 从选题到抓取规格</a>
+  <li><a href="#从选题到抓取规格" id="toc-从选题到抓取规格" class="nav-link" data-scroll-target="#从选题到抓取规格"><span class="header-section-number">4.3</span> 从选题到抓取规格</a>
   <ul class="collapse">
   <li><a href="#metadata.csv-字段" id="toc-metadata.csv-字段" class="nav-link" data-scroll-target="#metadata.csv-字段"><span class="header-section-number">4.3.1</span> <code>metadata.csv</code> 字段</a></li>
   <li><a href="#crawl_config.yaml-示例" id="toc-crawl_config.yaml-示例" class="nav-link" data-scroll-target="#crawl_config.yaml-示例"><span class="header-section-number">4.3.2</span> <code>crawl_config.yaml</code> 示例</a></li>
   </ul></li>
-  <li><a href="#用-ai-coding-agent-写抓取模块" id="toc-用-ai-coding-agent-写抓取模块" class="nav-link" data-scroll-target="#用-ai-coding-agent-写抓取模块"><span class="header-section-number">4.4</span> 12.2 用 AI Coding Agent 写抓取模块</a>
+  <li><a href="#用-ai-coding-agent-写抓取模块" id="toc-用-ai-coding-agent-写抓取模块" class="nav-link" data-scroll-target="#用-ai-coding-agent-写抓取模块"><span class="header-section-number">4.4</span> 用 AI Coding Agent 写抓取模块</a>
   <ul class="collapse">
   <li><a href="#prompt-a生成元数据抓取模块" id="toc-prompt-a生成元数据抓取模块" class="nav-link" data-scroll-target="#prompt-a生成元数据抓取模块"><span class="header-section-number">4.4.1</span> Prompt A：生成元数据抓取模块</a></li>
   <li><a href="#prompt-b生成-pdf-下载模块" id="toc-prompt-b生成-pdf-下载模块" class="nav-link" data-scroll-target="#prompt-b生成-pdf-下载模块"><span class="header-section-number">4.4.2</span> Prompt B：生成 PDF 下载模块</a></li>
   <li><a href="#prompt-c生成数据检查模块" id="toc-prompt-c生成数据检查模块" class="nav-link" data-scroll-target="#prompt-c生成数据检查模块"><span class="header-section-number">4.4.3</span> Prompt C：生成数据检查模块</a></li>
   </ul></li>
-  <li><a href="#运行调试与记录" id="toc-运行调试与记录" class="nav-link" data-scroll-target="#运行调试与记录"><span class="header-section-number">4.5</span> 12.3 运行、调试与记录</a></li>
-  <li><a href="#数据审计" id="toc-数据审计" class="nav-link" data-scroll-target="#数据审计"><span class="header-section-number">4.6</span> 12.4 数据审计</a>
+  <li><a href="#运行调试与记录" id="toc-运行调试与记录" class="nav-link" data-scroll-target="#运行调试与记录"><span class="header-section-number">4.5</span> 运行、调试与记录</a></li>
+  <li><a href="#数据审计" id="toc-数据审计" class="nav-link" data-scroll-target="#数据审计"><span class="header-section-number">4.6</span> 数据审计</a>
   <ul class="collapse">
   <li><a href="#dataset_check_report.md-建议结构" id="toc-dataset_check_report.md-建议结构" class="nav-link" data-scroll-target="#dataset_check_report.md-建议结构"><span class="header-section-number">4.6.1</span> <code>dataset_check_report.md</code> 建议结构</a></li>
   </ul></li>
-  <li><a href="#难度确认" id="toc-难度确认" class="nav-link" data-scroll-target="#难度确认"><span class="header-section-number">4.7</span> 12.5 难度确认</a>
+  <li><a href="#难度确认" id="toc-难度确认" class="nav-link" data-scroll-target="#难度确认"><span class="header-section-number">4.7</span> 难度确认</a>
   <ul class="collapse">
   <li><a href="#difficulty_declaration.md-模板" id="toc-difficulty_declaration.md-模板" class="nav-link" data-scroll-target="#difficulty_declaration.md-模板"><span class="header-section-number">4.7.1</span> <code>difficulty_declaration.md</code> 模板</a></li>
   </ul></li>
@@ -298,7 +298,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 </section>
 <section id="从选题到抓取规格" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="从选题到抓取规格"><span class="header-section-number">4.3</span> 12.1 从选题到抓取规格</h2>
+<h2 data-number="4.3" class="anchored" data-anchor-id="从选题到抓取规格"><span class="header-section-number">4.3</span> 从选题到抓取规格</h2>
 <p>在写代码之前，每组先完成 <code>crawl_spec.md</code>。抓取规格至少说明：</p>
 <ul>
 <li>股票池或行业范围；</li>
@@ -352,7 +352,7 @@ notes</code></pre>
 </section>
 </section>
 <section id="用-ai-coding-agent-写抓取模块" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="用-ai-coding-agent-写抓取模块"><span class="header-section-number">4.4</span> 12.2 用 AI Coding Agent 写抓取模块</h2>
+<h2 data-number="4.4" class="anchored" data-anchor-id="用-ai-coding-agent-写抓取模块"><span class="header-section-number">4.4</span> 用 AI Coding Agent 写抓取模块</h2>
 <p>推荐把抓取任务拆成五个小模块：</p>
 <pre class="text"><code>load_config.py
 search_announcements.py
@@ -407,7 +407,7 @@ check_dataset.py</code></pre>
 </section>
 </section>
 <section id="运行调试与记录" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="运行调试与记录"><span class="header-section-number">4.5</span> 12.3 运行、调试与记录</h2>
+<h2 data-number="4.5" class="anchored" data-anchor-id="运行调试与记录"><span class="header-section-number">4.5</span> 运行、调试与记录</h2>
 <p>学生必须记录完整过程：</p>
 <ol type="1">
 <li>给 AI 的 prompt；</li>
@@ -423,7 +423,7 @@ check_dataset.py</code></pre>
 <p>先抓 5–10 条测试数据，检查标题和 PDF 是否符合选题，再扩大到计划数据量。</p>
 </section>
 <section id="数据审计" class="level2" data-number="4.6">
-<h2 data-number="4.6" class="anchored" data-anchor-id="数据审计"><span class="header-section-number">4.6</span> 12.4 数据审计</h2>
+<h2 data-number="4.6" class="anchored" data-anchor-id="数据审计"><span class="header-section-number">4.6</span> 数据审计</h2>
 <p>抓到数据后，必须做数据审计。审计清单：</p>
 <ul>
 <li><code>metadata.csv</code> 是否有重复；</li>
@@ -460,7 +460,7 @@ check_dataset.py</code></pre>
 </section>
 </section>
 <section id="难度确认" class="level2" data-number="4.7">
-<h2 data-number="4.7" class="anchored" data-anchor-id="难度确认"><span class="header-section-number">4.7</span> 12.5 难度确认</h2>
+<h2 data-number="4.7" class="anchored" data-anchor-id="难度确认"><span class="header-section-number">4.7</span> 难度确认</h2>
 <p>Week 12 结束时，每组需要提交难度声明。难度可以在 Week 15 根据实际完成情况调整，但必须说明理由。</p>
 <table class="caption-top table">
 <colgroup>

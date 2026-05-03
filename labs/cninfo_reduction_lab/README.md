@@ -7,9 +7,9 @@ CNINFO query
   -> metadata.csv
   -> PDF download
   -> dataset check
-  -> parse PDF text
+  -> MinerU PDF-to-Markdown
   -> route section
-  -> rule-based extraction
+  -> rule-based or SiliconFlow LLM extraction
   -> Pydantic validation
   -> workflow log
 ```
@@ -26,10 +26,24 @@ CNINFO query
 
 ```bash
 python3 -m pip install -r requirements.txt
+cp .env.example .env
+# 正式项目在 .env 中填写 MINERU_API_KEY；如果使用 LLM 抽取，也填写 LLM_*。
 python3 src/pipeline_run.py --step all
 ```
 
-PDF 文本解析优先使用系统中的 `pdftotext` 命令；如果没有该命令，会尝试使用 Python 包 `pypdf`。
+PDF 解析步骤优先使用 MinerU API，把 PDF 转成 `data/parsed/markdown/*.md`，再写入统一的 `data/parsed/parsed_docs.jsonl`。课堂环境没有 MinerU Key 时，脚本会用本地 fallback 跑通流程，并在 `parsed_docs.jsonl` 的 `parser` 字段中标记为 `local_fallback`；正式项目结果应来自 MinerU。
+
+字段抽取默认使用规则 baseline：
+
+```bash
+python3 src/extract_fields.py --method rule
+```
+
+如果使用硅基流动 API，在 `.env` 中设置 `LLM_BASE_URL=https://api.siliconflow.cn/v1`、`LLM_MODEL` 和 `LLM_API_KEY`，再运行：
+
+```bash
+python3 src/extract_fields.py --method llm
+```
 
 ## 单步运行
 
@@ -39,6 +53,6 @@ python3 src/download_pdfs.py
 python3 src/check_dataset.py
 python3 src/parse_docs.py
 python3 src/route_sections.py
-python3 src/extract_fields.py
+python3 src/extract_fields.py --method rule
 python3 src/validate_results.py
 ```

@@ -15,3 +15,5 @@ starter_example/data/parsed/sections.jsonl
 labs/cninfo_reduction_lab/data/
 labs/cninfo_reduction_lab/outputs/
 
+
+/.quarto/

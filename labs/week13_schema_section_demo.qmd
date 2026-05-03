@@ -1,5 +1,5 @@
 ---
-title: "Lab Week 13：Section、Schema 与 Evidence 示范"
+title: "Lab Week 13：MinerU、Section、Schema 与 Evidence 示范"
 ---
 
 ## Lab 目标
@@ -7,12 +7,17 @@ title: "Lab Week 13：Section、Schema 与 Evidence 示范"
 本 lab 演示 Week 13 的最小抽取链路：
 
 ```text
-真实巨潮 PDF -> parsed_docs.jsonl -> section routing -> rule-based baseline -> Pydantic validation
+真实巨潮 PDF
+  -> MinerU API 转 Markdown
+  -> parsed_docs.jsonl
+  -> section routing
+  -> rule baseline 或硅基流动 LLM 抽取
+  -> Pydantic validation
 ```
 
-课堂上先用规则抽取做 baseline，能让学生看懂字段、证据和校验。正式项目中可以把 `extract_fields.py` 替换为 LLM API 抽取，但输出仍应通过同一个 Pydantic schema。
+课堂上先讲 MinerU 解析，再讲 section 与 schema，最后再讲字段抽取。字段抽取可以先用规则 baseline，让学生看懂字段、证据和校验；正式项目也可以用硅基流动 API 做 LLM 抽取，但输出仍应通过同一个 Pydantic schema。
 
-## 1. 解析样本文本
+## 1. 用 MinerU 把 PDF 转 Markdown
 
 运行：
 
@@ -23,10 +28,13 @@ python3 src/parse_docs.py
 输出：
 
 ```text
+data/parsed/markdown/*.md
 data/parsed/parsed_docs.jsonl
 ```
 
-这里用 `pdftotext` 或 `pypdf` 把真实 PDF 转为文本，并整理成接近 MinerU 输出的结构：每个文档包含 `doc_id`、`title`、`pdf_path` 和 `pages`。正式项目如果使用 MinerU API，可以保持后续 `route_sections.py` 的输入结构不变。
+正式项目中，这一步使用 MinerU API 把真实巨潮 PDF 转为 Markdown，并整理成后续脚本统一读取的结构：每个文档包含 `doc_id`、`title`、`pdf_path`、`markdown_path` 和 `pages`。
+
+如果课堂环境暂时没有 MinerU Key，demo 会使用本地 fallback 跑通流程，但 `parsed_docs.jsonl` 中的 `parser` 会标记为 `local_fallback`。学生正式提交时应使用 MinerU API 解析结果。
 
 ## 2. Section Routing
 
@@ -92,7 +100,7 @@ class ShareholderReductionExtract(BaseModel):
 运行：
 
 ```bash
-python3 src/extract_fields.py
+python3 src/extract_fields.py --method rule
 python3 src/validate_results.py
 ```
 
@@ -105,6 +113,21 @@ outputs/logs/validation_errors.jsonl
 ```
 
 本 demo 使用简单规则抽取，因此结果不会完美。课堂上应特别观察错误字段，把它作为“为什么需要 LLM + evidence + 人工评估”的例子。正式项目可以把 `extract_fields.py` 替换为 LLM API 调用，但输出仍应通过同一个 Pydantic schema。
+
+如果使用硅基流动 API，在 `.env` 中填写：
+
+```text
+LLM_BASE_URL=https://api.siliconflow.cn/v1
+LLM_MODEL=Qwen/Qwen3-8B
+LLM_API_KEY=your_key_here
+```
+
+然后运行：
+
+```bash
+python3 src/extract_fields.py --method llm
+python3 src/validate_results.py
+```
 
 ## 5. 给学生的观察任务
 

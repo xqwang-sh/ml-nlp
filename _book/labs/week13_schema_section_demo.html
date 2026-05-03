@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>7&nbsp; Lab Week 13：Section、Schema 与 Evidence 示范 – 模块 B：金融文本智能项目</title>
+<title>7&nbsp; Lab Week 13：MinerU、Section、Schema 与 Evidence 示范 – 模块 B：金融文本智能项目</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -115,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/week13_schema_section_demo.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/week13_schema_section_demo.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="展开或折叠侧边栏导航" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="搜索" onclick="window.quartoOpenSearch();">
@@ -173,13 +173,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -223,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#lab-目标" id="toc-lab-目标" class="nav-link active" data-scroll-target="#lab-目标"><span class="header-section-number">7.1</span> Lab 目标</a></li>
-  <li><a href="#解析样本文本" id="toc-解析样本文本" class="nav-link" data-scroll-target="#解析样本文本"><span class="header-section-number">7.2</span> 1. 解析样本文本</a></li>
+  <li><a href="#用-mineru-把-pdf-转-markdown" id="toc-用-mineru-把-pdf-转-markdown" class="nav-link" data-scroll-target="#用-mineru-把-pdf-转-markdown"><span class="header-section-number">7.2</span> 1. 用 MinerU 把 PDF 转 Markdown</a></li>
   <li><a href="#section-routing" id="toc-section-routing" class="nav-link" data-scroll-target="#section-routing"><span class="header-section-number">7.3</span> 2. Section Routing</a></li>
   <li><a href="#schema" id="toc-schema" class="nav-link" data-scroll-target="#schema"><span class="header-section-number">7.4</span> 3. Schema</a></li>
   <li><a href="#抽取与校验" id="toc-抽取与校验" class="nav-link" data-scroll-target="#抽取与校验"><span class="header-section-number">7.5</span> 4. 抽取与校验</a></li>
@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></h1>
+<h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></h1>
 </div>
 
 
@@ -256,16 +256,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="lab-目标" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="lab-目标"><span class="header-section-number">7.1</span> Lab 目标</h2>
 <p>本 lab 演示 Week 13 的最小抽取链路：</p>
-<pre class="text"><code>真实巨潮 PDF -&gt; parsed_docs.jsonl -&gt; section routing -&gt; rule-based baseline -&gt; Pydantic validation</code></pre>
-<p>课堂上先用规则抽取做 baseline，能让学生看懂字段、证据和校验。正式项目中可以把 <code>extract_fields.py</code> 替换为 LLM API 抽取，但输出仍应通过同一个 Pydantic schema。</p>
+<pre class="text"><code>真实巨潮 PDF
+  -&gt; MinerU API 转 Markdown
+  -&gt; parsed_docs.jsonl
+  -&gt; section routing
+  -&gt; rule baseline 或硅基流动 LLM 抽取
+  -&gt; Pydantic validation</code></pre>
+<p>课堂上先讲 MinerU 解析，再讲 section 与 schema，最后再讲字段抽取。字段抽取可以先用规则 baseline，让学生看懂字段、证据和校验；正式项目也可以用硅基流动 API 做 LLM 抽取，但输出仍应通过同一个 Pydantic schema。</p>
 </section>
-<section id="解析样本文本" class="level2" data-number="7.2">
-<h2 data-number="7.2" class="anchored" data-anchor-id="解析样本文本"><span class="header-section-number">7.2</span> 1. 解析样本文本</h2>
+<section id="用-mineru-把-pdf-转-markdown" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="用-mineru-把-pdf-转-markdown"><span class="header-section-number">7.2</span> 1. 用 MinerU 把 PDF 转 Markdown</h2>
 <p>运行：</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/parse_docs.py</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>输出：</p>
-<pre class="text"><code>data/parsed/parsed_docs.jsonl</code></pre>
-<p>这里用 <code>pdftotext</code> 或 <code>pypdf</code> 把真实 PDF 转为文本，并整理成接近 MinerU 输出的结构：每个文档包含 <code>doc_id</code>、<code>title</code>、<code>pdf_path</code> 和 <code>pages</code>。正式项目如果使用 MinerU API，可以保持后续 <code>route_sections.py</code> 的输入结构不变。</p>
+<pre class="text"><code>data/parsed/markdown/*.md
+data/parsed/parsed_docs.jsonl</code></pre>
+<p>正式项目中，这一步使用 MinerU API 把真实巨潮 PDF 转为 Markdown，并整理成后续脚本统一读取的结构：每个文档包含 <code>doc_id</code>、<code>title</code>、<code>pdf_path</code>、<code>markdown_path</code> 和 <code>pages</code>。</p>
+<p>如果课堂环境暂时没有 MinerU Key，demo 会使用本地 fallback 跑通流程，但 <code>parsed_docs.jsonl</code> 中的 <code>parser</code> 会标记为 <code>local_fallback</code>。学生正式提交时应使用 MinerU API 解析结果。</p>
 </section>
 <section id="section-routing" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="section-routing"><span class="header-section-number">7.3</span> 2. Section Routing</h2>
@@ -311,13 +318,20 @@ outputs/reports/section_check_report.csv</code></pre>
 <section id="抽取与校验" class="level2" data-number="7.5">
 <h2 data-number="7.5" class="anchored" data-anchor-id="抽取与校验"><span class="header-section-number">7.5</span> 4. 抽取与校验</h2>
 <p>运行：</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/extract_fields.py</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/extract_fields.py <span class="at">--method</span> rule</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/validate_results.py</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>输出：</p>
 <pre class="text"><code>outputs/results/extract_results.jsonl
 outputs/results/records_validated.csv
 outputs/logs/validation_errors.jsonl</code></pre>
 <p>本 demo 使用简单规则抽取，因此结果不会完美。课堂上应特别观察错误字段，把它作为“为什么需要 LLM + evidence + 人工评估”的例子。正式项目可以把 <code>extract_fields.py</code> 替换为 LLM API 调用，但输出仍应通过同一个 Pydantic schema。</p>
+<p>如果使用硅基流动 API，在 <code>.env</code> 中填写：</p>
+<pre class="text"><code>LLM_BASE_URL=https://api.siliconflow.cn/v1
+LLM_MODEL=Qwen/Qwen3-8B
+LLM_API_KEY=your_key_here</code></pre>
+<p>然后运行：</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/extract_fields.py <span class="at">--method</span> llm</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/validate_results.py</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="给学生的观察任务" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="给学生的观察任务"><span class="header-section-number">7.6</span> 5. 给学生的观察任务</h2>
@@ -762,8 +776,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../13_llm_pydantic_mineru_section_checking.html" class="pagination-link" aria-label="Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span>
+      <a href="../13_llm_pydantic_mineru_section_checking.html" class="pagination-link" aria-label="Week 13：MinerU 解析、Section 检查、Schema 与字段抽取">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

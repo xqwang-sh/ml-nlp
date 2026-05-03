@@ -173,13 +173,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -224,13 +224,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">3.1</span> 本周目标</a></li>
   <li><a href="#为什么本周先看数据" id="toc-为什么本周先看数据" class="nav-link" data-scroll-target="#为什么本周先看数据"><span class="header-section-number">3.2</span> 为什么本周先看数据</a></li>
-  <li><a href="#巨潮数据地图与选题发现" id="toc-巨潮数据地图与选题发现" class="nav-link" data-scroll-target="#巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 11.1 巨潮数据地图与选题发现</a>
+  <li><a href="#巨潮数据地图与选题发现" id="toc-巨潮数据地图与选题发现" class="nav-link" data-scroll-target="#巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 巨潮数据地图与选题发现</a>
   <ul class="collapse">
   <li><a href="#巨潮在本项目中的角色" id="toc-巨潮在本项目中的角色" class="nav-link" data-scroll-target="#巨潮在本项目中的角色"><span class="header-section-number">3.3.1</span> 巨潮在本项目中的角色</a></li>
   <li><a href="#从公告类型到项目问题" id="toc-从公告类型到项目问题" class="nav-link" data-scroll-target="#从公告类型到项目问题"><span class="header-section-number">3.3.2</span> 从公告类型到项目问题</a></li>
   <li><a href="#课堂活动巨潮数据观察" id="toc-课堂活动巨潮数据观察" class="nav-link" data-scroll-target="#课堂活动巨潮数据观察"><span class="header-section-number">3.3.3</span> 课堂活动：巨潮数据观察</a></li>
   </ul></li>
-  <li><a href="#vibe-coding-工具安装与工作流" id="toc-vibe-coding-工具安装与工作流" class="nav-link" data-scroll-target="#vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> 11.2 Vibe Coding 工具安装与工作流</a>
+  <li><a href="#vibe-coding-工具安装与工作流" id="toc-vibe-coding-工具安装与工作流" class="nav-link" data-scroll-target="#vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> Vibe Coding 工具安装与工作流</a>
   <ul class="collapse">
   <li><a href="#工具选择" id="toc-工具选择" class="nav-link" data-scroll-target="#工具选择"><span class="header-section-number">3.4.1</span> 工具选择</a></li>
   <li><a href="#安装与检查" id="toc-安装与检查" class="nav-link" data-scroll-target="#安装与检查"><span class="header-section-number">3.4.2</span> 安装与检查</a></li>
@@ -238,8 +238,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#为什么不能让-ai-一次性写完整项目" id="toc-为什么不能让-ai-一次性写完整项目" class="nav-link" data-scroll-target="#为什么不能让-ai-一次性写完整项目"><span class="header-section-number">3.4.4</span> 为什么不能让 AI 一次性写完整项目</a></li>
   <li><a href="#prompt-对比" id="toc-prompt-对比" class="nav-link" data-scroll-target="#prompt-对比"><span class="header-section-number">3.4.5</span> Prompt 对比</a></li>
   </ul></li>
-  <li><a href="#最小项目骨架" id="toc-最小项目骨架" class="nav-link" data-scroll-target="#最小项目骨架"><span class="header-section-number">3.5</span> 11.3 最小项目骨架</a></li>
-  <li><a href="#选题可行性工作坊" id="toc-选题可行性工作坊" class="nav-link" data-scroll-target="#选题可行性工作坊"><span class="header-section-number">3.6</span> 11.4 选题可行性工作坊</a>
+  <li><a href="#最小项目骨架" id="toc-最小项目骨架" class="nav-link" data-scroll-target="#最小项目骨架"><span class="header-section-number">3.5</span> 最小项目骨架</a></li>
+  <li><a href="#选题可行性工作坊" id="toc-选题可行性工作坊" class="nav-link" data-scroll-target="#选题可行性工作坊"><span class="header-section-number">3.6</span> 选题可行性工作坊</a>
   <ul class="collapse">
   <li><a href="#绿灯黄灯红灯" id="toc-绿灯黄灯红灯" class="nav-link" data-scroll-target="#绿灯黄灯红灯"><span class="header-section-number">3.6.1</span> 绿灯、黄灯、红灯</a></li>
   <li><a href="#topic_proposal.md-模板" id="toc-topic_proposal.md-模板" class="nav-link" data-scroll-target="#topic_proposal.md-模板"><span class="header-section-number">3.6.2</span> <code>topic_proposal.md</code> 模板</a></li>
@@ -294,7 +294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre class="text"><code>公告类型 -&gt; 金融问题 -&gt; 目标字段 -&gt; 结构化输出 -&gt; 难度档位</code></pre>
 </section>
 <section id="巨潮数据地图与选题发现" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 11.1 巨潮数据地图与选题发现</h2>
+<h2 data-number="3.3" class="anchored" data-anchor-id="巨潮数据地图与选题发现"><span class="header-section-number">3.3</span> 巨潮数据地图与选题发现</h2>
 <section id="巨潮在本项目中的角色" class="level3" data-number="3.3.1">
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="巨潮在本项目中的角色"><span class="header-section-number">3.3.1</span> 巨潮在本项目中的角色</h3>
 <p>巨潮资讯网提供上市公司公告查询和 PDF 下载入口。本项目的主数据必须来自巨潮公告。其他资料可以作为背景知识，但不能替代项目主数据。</p>
@@ -354,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="vibe-coding-工具安装与工作流" class="level2" data-number="3.4">
-<h2 data-number="3.4" class="anchored" data-anchor-id="vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> 11.2 Vibe Coding 工具安装与工作流</h2>
+<h2 data-number="3.4" class="anchored" data-anchor-id="vibe-coding-工具安装与工作流"><span class="header-section-number">3.4</span> Vibe Coding 工具安装与工作流</h2>
 <section id="工具选择" class="level3" data-number="3.4.1">
 <h3 data-number="3.4.1" class="anchored" data-anchor-id="工具选择"><span class="header-section-number">3.4.1</span> 工具选择</h3>
 <p>默认推荐使用 TRAE。已经拥有 Claude Code、Codex、Kimi Code 或其他 AI coding agent 的学生可以继续使用原工具。</p>
@@ -451,7 +451,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="最小项目骨架" class="level2" data-number="3.5">
-<h2 data-number="3.5" class="anchored" data-anchor-id="最小项目骨架"><span class="header-section-number">3.5</span> 11.3 最小项目骨架</h2>
+<h2 data-number="3.5" class="anchored" data-anchor-id="最小项目骨架"><span class="header-section-number">3.5</span> 最小项目骨架</h2>
 <p>本周建议项目结构如下：</p>
 <pre class="text"><code>project_name/
   README.md
@@ -491,7 +491,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>starter 的作用是帮助学生看懂项目链路，不是最终答案。正式项目仍需替换为本组选题、真实 metadata、真实 PDF 或解析文本。</p>
 </section>
 <section id="选题可行性工作坊" class="level2" data-number="3.6">
-<h2 data-number="3.6" class="anchored" data-anchor-id="选题可行性工作坊"><span class="header-section-number">3.6</span> 11.4 选题可行性工作坊</h2>
+<h2 data-number="3.6" class="anchored" data-anchor-id="选题可行性工作坊"><span class="header-section-number">3.6</span> 选题可行性工作坊</h2>
 <p>每组需要把“看到的数据”转化为可执行项目。选题四问：</p>
 <ol type="1">
 <li>数据来自巨潮哪类公告？</li>

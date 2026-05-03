@@ -173,13 +173,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -224,11 +224,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">8.1</span> 本周目标</a></li>
   <li><a href="#为什么需要-workflow" id="toc-为什么需要-workflow" class="nav-link" data-scroll-target="#为什么需要-workflow"><span class="header-section-number">8.2</span> 为什么需要 Workflow</a></li>
-  <li><a href="#工作流的基本要素" id="toc-工作流的基本要素" class="nav-link" data-scroll-target="#工作流的基本要素"><span class="header-section-number">8.3</span> 14.1 工作流的基本要素</a>
+  <li><a href="#工作流的基本要素" id="toc-工作流的基本要素" class="nav-link" data-scroll-target="#工作流的基本要素"><span class="header-section-number">8.3</span> 工作流的基本要素</a>
   <ul class="collapse">
   <li><a href="#推荐通用流程" id="toc-推荐通用流程" class="nav-link" data-scroll-target="#推荐通用流程"><span class="header-section-number">8.3.1</span> 推荐通用流程</a></li>
   </ul></li>
-  <li><a href="#五种工作流模式" id="toc-五种工作流模式" class="nav-link" data-scroll-target="#五种工作流模式"><span class="header-section-number">8.4</span> 14.2 五种工作流模式</a>
+  <li><a href="#五种工作流模式" id="toc-五种工作流模式" class="nav-link" data-scroll-target="#五种工作流模式"><span class="header-section-number">8.4</span> 五种工作流模式</a>
   <ul class="collapse">
   <li><a href="#顺序流水线" id="toc-顺序流水线" class="nav-link" data-scroll-target="#顺序流水线"><span class="header-section-number">8.4.1</span> 顺序流水线</a></li>
   <li><a href="#条件分支" id="toc-条件分支" class="nav-link" data-scroll-target="#条件分支"><span class="header-section-number">8.4.2</span> 条件分支</a></li>
@@ -236,15 +236,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#reviewer-revise" id="toc-reviewer-revise" class="nav-link" data-scroll-target="#reviewer-revise"><span class="header-section-number">8.4.4</span> Reviewer-Revise</a></li>
   <li><a href="#human-in-the-loop" id="toc-human-in-the-loop" class="nav-link" data-scroll-target="#human-in-the-loop"><span class="header-section-number">8.4.5</span> Human-in-the-loop</a></li>
   </ul></li>
-  <li><a href="#workflow-design" id="toc-workflow-design" class="nav-link" data-scroll-target="#workflow-design"><span class="header-section-number">8.5</span> 14.3 Workflow Design</a>
+  <li><a href="#workflow-design" id="toc-workflow-design" class="nav-link" data-scroll-target="#workflow-design"><span class="header-section-number">8.5</span> Workflow Design</a>
   <ul class="collapse">
   <li><a href="#workflow.yaml-示例" id="toc-workflow.yaml-示例" class="nav-link" data-scroll-target="#workflow.yaml-示例"><span class="header-section-number">8.5.1</span> <code>workflow.yaml</code> 示例</a></li>
   </ul></li>
-  <li><a href="#用-vibe-coding-实现端到端入口" id="toc-用-vibe-coding-实现端到端入口" class="nav-link" data-scroll-target="#用-vibe-coding-实现端到端入口"><span class="header-section-number">8.6</span> 14.4 用 Vibe Coding 实现端到端入口</a>
+  <li><a href="#用-vibe-coding-实现端到端入口" id="toc-用-vibe-coding-实现端到端入口" class="nav-link" data-scroll-target="#用-vibe-coding-实现端到端入口"><span class="header-section-number">8.6</span> 用 Vibe Coding 实现端到端入口</a>
   <ul class="collapse">
   <li><a href="#推荐运行命令" id="toc-推荐运行命令" class="nav-link" data-scroll-target="#推荐运行命令"><span class="header-section-number">8.6.1</span> 推荐运行命令</a></li>
   </ul></li>
-  <li><a href="#日志设计" id="toc-日志设计" class="nav-link" data-scroll-target="#日志设计"><span class="header-section-number">8.7</span> 14.5 日志设计</a></li>
+  <li><a href="#日志设计" id="toc-日志设计" class="nav-link" data-scroll-target="#日志设计"><span class="header-section-number">8.7</span> 日志设计</a></li>
   <li><a href="#课堂练习" id="toc-课堂练习" class="nav-link" data-scroll-target="#课堂练习"><span class="header-section-number">8.8</span> 课堂练习</a></li>
   <li><a href="#课后提交" id="toc-课后提交" class="nav-link" data-scroll-target="#课后提交"><span class="header-section-number">8.9</span> 课后提交</a></li>
   <li><a href="#常见错误" id="toc-常见错误" class="nav-link" data-scroll-target="#常见错误"><span class="header-section-number">8.10</span> 常见错误</a></li>
@@ -301,7 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   -&gt; final_outputs</code></pre>
 </section>
 <section id="工作流的基本要素" class="level2" data-number="8.3">
-<h2 data-number="8.3" class="anchored" data-anchor-id="工作流的基本要素"><span class="header-section-number">8.3</span> 14.1 工作流的基本要素</h2>
+<h2 data-number="8.3" class="anchored" data-anchor-id="工作流的基本要素"><span class="header-section-number">8.3</span> 工作流的基本要素</h2>
 <p>每个节点都应有五个要素：</p>
 <table class="caption-top table">
 <thead>
@@ -381,7 +381,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="五种工作流模式" class="level2" data-number="8.4">
-<h2 data-number="8.4" class="anchored" data-anchor-id="五种工作流模式"><span class="header-section-number">8.4</span> 14.2 五种工作流模式</h2>
+<h2 data-number="8.4" class="anchored" data-anchor-id="五种工作流模式"><span class="header-section-number">8.4</span> 五种工作流模式</h2>
 <section id="顺序流水线" class="level3" data-number="8.4.1">
 <h3 data-number="8.4.1" class="anchored" data-anchor-id="顺序流水线"><span class="header-section-number">8.4.1</span> 顺序流水线</h3>
 <p>最基础的模式，适合基础档项目。</p>
@@ -417,7 +417,7 @@ else:
 </section>
 </section>
 <section id="workflow-design" class="level2" data-number="8.5">
-<h2 data-number="8.5" class="anchored" data-anchor-id="workflow-design"><span class="header-section-number">8.5</span> 14.3 Workflow Design</h2>
+<h2 data-number="8.5" class="anchored" data-anchor-id="workflow-design"><span class="header-section-number">8.5</span> Workflow Design</h2>
 <p>每组先写 <code>workflow_design.md</code>，再写代码。</p>
 <p>模板：</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Workflow Design</span></span>
@@ -471,7 +471,7 @@ else:
 </section>
 </section>
 <section id="用-vibe-coding-实现端到端入口" class="level2" data-number="8.6">
-<h2 data-number="8.6" class="anchored" data-anchor-id="用-vibe-coding-实现端到端入口"><span class="header-section-number">8.6</span> 14.4 用 Vibe Coding 实现端到端入口</h2>
+<h2 data-number="8.6" class="anchored" data-anchor-id="用-vibe-coding-实现端到端入口"><span class="header-section-number">8.6</span> 用 Vibe Coding 实现端到端入口</h2>
 <p>当让 AI coding agent 写“粘合代码”时，必须提供：</p>
 <ul>
 <li>当前文件树；</li>
@@ -503,7 +503,7 @@ outputs/reports/summary_report.md</code></pre>
 </section>
 </section>
 <section id="日志设计" class="level2" data-number="8.7">
-<h2 data-number="8.7" class="anchored" data-anchor-id="日志设计"><span class="header-section-number">8.7</span> 14.5 日志设计</h2>
+<h2 data-number="8.7" class="anchored" data-anchor-id="日志设计"><span class="header-section-number">8.7</span> 日志设计</h2>
 <p><code>run_log.jsonl</code> 每一行建议是一个 JSON 对象：</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span><span class="dt">"time"</span><span class="fu">:</span> <span class="st">"2026-04-29T10:00:00"</span><span class="fu">,</span> <span class="dt">"step"</span><span class="fu">:</span> <span class="st">"parse"</span><span class="fu">,</span> <span class="dt">"doc_id"</span><span class="fu">:</span> <span class="st">"000001_20240101_xxx"</span><span class="fu">,</span> <span class="dt">"status"</span><span class="fu">:</span> <span class="st">"success"</span><span class="fu">,</span> <span class="dt">"elapsed"</span><span class="fu">:</span> <span class="fl">2.31</span><span class="fu">,</span> <span class="dt">"error"</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">}</span></span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>日志不是装饰品。它回答：</p>
@@ -992,8 +992,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./labs/week13_schema_section_demo.html" class="pagination-link" aria-label="Lab Week 13：Section、Schema 与 Evidence 示范">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span>
+      <a href="./labs/week13_schema_section_demo.html" class="pagination-link" aria-label="Lab Week 13：MinerU、Section、Schema 与 Evidence 示范">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
