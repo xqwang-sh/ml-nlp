@@ -4,7 +4,6 @@ import argparse
 import io
 import json
 import os
-import subprocess
 import time
 import zipfile
 from pathlib import Path
@@ -15,45 +14,12 @@ from dotenv import load_dotenv
 from common import read_csv, read_yaml, write_jsonl
 
 
-def local_pdf_to_markdown(pdf_path: Path) -> tuple[str, list[dict]]:
-    pages = extract_pdf_pages(pdf_path)
-    markdown = "\n\n".join(f"<!-- page: {page['page_no']} -->\n\n{page['text']}" for page in pages)
-    return markdown, pages
-
-
-def extract_pdf_pages(pdf_path: Path) -> list[dict]:
-    if not pdf_path.exists():
-        raise FileNotFoundError(pdf_path)
-
-    try:
-        result = subprocess.run(
-            ["pdftotext", "-layout", str(pdf_path), "-"],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        raw_pages = result.stdout.split("\f")
-        return [
-            {"page_no": index + 1, "text": page.strip()}
-            for index, page in enumerate(raw_pages)
-            if page.strip()
-        ]
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        pass
-
-    try:
-        from pypdf import PdfReader
-    except ImportError as exc:
-        raise RuntimeError(
-            "PDF text extraction needs either the pdftotext command or pypdf. "
-            "Install pypdf with: python3 -m pip install pypdf"
-        ) from exc
-
-    reader = PdfReader(str(pdf_path))
-    pages = []
-    for index, page in enumerate(reader.pages):
-        pages.append({"page_no": index + 1, "text": page.extract_text() or ""})
-    return [page for page in pages if page["text"].strip()]
+def require_success_payload(response: requests.Response, context: str) -> dict:
+    response.raise_for_status()
+    data = response.json()
+    if data.get("code") != 0:
+        raise RuntimeError(f"{context} failed: {json.dumps(data, ensure_ascii=False)}")
+    return data
 
 
 def submit_mineru_url(row: dict, config: dict, api_key: str) -> str:
@@ -73,8 +39,7 @@ def submit_mineru_url(row: dict, config: dict, api_key: str) -> str:
         },
         timeout=int(mineru.get("timeout_seconds", 600)),
     )
-    response.raise_for_status()
-    data = response.json()
+    data = require_success_payload(response, f"MinerU submit doc_id={row['doc_id']}")
     task_id = data.get("data", {}).get("task_id") or data.get("task_id")
     if not task_id:
         raise RuntimeError(f"MinerU did not return task_id: {data}")
@@ -94,14 +59,15 @@ def poll_mineru_task(task_id: str, config: dict, api_key: str) -> dict:
             headers={"Authorization": f"Bearer {api_key}"},
             timeout=60,
         )
-        response.raise_for_status()
-        data = response.json()
+        data = require_success_payload(response, f"MinerU poll task_id={task_id}")
         task = data.get("data", data)
         state = str(task.get("state") or task.get("status") or "").lower()
         if state in {"done", "success", "finished"}:
             return task
         if state in {"failed", "error"}:
             raise RuntimeError(json.dumps(task, ensure_ascii=False))
+        if state not in {"pending", "running", "converting"}:
+            raise RuntimeError(f"MinerU returned unknown state for task_id={task_id}: {state}")
         time.sleep(poll_interval)
     raise TimeoutError(f"MinerU task timed out: {task_id}")
 
@@ -120,7 +86,8 @@ def read_markdown_from_zip(zip_url: str) -> str:
 def parse_with_mineru(row: dict, config: dict, api_key: str) -> tuple[str, dict]:
     task_id = submit_mineru_url(row, config, api_key)
     task = poll_mineru_task(task_id, config, api_key)
-    zip_url = task.get("full_zip_url") or task.get("zip_url") or task.get("result_url")
+    extract_result = task.get("extract_result") or {}
+    zip_url = task.get("full_zip_url") or extract_result.get("full_zip_url")
     if not zip_url:
         raise RuntimeError(f"MinerU task has no result zip URL: {task}")
     markdown = read_markdown_from_zip(zip_url)
@@ -140,32 +107,25 @@ def parse_docs(config_path: str) -> list[dict]:
     parsed_dir.mkdir(parents=True, exist_ok=True)
     markdown_dir.mkdir(parents=True, exist_ok=True)
     records = []
-    provider = config.get("parse", {}).get("provider", "mineru")
-    allow_local_fallback = bool(config.get("parse", {}).get("allow_local_fallback", False))
+    provider = config.get("parse", {}).get("provider")
+    if provider != "mineru":
+        raise RuntimeError(f"Unsupported parse provider: {provider}. This lab requires MinerU API.")
     api_key_env = config.get("parse", {}).get("mineru", {}).get("api_key_env", "MINERU_API_KEY")
     mineru_api_key = os.getenv(api_key_env, "")
+    if not mineru_api_key or mineru_api_key == "your_key_here":
+        raise RuntimeError(f"Missing real {api_key_env}. MinerU parsing stops here.")
 
     for row in read_csv(metadata_path):
         pdf_path = Path(row["local_pdf_path"])
         if row.get("download_status") not in {"success", "skipped"}:
-            continue
+            raise RuntimeError(f"Cannot parse doc_id={row['doc_id']} because download_status={row.get('download_status')}")
+        if not pdf_path.exists() or pdf_path.stat().st_size == 0:
+            raise FileNotFoundError(f"Missing PDF for doc_id={row['doc_id']}: {pdf_path}")
         markdown_path = markdown_dir / f"{row['doc_id']}.md"
-        parser = provider
-        mineru_meta = None
-        if provider == "mineru" and mineru_api_key and mineru_api_key != "your_key_here":
-            markdown, mineru_meta = parse_with_mineru(row, config, mineru_api_key)
-            pages = markdown_to_pages(markdown)
-        elif provider == "mineru" and allow_local_fallback:
-            markdown, pages = local_pdf_to_markdown(pdf_path)
-            parser = "local_fallback"
-        elif provider == "local":
-            markdown, pages = local_pdf_to_markdown(pdf_path)
-            parser = "local"
-        else:
-            raise RuntimeError(
-                f"MinerU parsing needs a real {api_key_env}. "
-                "Set parse.allow_local_fallback=true only for classroom smoke tests."
-            )
+        markdown, mineru_meta = parse_with_mineru(row, config, mineru_api_key)
+        pages = markdown_to_pages(markdown)
+        if not pages:
+            raise RuntimeError(f"MinerU returned empty markdown for doc_id={row['doc_id']}")
         markdown_path.write_text(markdown, encoding="utf-8")
         record = {
             "doc_id": row["doc_id"],
@@ -174,13 +134,14 @@ def parse_docs(config_path: str) -> list[dict]:
             "title": row["announcement_title"],
             "pdf_path": str(pdf_path),
             "markdown_path": str(markdown_path),
-            "parser": parser,
+            "parser": "mineru",
             "pages": pages,
+            "mineru_task_id": mineru_meta["task_id"],
         }
-        if mineru_meta:
-            record["mineru_task_id"] = mineru_meta["task_id"]
         records.append(record)
 
+    if not records:
+        raise RuntimeError("No documents were parsed.")
     output_path = parsed_dir / "parsed_docs.jsonl"
     write_jsonl(output_path, records)
     return records

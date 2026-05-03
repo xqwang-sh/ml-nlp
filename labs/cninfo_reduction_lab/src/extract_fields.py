@@ -39,6 +39,20 @@ def first_match(patterns: list[str], text: str) -> str | None:
     return None
 
 
+def clean_amount(value: str | None) -> str | None:
+    if not value:
+        return None
+    value = re.sub(r"\s+", "", value)
+    return value.replace("股", " 股")
+
+
+def clean_ratio(value: str | None) -> str | None:
+    if not value:
+        return None
+    value = value.replace("\\%", "%")
+    return re.sub(r"\s+", "", value)
+
+
 def extract_one_rule(section: dict) -> dict:
     text = section["section_text"]
     compact = normalize_for_regex(text)
@@ -73,29 +87,32 @@ def extract_one_rule(section: dict) -> dict:
 
     amount = first_match(
         [
-            r"减持(?:其所持有的)?(?:本公司|我公司|公司)?股份不超过[:：]?\s*([0-9,]+ 股)",
-            r"减持不超过[:：]?\s*([0-9,]+ 股)(?:公司)?股份",
-            r"不超过[:：]?\s*([0-9,]+ 股)(?:公司|我公司)?股份",
-            r"不超过[:：]?\s*([0-9,]+ 股)",
-            r"计划减持数量(?:（股）)?\s*([0-9,]+ 股)",
+            r"减持(?:其所持有的)?(?:本公司|我公司|公司)?股份不超过[:：]?\s*([0-9,]+\s*股)",
+            r"减持不超过[:：]?\s*([0-9,]+\s*股)(?:公司)?股份",
+            r"不超过[:：]?\s*([0-9,]+\s*股)(?:公司|我公司)?股份",
+            r"不超过[:：]?\s*([0-9,]+\s*股)",
+            r"计划减持数量(?:（股）)?\s*([0-9,]+\s*股)",
         ],
         compact,
     )
+    amount = clean_amount(amount)
     ratio_scope = evidence_scope
     if amount:
-        amount_index_for_ratio = compact.find(amount)
+        compact_amount = amount.replace(" ", "")
+        amount_index_for_ratio = compact.find(compact_amount)
         if amount_index_for_ratio >= 0:
             ratio_scope = compact[amount_index_for_ratio : amount_index_for_ratio + 220]
 
     ratio = first_match(
         [
-            r"占(?:公司|本公司)?(?:当前)?总股本(?:的|比例不超过)?\s*([0-9.]+%)",
-            r"即不超过(?:公司|本公司)?(?:当前)?总股本(?:的)?\s*([0-9.]+%)",
-            r"计划减持比例\s*([0-9.]+%)",
-            r"减持占总股本\s*的比例.*?([0-9.]+%)",
+            r"占(?:公司|本公司)?(?:当前)?总股本(?:的|比例不超过)?\s*\$?([0-9.]+\s*\\?%)\$?",
+            r"即不超过(?:公司|本公司)?(?:当前)?总股本(?:的)?\s*\$?([0-9.]+\s*\\?%)\$?",
+            r"计划减持比例\s*\$?([0-9.]+\s*\\?%)\$?",
+            r"减持占总股本\s*的比例.*?\$?([0-9.]+\s*\\?%)\$?",
         ],
         ratio_scope,
     )
+    ratio = clean_ratio(ratio)
     period = first_match(
         [
             r"减持期间为([^。]+)",
@@ -212,11 +229,6 @@ page_no={section.get("page_no")}
         config,
     )
     result = json.loads(strip_json_fence(content))
-    result.setdefault("doc_id", section["doc_id"])
-    result.setdefault("stock_code", section.get("stock_code"))
-    result.setdefault("company_name", section.get("stock_name"))
-    result.setdefault("event_type", "股东减持")
-    result.setdefault("evidence", {"text": section["section_text"][:80], "page_no": section.get("page_no")})
     return result
 
 

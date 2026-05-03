@@ -10,6 +10,8 @@ from schemas import ShareholderReductionExtract
 def validate_results(config_path: str) -> tuple[list[dict], list[dict]]:
     config = read_yaml(config_path)
     rows = read_jsonl(config["paths"]["extract_results"])
+    if not rows:
+        raise RuntimeError(f"No extraction rows found: {config['paths']['extract_results']}")
     valid = []
     errors = []
     for row in rows:
@@ -28,6 +30,8 @@ def validate_results(config_path: str) -> tuple[list[dict], list[dict]]:
 
     write_csv(config["paths"]["validated_results"], flat_rows)
     write_jsonl(config["paths"]["validation_errors"], errors)
+    if errors:
+        raise RuntimeError(f"Pydantic validation failed for {len(errors)} row(s). See {config['paths']['validation_errors']}")
     return flat_rows, errors
 
 
@@ -41,4 +45,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

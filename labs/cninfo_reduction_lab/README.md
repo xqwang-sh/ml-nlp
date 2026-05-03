@@ -31,7 +31,7 @@ cp .env.example .env
 python3 src/pipeline_run.py --step all
 ```
 
-PDF 解析步骤优先使用 MinerU API，把 PDF 转成 `data/parsed/markdown/*.md`，再写入统一的 `data/parsed/parsed_docs.jsonl`。课堂环境没有 MinerU Key 时，脚本会用本地 fallback 跑通流程，并在 `parsed_docs.jsonl` 的 `parser` 字段中标记为 `local_fallback`；正式项目结果应来自 MinerU。
+PDF 解析步骤必须使用 MinerU API，把 PDF 转成 `data/parsed/markdown/*.md`，再写入统一的 `data/parsed/parsed_docs.jsonl`。没有真实 `MINERU_API_KEY`、MinerU 返回失败、或解析结果为空时，脚本会直接退出。
 
 字段抽取默认使用规则 baseline：
 

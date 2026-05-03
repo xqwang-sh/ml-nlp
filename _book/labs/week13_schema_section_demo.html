@@ -272,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre class="text"><code>data/parsed/markdown/*.md
 data/parsed/parsed_docs.jsonl</code></pre>
 <p>正式项目中，这一步使用 MinerU API 把真实巨潮 PDF 转为 Markdown，并整理成后续脚本统一读取的结构：每个文档包含 <code>doc_id</code>、<code>title</code>、<code>pdf_path</code>、<code>markdown_path</code> 和 <code>pages</code>。</p>
-<p>如果课堂环境暂时没有 MinerU Key，demo 会使用本地 fallback 跑通流程，但 <code>parsed_docs.jsonl</code> 中的 <code>parser</code> 会标记为 <code>local_fallback</code>。学生正式提交时应使用 MinerU API 解析结果。</p>
+<p>没有真实 MinerU Key、MinerU 返回失败、或解析结果为空时，脚本会直接退出。这样可以防止学生误把本地解析或空结果当成正式项目结果。</p>
 </section>
 <section id="section-routing" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="section-routing"><span class="header-section-number">7.3</span> 2. Section Routing</h2>

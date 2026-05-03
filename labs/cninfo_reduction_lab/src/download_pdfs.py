@@ -29,6 +29,8 @@ def download_pdfs(config_path: str) -> tuple[list[dict], list[dict]]:
         "Referer": "https://www.cninfo.com.cn/new/fulltextSearch",
     }
     rows = read_csv(metadata_path)
+    if not rows:
+        raise RuntimeError(f"No metadata rows found: {metadata_path}")
     failures: list[dict] = []
     session = requests.Session()
 
@@ -43,21 +45,21 @@ def download_pdfs(config_path: str) -> tuple[list[dict], list[dict]]:
         if not is_allowed_pdf_url(url):
             row["download_status"] = "failed"
             row["error_message"] = f"blocked non-CNINFO PDF URL: {url}"
-            failures.append(row.copy())
-            continue
-        try:
-            response = session.get(url, headers=headers, timeout=timeout)
-            response.raise_for_status()
-            content_type = response.headers.get("Content-Type", "")
-            if "pdf" not in content_type.lower() and not response.content.startswith(b"%PDF"):
-                raise RuntimeError(f"response does not look like PDF: {content_type}")
-            dst.write_bytes(response.content)
-            row["download_status"] = "success"
-            row["error_message"] = ""
-        except Exception as exc:
+            write_csv(metadata_path, rows)
+            write_csv(failed_path, [row.copy()])
+            raise RuntimeError(row["error_message"])
+        response = session.get(url, headers=headers, timeout=timeout)
+        response.raise_for_status()
+        content_type = response.headers.get("Content-Type", "")
+        if "pdf" not in content_type.lower() and not response.content.startswith(b"%PDF"):
             row["download_status"] = "failed"
-            row["error_message"] = str(exc)
-            failures.append(row.copy())
+            row["error_message"] = f"response does not look like PDF: {content_type}"
+            write_csv(metadata_path, rows)
+            write_csv(failed_path, [row.copy()])
+            raise RuntimeError(row["error_message"])
+        dst.write_bytes(response.content)
+        row["download_status"] = "success"
+        row["error_message"] = ""
         time.sleep(sleep_seconds)
 
     write_csv(metadata_path, rows)
@@ -75,4 +77,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

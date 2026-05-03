@@ -11,6 +11,8 @@ def check_dataset(config_path: str) -> str:
     metadata_path = config["paths"]["metadata"]
     report_path = Path(config["paths"]["dataset_report"])
     rows = read_csv(metadata_path)
+    if not rows:
+        raise RuntimeError(f"No metadata rows found: {metadata_path}")
     seen = set()
     duplicates = []
     missing_pdf = []
@@ -49,6 +51,12 @@ def check_dataset(config_path: str) -> str:
         text += f"| {row['doc_id']} | {row['stock_code']} {row['stock_name']} | {row['announcement_title']} | {row.get('download_status', '')} | {size} |\n"
 
     report_path.write_text(text, encoding="utf-8")
+    if missing_pdf or duplicates or keyword_miss:
+        raise RuntimeError(
+            "Dataset check failed: "
+            f"missing_pdf={len(missing_pdf)}, duplicates={len(duplicates)}, keyword_miss={len(keyword_miss)}. "
+            f"See {report_path}"
+        )
     return str(report_path)
 
 

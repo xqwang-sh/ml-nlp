@@ -31,7 +31,11 @@ def route_sections(config_path: str) -> list[dict]:
     sections = []
     report_rows = []
 
-    for doc in read_jsonl(parsed_path):
+    docs = read_jsonl(parsed_path)
+    if not docs:
+        raise RuntimeError(f"No parsed docs found: {parsed_path}")
+
+    for doc in docs:
         full_text = "\n".join(page["text"] for page in doc["pages"])
         found, section_text, issue = find_section(
             full_text,
@@ -92,6 +96,10 @@ def route_sections(config_path: str) -> list[dict]:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(report_rows)
+    bad_sections = [row for row in report_rows if row["found"] != "true" or row["quality_issue"] != "ok"]
+    if bad_sections:
+        doc_ids = ", ".join(row["doc_id"] for row in bad_sections)
+        raise RuntimeError(f"Section routing failed for doc_id(s): {doc_ids}. See {report_path}")
     return sections
 
 

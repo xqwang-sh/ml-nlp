@@ -138,6 +138,8 @@ def query_cninfo(config: dict) -> list[dict]:
 def crawl(config_path: str) -> list[dict]:
     config = read_yaml(config_path)
     rows = query_cninfo(config)
+    if not rows:
+        raise RuntimeError("CNINFO query returned 0 PDF announcements.")
     write_csv(config["output"]["metadata"], rows, FIELDS)
     return rows
 
@@ -152,4 +154,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

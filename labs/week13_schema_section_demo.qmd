@@ -34,7 +34,7 @@ data/parsed/parsed_docs.jsonl
 
 正式项目中，这一步使用 MinerU API 把真实巨潮 PDF 转为 Markdown，并整理成后续脚本统一读取的结构：每个文档包含 `doc_id`、`title`、`pdf_path`、`markdown_path` 和 `pages`。
 
-如果课堂环境暂时没有 MinerU Key，demo 会使用本地 fallback 跑通流程，但 `parsed_docs.jsonl` 中的 `parser` 会标记为 `local_fallback`。学生正式提交时应使用 MinerU API 解析结果。
+没有真实 MinerU Key、MinerU 返回失败、或解析结果为空时，脚本会直接退出。这样可以防止学生误把本地解析或空结果当成正式项目结果。
 
 ## 2. Section Routing
 

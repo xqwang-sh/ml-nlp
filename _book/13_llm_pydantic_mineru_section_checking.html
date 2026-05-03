@@ -359,7 +359,7 @@ MINERU_API_KEY=your_mineru_key_here</code></pre>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> .env.example .env</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 在 .env 中填入真实 MINERU_API_KEY</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> src/pipeline_run.py <span class="at">--step</span> parse</span></code><button title="复制到剪贴板" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>正式项目要求用 MinerU API 解析 PDF。课堂环境没有 Key 时，demo 可以临时使用 local fallback 做冒烟测试，但提交材料中应说明正式结果来自 MinerU。</p>
+<p>正式项目和课堂 demo 都要求用 MinerU API 解析 PDF。没有真实 Key、API 返回失败、或解析结果为空时，脚本应直接退出，不允许静默使用本地解析替代。</p>
 </section>
 <section id="解析检查表" class="level3" data-number="6.3.3">
 <h3 data-number="6.3.3" class="anchored" data-anchor-id="解析检查表"><span class="header-section-number">6.3.3</span> 解析检查表</h3>

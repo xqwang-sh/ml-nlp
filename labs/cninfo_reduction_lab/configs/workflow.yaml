@@ -14,7 +14,6 @@ paths:
   run_log: "outputs/logs/run_log.jsonl"
 parse:
   provider: "mineru"
-  allow_local_fallback: true
   mineru:
     api_base_url: "https://mineru.net"
     api_key_env: "MINERU_API_KEY"
