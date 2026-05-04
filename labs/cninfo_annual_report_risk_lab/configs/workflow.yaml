@@ -1,4 +1,4 @@
-project_name: "cninfo_shareholder_reduction_lab"
+project_name: "cninfo_sse_annual_report_risk_lab"
 paths:
   metadata: "data/metadata/metadata.csv"
   pdf_dir: "data/pdf"
@@ -19,8 +19,8 @@ parse:
     api_key_env: "MINERU_API_KEY"
     model_version: "vlm"
     language: "ch"
-    poll_interval_seconds: 3
-    timeout_seconds: 600
+    poll_interval_seconds: 10
+    timeout_seconds: 1800
 extract:
   provider: "rule"
   llm:

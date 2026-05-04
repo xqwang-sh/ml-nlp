@@ -11,11 +11,11 @@ target_sections:
     min_chars: 500
     page_expansion: 1
 
-  shareholder_reduction:
+  annual_report_risk:
     include_keywords:
-      - "减持计划"
-      - "减持股份"
-      - "减持情况"
+      - "可能面对的风险"
+      - "公司面临的风险"
+      - "风险因素"
     exclude_keywords:
       - "目录"
       - "备查文件"

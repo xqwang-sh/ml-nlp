@@ -83,8 +83,7 @@ def read_markdown_from_zip(zip_url: str) -> str:
         return archive.read(preferred).decode("utf-8", errors="replace")
 
 
-def parse_with_mineru(row: dict, config: dict, api_key: str) -> tuple[str, dict]:
-    task_id = submit_mineru_url(row, config, api_key)
+def collect_mineru_result(task_id: str, config: dict, api_key: str) -> tuple[str, dict]:
     task = poll_mineru_task(task_id, config, api_key)
     extract_result = task.get("extract_result") or {}
     zip_url = task.get("full_zip_url") or extract_result.get("full_zip_url")
@@ -115,14 +114,26 @@ def parse_docs(config_path: str) -> list[dict]:
     if not mineru_api_key or mineru_api_key == "your_key_here":
         raise RuntimeError(f"Missing real {api_key_env}. MinerU parsing stops here.")
 
+    candidates = []
     for row in read_csv(metadata_path):
         pdf_path = Path(row["local_pdf_path"])
         if row.get("download_status") not in {"success", "skipped"}:
             raise RuntimeError(f"Cannot parse doc_id={row['doc_id']} because download_status={row.get('download_status')}")
         if not pdf_path.exists() or pdf_path.stat().st_size == 0:
             raise FileNotFoundError(f"Missing PDF for doc_id={row['doc_id']}: {pdf_path}")
+        candidates.append((row, pdf_path))
+
+    if not candidates:
+        raise RuntimeError("No downloaded PDFs were ready for MinerU parsing.")
+
+    submitted = []
+    for row, pdf_path in candidates:
+        task_id = submit_mineru_url(row, config, mineru_api_key)
+        submitted.append((row, pdf_path, task_id))
+
+    for row, pdf_path, task_id in submitted:
         markdown_path = markdown_dir / f"{row['doc_id']}.md"
-        markdown, mineru_meta = parse_with_mineru(row, config, mineru_api_key)
+        markdown, mineru_meta = collect_mineru_result(task_id, config, mineru_api_key)
         pages = markdown_to_pages(markdown)
         if not pages:
             raise RuntimeError(f"MinerU returned empty markdown for doc_id={row['doc_id']}")

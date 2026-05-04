@@ -22,7 +22,7 @@ python3 run.py all
 For the live CNINFO classroom demo:
 
 ```bash
-cd labs/cninfo_reduction_lab
+cd labs/cninfo_annual_report_risk_lab
 python3 -m pip install -r requirements.txt
 python3 src/pipeline_run.py --step all
 ```

@@ -1,6 +1,6 @@
 """Offline starter metadata step.
 
-The real CNINFO crawler is demonstrated in labs/cninfo_reduction_lab. This
+The real CNINFO crawler is demonstrated in labs/cninfo_annual_report_risk_lab. This
 starter keeps a tiny local metadata file so students can learn the workflow
 shape before touching live websites.
 """

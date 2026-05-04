@@ -4,10 +4,10 @@ import argparse
 
 try:
     from .common import read_jsonl, read_yaml, write_csv, write_jsonl
-    from .schemas import ShareholderReductionExtract
+    from .schemas import AnnualReportRiskExtract
 except ImportError:
     from common import read_jsonl, read_yaml, write_csv, write_jsonl
-    from schemas import ShareholderReductionExtract
+    from schemas import AnnualReportRiskExtract
 
 
 def validate_results(config_path: str) -> tuple[list[dict], list[dict]]:
@@ -17,16 +17,17 @@ def validate_results(config_path: str) -> tuple[list[dict], list[dict]]:
     errors = []
     for row in read_jsonl(paths["extract_results"]):
         try:
-            model = ShareholderReductionExtract.model_validate(row)
+            model = AnnualReportRiskExtract.model_validate(row)
             valid.append(model.model_dump(mode="json"))
         except Exception as exc:
             errors.append({"doc_id": row.get("doc_id"), "error": str(exc), "raw": row})
 
     flat_rows = []
     for row in valid:
-        evidence = row.pop("evidence")
-        row["evidence_text"] = evidence.get("text")
-        row["page_no"] = evidence.get("page_no")
+        categories = row.pop("risk_categories")
+        row["risk_category_names"] = ";".join(item["category"] for item in categories)
+        row["risk_evidence_text"] = " || ".join(item["evidence"]["text"] for item in categories)
+        row["page_no"] = ";".join(str(item["evidence"].get("page_no") or "") for item in categories)
         flat_rows.append(row)
 
     write_csv(paths["validated_csv"], flat_rows)
@@ -44,4 +45,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

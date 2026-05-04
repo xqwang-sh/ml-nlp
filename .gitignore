@@ -12,8 +12,8 @@ starter_example/outputs/
 starter_example/data/parsed/parsed_docs.jsonl
 starter_example/data/parsed/sections.jsonl
 
-labs/cninfo_reduction_lab/data/
-labs/cninfo_reduction_lab/outputs/
+labs/cninfo_annual_report_risk_lab/data/
+labs/cninfo_annual_report_risk_lab/outputs/
 
 
 /.quarto/

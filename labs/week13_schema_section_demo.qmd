@@ -75,17 +75,12 @@ cat src/schemas.py
 本 demo 的核心 schema 是：
 
 ```python
-class ShareholderReductionExtract(BaseModel):
+class AnnualReportRiskExtract(BaseModel):
     doc_id: str
     company_name: str
-    event_type: Literal["股东减持"]
-    shareholder_name: Optional[str] = None
-    reduction_method: Optional[str] = None
-    reduction_amount_text: Optional[str] = None
-    reduction_ratio_text: Optional[str] = None
-    reduction_period: Optional[str] = None
-    reason: Optional[str] = None
-    evidence: Evidence
+    report_year: Literal["2024"]
+    event_type: Literal["年报风险披露"]
+    risk_categories: list[RiskCategory]
 ```
 
 课堂讲解重点：
@@ -146,5 +141,5 @@ records_validated.csv
 
 1. 哪个字段最容易抽错？
 2. evidence 是否真的出现在原文里？
-3. 如果模型抽不出减持原因，应该输出什么？
+3. 如果模型无法判断某个具体风险类别，应该输出什么？
 4. 如果 section 命中错误，会对抽取结果造成什么影响？

@@ -20,6 +20,7 @@ FIELDS = [
     "market",
     "announcement_title",
     "announcement_type",
+    "report_year",
     "publish_date",
     "url",
     "pdf_url",
@@ -55,6 +56,24 @@ def page_column_to_market(page_column: str | None) -> str:
     return page_column.lower()
 
 
+def is_target_annual_report(item: dict, config: dict, seen_stocks: set[str]) -> bool:
+    title = clean_title(item.get("announcementTitle") or "")
+    stock_code = item.get("secCode") or ""
+    adjunct_url = item.get("adjunctUrl") or ""
+    query = config["query"]
+    if not stock_code or stock_code in seen_stocks:
+        return False
+    if item.get("pageColumn") != query.get("required_page_column", "SHZB"):
+        return False
+    if not adjunct_url.lower().endswith(".pdf"):
+        return False
+    if query.get("title_include", "2024年年度报告") not in title:
+        return False
+    if any(word in title for word in query.get("title_exclude", [])):
+        return False
+    return True
+
+
 def query_cninfo(config: dict) -> list[dict]:
     session = requests.Session()
     headers = {
@@ -76,6 +95,7 @@ def query_cninfo(config: dict) -> list[dict]:
     pdf_dir = Path(config["output"]["pdf_dir"])
 
     rows: list[dict] = []
+    seen_stocks: set[str] = set()
     page_num = 1
     while len(rows) < max_records:
         payload = {
@@ -83,11 +103,11 @@ def query_cninfo(config: dict) -> list[dict]:
             "pageSize": page_size,
             "column": config["query"].get("column", "szse"),
             "tabName": config["query"].get("tab_name", "fulltext"),
-            "plate": "",
+            "plate": config["query"].get("plate", ""),
             "stock": "",
             "searchkey": keyword,
             "secid": "",
-            "category": "",
+            "category": config["query"].get("category", ""),
             "trade": "",
             "seDate": se_date,
             "sortName": "",
@@ -104,24 +124,27 @@ def query_cninfo(config: dict) -> list[dict]:
         for item in announcements:
             if len(rows) >= max_records:
                 break
-            adjunct_url = item.get("adjunctUrl") or ""
-            if not adjunct_url.lower().endswith(".pdf"):
+            if not is_target_annual_report(item, config, seen_stocks):
                 continue
+            adjunct_url = item.get("adjunctUrl") or ""
             doc_id = item.get("announcementId") or f"{item.get('secCode', 'unknown')}_{len(rows) + 1}"
             title = clean_title(item.get("announcementTitle") or "")
             pdf_url = urljoin(pdf_base_url, adjunct_url)
+            stock_code = item.get("secCode") or ""
+            seen_stocks.add(stock_code)
             rows.append(
                 {
                     "doc_id": doc_id,
-                    "stock_code": item.get("secCode") or "",
+                    "stock_code": stock_code,
                     "stock_name": item.get("secName") or item.get("tileSecName") or "",
                     "market": page_column_to_market(item.get("pageColumn")),
                     "announcement_title": title,
-                    "announcement_type": "股东减持",
+                    "announcement_type": "年度报告",
+                    "report_year": "2024",
                     "publish_date": format_date(item.get("announcementTime")),
-                    "url": f"https://www.cninfo.com.cn/new/disclosure/detail?stockCode={item.get('secCode') or ''}&announcementId={doc_id}",
+                    "url": f"https://www.cninfo.com.cn/new/disclosure/detail?stockCode={stock_code}&announcementId={doc_id}",
                     "pdf_url": pdf_url,
-                    "local_pdf_path": str(pdf_dir / f"{doc_id}.pdf"),
+                    "local_pdf_path": str(pdf_dir / f"{stock_code}_{doc_id}.pdf"),
                     "source": "cninfo",
                     "crawl_time": datetime.now().isoformat(timespec="seconds"),
                     "download_status": "pending",
@@ -138,8 +161,10 @@ def query_cninfo(config: dict) -> list[dict]:
 def crawl(config_path: str) -> list[dict]:
     config = read_yaml(config_path)
     rows = query_cninfo(config)
-    if not rows:
-        raise RuntimeError("CNINFO query returned 0 PDF announcements.")
+    expected = int(config["query"].get("target_records", config["query"]["max_records"]))
+    if len(rows) != expected:
+        if len(rows) < expected:
+            raise RuntimeError(f"CNINFO query returned {len(rows)} target annual reports; expected at least {expected}.")
     write_csv(config["output"]["metadata"], rows, FIELDS)
     return rows
 

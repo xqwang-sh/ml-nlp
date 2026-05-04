@@ -15,7 +15,7 @@ title: "Lab Week 12：Metadata、PDF 下载与数据检查示范"
 ## 示例项目位置
 
 ```bash
-cd labs/cninfo_reduction_lab
+cd labs/cninfo_annual_report_risk_lab
 ```
 
 ## 1. 抓取规格

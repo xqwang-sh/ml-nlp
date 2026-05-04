@@ -17,7 +17,7 @@ def check_dataset(config_path: str) -> str:
     duplicates = []
     missing_pdf = []
     keyword_miss = []
-    keywords = ["减持", "减持计划", "减持股份"]
+    keywords = ["2024年年度报告"]
 
     for row in rows:
         doc_id = row["doc_id"]
@@ -28,6 +28,8 @@ def check_dataset(config_path: str) -> str:
         if not pdf_path.exists() or pdf_path.stat().st_size == 0:
             missing_pdf.append(row)
         if not any(keyword in row["announcement_title"] for keyword in keywords):
+            keyword_miss.append(row)
+        if row.get("market") != "sh" or row.get("announcement_type") != "年度报告":
             keyword_miss.append(row)
 
     report_path.parent.mkdir(parents=True, exist_ok=True)

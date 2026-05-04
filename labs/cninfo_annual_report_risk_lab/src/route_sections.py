@@ -7,14 +7,18 @@ from pathlib import Path
 from common import read_jsonl, read_yaml, write_jsonl
 
 
-def find_section(text: str, include_keywords: list[str], exclude_keywords: list[str], min_chars: int) -> tuple[bool, str, str]:
-    positions = [text.find(keyword) for keyword in include_keywords if text.find(keyword) >= 0]
-    if not positions:
+def find_section(text: str, rule: dict) -> tuple[bool, str, str]:
+    include_keywords = rule["include_keywords"]
+    min_chars = int(rule["min_chars"])
+    start = -1
+    for keyword in include_keywords:
+        start = text.find(keyword)
+        if start >= 0:
+            break
+    if start < 0:
         return False, "", "not_found"
-    start = min(positions)
     section = text[start:]
-    end_markers = ["三、", "四、", "五、", "备查文件"]
-    end_positions = [section.find(marker) for marker in end_markers if section.find(marker) > 20]
+    end_positions = [section.find(marker) for marker in rule.get("end_markers", []) if section.find(marker) > min_chars]
     if end_positions:
         section = section[: min(end_positions)]
     section = section.strip()
@@ -27,7 +31,7 @@ def route_sections(config_path: str) -> list[dict]:
     config = read_yaml(config_path)
     parsed_path = Path(config["paths"]["parsed_dir"]) / "parsed_docs.jsonl"
     rules = read_yaml(config["paths"]["section_rules"])
-    rule = rules["target_sections"]["shareholder_reduction"]
+    rule = rules["target_sections"]["annual_report_risk"]
     sections = []
     report_rows = []
 
@@ -37,12 +41,7 @@ def route_sections(config_path: str) -> list[dict]:
 
     for doc in docs:
         full_text = "\n".join(page["text"] for page in doc["pages"])
-        found, section_text, issue = find_section(
-            full_text,
-            rule["include_keywords"],
-            rule["exclude_keywords"],
-            int(rule["min_chars"]),
-        )
+        found, section_text, issue = find_section(full_text, rule)
         page_no = None
         if found:
             for page in doc["pages"]:
@@ -55,7 +54,7 @@ def route_sections(config_path: str) -> list[dict]:
                 "stock_code": doc.get("stock_code"),
                 "stock_name": doc.get("stock_name"),
                 "title": doc["title"],
-                "target_section": "shareholder_reduction",
+                "target_section": "annual_report_risk",
                 "found": found,
                 "page_no": page_no,
                 "section_text": section_text,
@@ -66,9 +65,9 @@ def route_sections(config_path: str) -> list[dict]:
             {
                 "doc_id": doc["doc_id"],
                 "title": doc["title"],
-                "target_section": "shareholder_reduction",
+                "target_section": "annual_report_risk",
                 "found": str(found).lower(),
-                "section_title": "减持计划",
+                "section_title": "可能面对的风险",
                 "page_start": page_no or "",
                 "page_end": page_no or "",
                 "quality_issue": issue,
@@ -104,7 +103,7 @@ def route_sections(config_path: str) -> list[dict]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Route shareholder reduction sections.")
+    parser = argparse.ArgumentParser(description="Route annual-report risk sections.")
     parser.add_argument("--config", default="configs/workflow.yaml")
     args = parser.parse_args()
     sections = route_sections(args.config)

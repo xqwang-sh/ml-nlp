@@ -1,0 +1,35 @@
+project_name: "cninfo_sse_annual_report_risk_lab"
+source: "cninfo"
+endpoint: "https://www.cninfo.com.cn/new/hisAnnouncement/query"
+pdf_base_url: "https://static.cninfo.com.cn/"
+keywords:
+  - "2024年年度报告"
+query:
+  column: "sse"
+  tab_name: "fulltext"
+  plate: "sh"
+  category: "category_ndbg_szsh"
+  page_size: 30
+  max_records: 300
+  target_records: 20
+  required_page_column: "SHZB"
+  title_include: "2024年年度报告"
+  title_exclude:
+    - "摘要"
+    - "英文"
+    - "已取消"
+    - "取消"
+    - "H股"
+date_range:
+  start: "2025-01-01"
+  end: "2025-12-31"
+request:
+  sleep_seconds: 1.2
+  timeout_seconds: 60
+  user_agent: "Mozilla/5.0 (Course demo; contact: teacher)"
+pdf:
+  max_pages_for_mineru: 200
+output:
+  metadata: "data/metadata/metadata.csv"
+  pdf_dir: "data/pdf"
+  failed_downloads: "outputs/logs/failed_downloads.csv"

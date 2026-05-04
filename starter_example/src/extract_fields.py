@@ -9,53 +9,45 @@ except ImportError:
     from common import read_jsonl, read_yaml, write_jsonl
 
 
+RISK_RULES = [
+    ("市场风险", ["市场需求", "市场波动", "宏观经济"]),
+    ("行业竞争风险", ["行业竞争", "竞争加剧", "市场竞争"]),
+    ("经营风险", ["经营风险", "客户集中", "业务拓展"]),
+    ("财务风险", ["应收账款", "现金流", "资产减值"]),
+    ("政策与合规风险", ["政策风险", "监管", "合规"]),
+    ("管理与内控风险", ["管理风险", "内部控制", "人才"]),
+]
+
+
 def normalize_space(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
-def first_match(patterns: list[str], text: str) -> str | None:
-    for pattern in patterns:
-        match = re.search(pattern, text)
-        if match:
-            value = match.group(1) if match.groups() else match.group(0)
-            return normalize_space(value).strip(" 。；;，,")
+def evidence_for_keywords(text: str, keywords: list[str]) -> str | None:
+    normalized = normalize_space(text)
+    for keyword in keywords:
+        index = normalized.find(keyword)
+        if index >= 0:
+            return normalized[max(0, index - 60) : index + 160]
     return None
 
 
 def extract_one(section: dict) -> dict:
-    text = normalize_space(section["section_text"])
-    shareholder_name = first_match(
-        [
-            r"股东([\u4e00-\u9fa5A-Za-z0-9（）()、·]+?)计划",
-            r"实际控制人([\u4e00-\u9fa5A-Za-z0-9（）()、·]+?)先生",
-        ],
-        text,
-    )
-    amount = first_match([r"不超过\s*([0-9,]+ 股)", r"减持公司股份不超过\s*([0-9,]+ 股)"], text)
-    ratio = first_match([r"总股本(?:的)?\s*([0-9.]+%)", r"总股本的\s*([0-9.]+%)"], text)
-    period = first_match([r"减持期间为([^。]+)", r"三个月内"], text)
-    reason = first_match([r"减持原因为([^。]+)"], text)
-    evidence = ""
-    for sentence in re.split(r"[。\n]", section["section_text"]):
-        if "减持" in sentence and ("不超过" in sentence or "减持期间" in sentence):
-            evidence = normalize_space(sentence) + "。"
-            break
-
+    text = section["section_text"]
+    categories = []
+    for category, keywords in RISK_RULES:
+        evidence = evidence_for_keywords(text, keywords)
+        if evidence:
+            categories.append({"category": category, "evidence": {"text": evidence, "page_no": section.get("page_no")}})
+    if not categories:
+        categories.append({"category": "其他风险", "evidence": {"text": normalize_space(text)[:180], "page_no": section.get("page_no")}})
     return {
         "doc_id": section["doc_id"],
         "stock_code": section.get("stock_code"),
         "company_name": section.get("stock_name") or "",
-        "event_type": "股东减持",
-        "shareholder_name": shareholder_name,
-        "reduction_method": "集中竞价交易" if "集中竞价" in text else None,
-        "reduction_amount_text": amount,
-        "reduction_ratio_text": ratio,
-        "reduction_period": period,
-        "reason": reason,
-        "evidence": {
-            "text": evidence or section["section_text"][:100],
-            "page_no": section.get("page_no"),
-        },
+        "report_year": "2024",
+        "event_type": "年报风险披露",
+        "risk_categories": categories,
     }
 
 
@@ -68,7 +60,7 @@ def extract_fields(config_path: str) -> list[dict]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Extract starter fields with simple rules.")
+    parser = argparse.ArgumentParser(description="Extract starter annual-report risk categories.")
     parser.add_argument("--config", default="configs/workflow.yaml")
     args = parser.parse_args()
     results = extract_fields(args.config)

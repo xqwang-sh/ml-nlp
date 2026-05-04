@@ -12,7 +12,7 @@ metadata.csv
   -> summary report
 ```
 
-真实巨潮抓取和 PDF 下载请看 `../labs/cninfo_reduction_lab/`。
+真实巨潮抓取和 PDF 下载请看 `../labs/cninfo_annual_report_risk_lab/`。
 
 ## 快速开始
 
@@ -56,6 +56,6 @@ python3 src/hello_llm.py --config configs/model_config.yaml
 
 - `data/metadata/metadata.csv` 和 `data/parsed/parsed_docs_sample.jsonl` 是离线教学样本。
 - starter 的抽取是简单规则，不代表最终项目答案。
-- 正式项目应替换为真实巨潮 metadata、真实 PDF 或 MinerU 解析输出。
+- 正式项目应替换为真实巨潮沪主板年报 metadata、真实 PDF 和 MinerU 解析输出。
 - 不要把真实 API Key 写入代码或提交 `.env`。
 

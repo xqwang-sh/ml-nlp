@@ -1,9 +1,9 @@
 target_sections:
   default:
     include_keywords:
-      - "减持"
-      - "回购"
-      - "风险"
+      - "可能面对的风险"
+      - "公司面临的风险"
+      - "风险因素"
     exclude_keywords:
       - "目录"
       - "释义"

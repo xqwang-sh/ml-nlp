@@ -11,7 +11,19 @@ class Evidence(BaseModel):
 
 
 class RiskCategory(BaseModel):
-    category: Literal["市场风险", "行业竞争风险", "经营风险", "财务风险", "政策与合规风险", "管理与内控风险", "其他风险"]
+    category: Literal[
+        "市场风险",
+        "行业竞争风险",
+        "经营风险",
+        "财务风险",
+        "政策与合规风险",
+        "技术与研发风险",
+        "供应链与原材料风险",
+        "汇率与利率风险",
+        "环境与安全风险",
+        "管理与内控风险",
+        "其他风险",
+    ]
     evidence: Evidence
 
 
@@ -22,6 +34,3 @@ class AnnualReportRiskExtract(BaseModel):
     report_year: Literal["2024"]
     event_type: Literal["年报风险披露"]
     risk_categories: list[RiskCategory]
-
-
-AnnouncementExtract = AnnualReportRiskExtract

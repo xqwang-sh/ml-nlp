@@ -26,17 +26,15 @@ def generate_report(config_path: str) -> str:
         "",
         "## Output Preview",
         "",
-        "| doc_id | company_name | shareholder_name | amount | ratio | evidence_page |",
-        "|---|---|---|---|---|---:|",
+        "| doc_id | company_name | risk_categories | evidence_page |",
+        "|---|---|---|---:|",
     ]
     for row in rows:
         lines.append(
-            "| {doc_id} | {company_name} | {shareholder_name} | {amount} | {ratio} | {page} |".format(
+            "| {doc_id} | {company_name} | {risk_categories} | {page} |".format(
                 doc_id=row.get("doc_id", ""),
                 company_name=row.get("company_name", ""),
-                shareholder_name=row.get("shareholder_name", ""),
-                amount=row.get("reduction_amount_text", ""),
-                ratio=row.get("reduction_ratio_text", ""),
+                risk_categories=row.get("risk_category_names", ""),
                 page=row.get("page_no", ""),
             )
         )
@@ -45,7 +43,7 @@ def generate_report(config_path: str) -> str:
             "",
             "## Next Steps",
             "",
-            "- Replace offline sample text with real CNINFO PDFs or MinerU parsed outputs.",
+            "- Replace offline sample text with real CNINFO annual reports and MinerU parsed outputs.",
             "- Replace rule-based extraction with LLM extraction if your project requires it.",
             "- Keep evidence_text and Pydantic validation in the final project.",
         ]
@@ -64,4 +62,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
