@@ -5,7 +5,7 @@ project:
 book:
   title: "模块 B：金融文本智能项目"
   subtitle: "用受控 Vibe Coding 分析巨潮公告"
-  author: "汪小圈"
+  author: "汪小圈、邵颖慧"
   date: last-modified
   chapters:
     - index.qmd
