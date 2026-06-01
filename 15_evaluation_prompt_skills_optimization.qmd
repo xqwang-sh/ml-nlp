@@ -14,14 +14,14 @@ Week 15 的任务是把“系统能跑”推进到“结果可信、过程可复
 4. 编写项目 rules / skills，让 AI coding agent 更稳定地帮助项目；
 5. 整理 final repo、demo 和 slides。
 
-## 15.1 评估框架
+## 评估框架
 
 金融文本智能项目不能只展示成功样例。评估要回答：系统在多少样本上可靠，错误主要来自哪里，下一步应该改什么。
 
 本课程建议五类指标：
 
 | 指标 | 问题 | 示例 |
-|---|---|---|
+|---|-----|-----|
 | Data Quality | 抓到的数据是否真的属于目标任务？ | 标题匹配率、PDF 可打开率、重复率 |
 | Section Quality | 目标章节是否找对？ | 关键章节找到率、页码正确率、表格损坏率 |
 | Extraction Quality | 字段是否抽对？ | 字段准确率、缺失率、格式错误率 |
@@ -33,7 +33,7 @@ Week 15 的任务是把“系统能跑”推进到“结果可信、过程可复
 每组抽样人工标注：
 
 | 难度 | 人工标注建议 |
-|---|---|
+|---|-----|
 | 基础 | 10–15 份 PDF |
 | 标准 | 15–25 份 PDF |
 | 挑战 | 25+ 份 PDF 或 10+ 对匹配样本 |
@@ -56,12 +56,12 @@ doc_id,field_name,predicted_value,gold_value,is_correct,evidence_correct,error_t
 - `workflow_error`
 - `human_label_unclear`
 
-## 15.2 错误驱动优化
+## 错误驱动优化
 
 优化不是盲目换模型，也不是只改 prompt。先判断错误来自哪里。
 
 | 错误类型 | 表现 | 可能原因 | 修复方法 |
-|---|---|---|---|
+|--|----|----|----|
 | 抓取错误 | 标题不相关，PDF 缺失 | 关键词过宽、下载失败未记录 | 收窄关键词、补充失败日志、人工抽查 |
 | PDF 解析错误 | 表格丢列、页码错乱 | PDF 版式复杂，解析结果未检查 | 换解析策略、保留原 PDF、标记人工复核 |
 | Section 错误 | 命中目录或无关章节 | include 过宽，exclude 不足 | 加排除词、页码扩展、最小长度规则 |
@@ -71,7 +71,7 @@ doc_id,field_name,predicted_value,gold_value,is_correct,evidence_correct,error_t
 | 工作流失败 | 单条能跑，批量失败 | 路径、缓存、异常处理混乱 | 加统一入口、日志、重试和断点 |
 | 展示不可复现 | Demo 依赖临时文件 | README 不完整，命令不清 | 固化配置、准备 sample outputs |
 
-## 15.3 Prompt 优化
+## Prompt 优化
 
 Prompt 优化应围绕具体错误进行。
 
@@ -128,7 +128,7 @@ Schema：
 {json_schema}
 ```
 
-## 15.4 Schema 优化
+## Schema 优化
 
 常见优化方式：
 
@@ -150,7 +150,7 @@ class MoneyValue(BaseModel):
 
 这样比只写一个 `amount: float` 更稳健，因为公告中金额单位经常变化。
 
-## 15.5 Section 优化
+## Section 优化
 
 Section 优化不是追求自动化到完全不看，而是减少明显误定位。
 
@@ -165,7 +165,7 @@ Section 优化不是追求自动化到完全不看，而是减少明显误定位
 
 每次修改 section rules 后，应重新跑一小批样本，并更新 `section_check_report.md`。
 
-## 15.6 Skills / Rules
+## Skills / Rules
 
 这里的 skills 不是给最终 LLM 抽取字段的 prompt，而是给“帮你写代码的 AI coding agent”的长期项目说明。不同工具叫法可能不同：TRAE 可使用 Rules & Skills；Claude Code / Kimi Code 有类似能力；Codex 可用 `AGENTS.md` 存放项目说明和工作规则。
 
@@ -235,7 +235,7 @@ skills/evaluator/SKILL.md
 - 不允许做什么；
 - 验收命令。
 
-## 15.7 展示工程化
+## 展示工程化
 
 最终 repo 至少包含：
 
@@ -281,9 +281,10 @@ README 必须写清：
 Deliverable 15：
 
 ```text
-final_repo/ 或 final.zip
+GitHub 公开仓库链接
 eval_report_final.md
 optimization_log.md
+final_report.md 或 final_report.pdf
 AGENTS.md / CODING_RULES.md / skills/
 demo_script.md
 final_slides.pdf
@@ -291,10 +292,10 @@ ai_usage_statement.md
 ai_worklog_all.md
 ```
 
-最终项目目录建议：
+最终项目必须放在 GitHub 公开仓库中，不接受只交 `final.zip`。目录建议：
 
 ```text
-final_repo/
+public_repo/
   README.md
   requirements.txt
   .env.example
@@ -319,9 +320,11 @@ final_repo/
     logs/
     results/
     reports/
+  final_report.md 或 final_report.pdf
   tests/
   ai_worklog_all.md
   ai_usage_statement.md
+  demo_script.md
   final_slides.pdf
 ```
 
@@ -345,4 +348,3 @@ final_repo/
 3. 如何发现；
 4. 如何修复；
 5. 修复后是否真的改善。
-

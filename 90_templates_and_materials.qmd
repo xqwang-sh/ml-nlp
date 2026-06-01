@@ -31,20 +31,20 @@ templates/
 
 ## 课堂 Labs
 
-`labs/` 目录提供 Week 12–14 的贯穿示范。它使用“股东减持公告核心字段抽取”作为小样例，真实访问巨潮公开公告查询接口并下载公开 PDF。默认只抓取 5 条记录，便于课堂控制。
+`labs/` 目录提供 Week 12–14 的贯穿示范。它使用“沪主板年报风险披露类别抽取”作为小样例，真实访问巨潮公开公告查询接口并下载沪主板年报 PDF。默认选择 20 家沪主板公司，便于课堂控制。
 
 ```text
 labs/
   week12_metadata_demo.qmd
   week13_schema_section_demo.qmd
   week14_workflow_demo.qmd
-  cninfo_reduction_lab/
+  cninfo_annual_report_risk_lab/
 ```
 
 运行示范项目：
 
 ```bash
-cd labs/cninfo_reduction_lab
+cd labs/cninfo_annual_report_risk_lab
 python3 src/pipeline_run.py --step all
 ```
 
@@ -60,6 +60,8 @@ python3 src/pipeline_run.py --step all
 |---|---|---|---|
 
 ## 联系方式
+
+## GitHub 公开仓库链接
 
 ## 初步选题方向
 ```
@@ -340,15 +342,15 @@ target_sections:
     min_chars: 500
     page_expansion: 1
 
-  shareholder_reduction:
+  annual_report_risk:
     include_keywords:
-      - "减持计划"
-      - "减持股份"
-      - "减持情况"
+      - "可能面对的风险"
+      - "公司面临的风险"
+      - "风险因素"
     exclude_keywords:
       - "目录"
-      - "备查文件"
-    min_chars: 200
+      - "释义"
+    min_chars: 500
     page_expansion: 0
 ```
 
@@ -448,6 +450,8 @@ steps:
 ```markdown
 # Presentation Checklist
 
+- [ ] GitHub 公开仓库链接可直接访问
+- [ ] 仓库中包含数据、代码、最终报告和展示材料
 - [ ] 题目与金融问题清楚
 - [ ] 说明巨潮数据来源
 - [ ] 说明数据量与难度档位

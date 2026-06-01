@@ -7,7 +7,7 @@ title: "Week 16：项目展示、答辩与期末考试说明"
 Week 16 是项目二的收尾周。本周需要完成三件事：
 
 1. 完成小组项目展示与答辩；
-2. 提交最终项目仓库与展示材料；
+2. 提交 GitHub 公开仓库链接与展示材料；
 3. 明确期末考试中模块 B 的考查范围和题型比例。
 
 展示和答辩检查的是学生是否真正理解：
@@ -36,7 +36,7 @@ Week 16 是项目二的收尾周。本周需要完成三件事：
 每组 slides 建议 8–10 页。不要把展示做成工具安装汇报，也不要只展示最终表格。推荐结构如下：
 
 | 页码 | 内容 | 必须讲清楚什么 |
-|---:|---|---|
+|--:|-----|--------|
 | 1 | 题目与金融问题 | 研究什么公告，解决什么金融问题 |
 | 2 | 巨潮数据来源 | 入口、关键词、公告类型、时间范围、样本规模 |
 | 3 | 难度档位 | 申请 0.9 / 1.0 / 1.1 的理由 |
@@ -78,12 +78,20 @@ Demo 不要求现场跑完整数据集，但必须展示一条完整证据链：
 
 ## 最终仓库要求
 
-最终提交应是一个可以复现的小项目，而不是只有 PPT。
+最终提交必须是一个 GitHub 公开仓库，而不是只有 PPT 或一个压缩包。教师应能直接打开仓库链接检查项目结构、运行说明和最终材料。
+
+仓库必须同时包含：
+
+- 数据：至少包含 `metadata.csv`、可检查的样本数据，以及必要的中间结果；如果原始 PDF 太大，可以保留样本并提供下载脚本与说明；
+- 代码：数据抓取、解析、抽取、校验、评估所需的核心代码；
+- 最终报告：`final_report.md` 或 `final_report.pdf`；
+- 展示材料：`final_slides.pdf`、`demo_script.md`；
+- 复现说明：`README.md` 中写明环境配置、运行命令和输出位置。
 
 最低目录结构：
 
 ```text
-final_repo/
+public_repo/
   README.md
   requirements.txt
   .env.example
@@ -111,6 +119,7 @@ final_repo/
     reports/eval_report_final.md
   tests/ 或 sample_checks/
   pipeline_run.py 或 run.py
+  final_report.md 或 final_report.pdf
   demo_script.md
   final_slides.pdf
   ai_usage_statement.md
@@ -146,7 +155,7 @@ MINERU_API_KEY=your_key_here
 ## 最终提交清单
 
 ```text
-final_repo/ 或 final.zip
+GitHub 公开仓库 URL
 README.md
 requirements.txt
 .env.example
@@ -154,9 +163,11 @@ configs/
 pipeline_run.py 或 run.py
 src/
 data/metadata/metadata.csv
+data/ 中的样本数据或下载脚本
 outputs/logs/sample_run_log.jsonl
 outputs/results/final_results.csv 或 final_results.jsonl
 outputs/reports/eval_report_final.md
+final_report.md 或 final_report.pdf
 demo_script.md
 final_slides.pdf
 ai_usage_statement.md
@@ -165,6 +176,8 @@ ai_worklog_all.md
 
 提交前自查：
 
+- [ ] GitHub 仓库为公开可访问状态；
+- [ ] 仓库中同时包含数据、代码、最终报告和展示材料；
 - [ ] `metadata.csv` 能追溯到巨潮公告；
 - [ ] PDF 样本或解析样本能对应 metadata；
 - [ ] 核心字段有 Pydantic Schema；
@@ -179,7 +192,7 @@ ai_worklog_all.md
 ## 展示评分 Rubric
 
 | 维度 | 分值 | 评价标准 |
-|---|---:|---|
+|---|-:|------|
 | 金融问题表达 | 3 | 能讲清为什么该公告任务有价值 |
 | 方法链路表达 | 3 | 能讲清数据、API、Schema、MinerU、Section、Workflow 如何串联 |
 | Demo 与证据链 | 4 | 能展示一个 PDF 到结构化结果的过程；字段有证据文本和页码 |
@@ -219,7 +232,7 @@ ai_worklog_all.md
 模块 B 题目只考察课程中反复使用的核心概念、流程设计和项目错误分析，不考具体工具安装命令，不要求背诵 API 代码。
 
 | 部分 | 预计题量 | 模块 B 占期末比例 | 考查重点 |
-|---|---:|---:|---|
+|---|---:|---:|-------|
 | 客观题 | 2–4 小题 | 约 8%–10% | 基本概念、术语辨析、流程顺序 |
 | 简答题 | 1 小题 | 约 8%–10% | 为什么这样设计、如何避免常见错误 |
 | 案例分析题 | 1 小题 | 约 10%–12% | 结合金融公告项目，分析数据、schema、section、workflow 或评估问题 |
@@ -243,4 +256,3 @@ ai_worklog_all.md
 - Skills / Rules。
 
 案例分析题会与同学们做过的项目类型相关，例如公告抓取、PDF 解析、section 检查、字段抽取、证据回填、workflow 复现或评估错误分析。考试不会要求复现某个小组的具体代码。
-

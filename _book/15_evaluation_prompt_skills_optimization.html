@@ -173,13 +173,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./13_llm_pydantic_mineru_section_checking.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：LLM API、Pydantic Schema、MinerU API 与 Section 检查</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Week 13：MinerU 解析、Section 检查、Schema 与字段抽取</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./labs/week13_schema_section_demo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：Section、Schema 与 Evidence 示范</span></span></a>
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Lab Week 13：MinerU、Section、Schema 与 Evidence 示范</span></span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -223,25 +223,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
    
   <ul>
   <li><a href="#本周目标" id="toc-本周目标" class="nav-link active" data-scroll-target="#本周目标"><span class="header-section-number">10.1</span> 本周目标</a></li>
-  <li><a href="#评估框架" id="toc-评估框架" class="nav-link" data-scroll-target="#评估框架"><span class="header-section-number">10.2</span> 15.1 评估框架</a>
+  <li><a href="#评估框架" id="toc-评估框架" class="nav-link" data-scroll-target="#评估框架"><span class="header-section-number">10.2</span> 评估框架</a>
   <ul class="collapse">
   <li><a href="#轻量人工评估" id="toc-轻量人工评估" class="nav-link" data-scroll-target="#轻量人工评估"><span class="header-section-number">10.2.1</span> 轻量人工评估</a></li>
   </ul></li>
-  <li><a href="#错误驱动优化" id="toc-错误驱动优化" class="nav-link" data-scroll-target="#错误驱动优化"><span class="header-section-number">10.3</span> 15.2 错误驱动优化</a></li>
-  <li><a href="#prompt-优化" id="toc-prompt-优化" class="nav-link" data-scroll-target="#prompt-优化"><span class="header-section-number">10.4</span> 15.3 Prompt 优化</a>
+  <li><a href="#错误驱动优化" id="toc-错误驱动优化" class="nav-link" data-scroll-target="#错误驱动优化"><span class="header-section-number">10.3</span> 错误驱动优化</a></li>
+  <li><a href="#prompt-优化" id="toc-prompt-优化" class="nav-link" data-scroll-target="#prompt-优化"><span class="header-section-number">10.4</span> Prompt 优化</a>
   <ul class="collapse">
   <li><a href="#抽取-prompt-模板" id="toc-抽取-prompt-模板" class="nav-link" data-scroll-target="#抽取-prompt-模板"><span class="header-section-number">10.4.1</span> 抽取 Prompt 模板</a></li>
   <li><a href="#json-修复-prompt" id="toc-json-修复-prompt" class="nav-link" data-scroll-target="#json-修复-prompt"><span class="header-section-number">10.4.2</span> JSON 修复 Prompt</a></li>
   </ul></li>
-  <li><a href="#schema-优化" id="toc-schema-优化" class="nav-link" data-scroll-target="#schema-优化"><span class="header-section-number">10.5</span> 15.4 Schema 优化</a></li>
-  <li><a href="#section-优化" id="toc-section-优化" class="nav-link" data-scroll-target="#section-优化"><span class="header-section-number">10.6</span> 15.5 Section 优化</a></li>
-  <li><a href="#skills-rules" id="toc-skills-rules" class="nav-link" data-scroll-target="#skills-rules"><span class="header-section-number">10.7</span> 15.6 Skills / Rules</a>
+  <li><a href="#schema-优化" id="toc-schema-优化" class="nav-link" data-scroll-target="#schema-优化"><span class="header-section-number">10.5</span> Schema 优化</a></li>
+  <li><a href="#section-优化" id="toc-section-优化" class="nav-link" data-scroll-target="#section-优化"><span class="header-section-number">10.6</span> Section 优化</a></li>
+  <li><a href="#skills-rules" id="toc-skills-rules" class="nav-link" data-scroll-target="#skills-rules"><span class="header-section-number">10.7</span> Skills / Rules</a>
   <ul class="collapse">
   <li><a href="#层次一项目规则文件" id="toc-层次一项目规则文件" class="nav-link" data-scroll-target="#层次一项目规则文件"><span class="header-section-number">10.7.1</span> 层次一：项目规则文件</a></li>
   <li><a href="#层次二任务-prompt-模板" id="toc-层次二任务-prompt-模板" class="nav-link" data-scroll-target="#层次二任务-prompt-模板"><span class="header-section-number">10.7.2</span> 层次二：任务 Prompt 模板</a></li>
   <li><a href="#层次三可复用-skill" id="toc-层次三可复用-skill" class="nav-link" data-scroll-target="#层次三可复用-skill"><span class="header-section-number">10.7.3</span> 层次三：可复用 Skill</a></li>
   </ul></li>
-  <li><a href="#展示工程化" id="toc-展示工程化" class="nav-link" data-scroll-target="#展示工程化"><span class="header-section-number">10.8</span> 15.7 展示工程化</a></li>
+  <li><a href="#展示工程化" id="toc-展示工程化" class="nav-link" data-scroll-target="#展示工程化"><span class="header-section-number">10.8</span> 展示工程化</a></li>
   <li><a href="#课堂练习" id="toc-课堂练习" class="nav-link" data-scroll-target="#课堂练习"><span class="header-section-number">10.9</span> 课堂练习</a></li>
   <li><a href="#课后提交" id="toc-课后提交" class="nav-link" data-scroll-target="#课后提交"><span class="header-section-number">10.10</span> 课后提交</a></li>
   <li><a href="#常见错误" id="toc-常见错误" class="nav-link" data-scroll-target="#常见错误"><span class="header-section-number">10.11</span> 常见错误</a></li>
@@ -284,14 +284,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 </section>
 <section id="评估框架" class="level2" data-number="10.2">
-<h2 data-number="10.2" class="anchored" data-anchor-id="评估框架"><span class="header-section-number">10.2</span> 15.1 评估框架</h2>
+<h2 data-number="10.2" class="anchored" data-anchor-id="评估框架"><span class="header-section-number">10.2</span> 评估框架</h2>
 <p>金融文本智能项目不能只展示成功样例。评估要回答：系统在多少样本上可靠，错误主要来自哪里，下一步应该改什么。</p>
 <p>本课程建议五类指标：</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 23%">
+<col style="width: 38%">
+<col style="width: 38%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -370,14 +370,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 <section id="错误驱动优化" class="level2" data-number="10.3">
-<h2 data-number="10.3" class="anchored" data-anchor-id="错误驱动优化"><span class="header-section-number">10.3</span> 15.2 错误驱动优化</h2>
+<h2 data-number="10.3" class="anchored" data-anchor-id="错误驱动优化"><span class="header-section-number">10.3</span> 错误驱动优化</h2>
 <p>优化不是盲目换模型，也不是只改 prompt。先判断错误来自哪里。</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width: 14%">
+<col style="width: 28%">
+<col style="width: 28%">
+<col style="width: 28%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -440,7 +440,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </section>
 <section id="prompt-优化" class="level2" data-number="10.4">
-<h2 data-number="10.4" class="anchored" data-anchor-id="prompt-优化"><span class="header-section-number">10.4</span> 15.3 Prompt 优化</h2>
+<h2 data-number="10.4" class="anchored" data-anchor-id="prompt-优化"><span class="header-section-number">10.4</span> Prompt 优化</h2>
 <p>Prompt 优化应围绕具体错误进行。</p>
 <p>有效做法：</p>
 <ul>
@@ -492,7 +492,7 @@ Schema：
 </section>
 </section>
 <section id="schema-优化" class="level2" data-number="10.5">
-<h2 data-number="10.5" class="anchored" data-anchor-id="schema-优化"><span class="header-section-number">10.5</span> 15.4 Schema 优化</h2>
+<h2 data-number="10.5" class="anchored" data-anchor-id="schema-优化"><span class="header-section-number">10.5</span> Schema 优化</h2>
 <p>常见优化方式：</p>
 <ul>
 <li>将模糊字段拆分为原文值和标准化值；</li>
@@ -510,7 +510,7 @@ Schema：
 <p>这样比只写一个 <code>amount: float</code> 更稳健，因为公告中金额单位经常变化。</p>
 </section>
 <section id="section-优化" class="level2" data-number="10.6">
-<h2 data-number="10.6" class="anchored" data-anchor-id="section-优化"><span class="header-section-number">10.6</span> 15.5 Section 优化</h2>
+<h2 data-number="10.6" class="anchored" data-anchor-id="section-优化"><span class="header-section-number">10.6</span> Section 优化</h2>
 <p>Section 优化不是追求自动化到完全不看，而是减少明显误定位。</p>
 <p>可用策略：</p>
 <ul>
@@ -524,7 +524,7 @@ Schema：
 <p>每次修改 section rules 后，应重新跑一小批样本，并更新 <code>section_check_report.md</code>。</p>
 </section>
 <section id="skills-rules" class="level2" data-number="10.7">
-<h2 data-number="10.7" class="anchored" data-anchor-id="skills-rules"><span class="header-section-number">10.7</span> 15.6 Skills / Rules</h2>
+<h2 data-number="10.7" class="anchored" data-anchor-id="skills-rules"><span class="header-section-number">10.7</span> Skills / Rules</h2>
 <p>这里的 skills 不是给最终 LLM 抽取字段的 prompt，而是给“帮你写代码的 AI coding agent”的长期项目说明。不同工具叫法可能不同：TRAE 可使用 Rules &amp; Skills；Claude Code / Kimi Code 有类似能力；Codex 可用 <code>AGENTS.md</code> 存放项目说明和工作规则。</p>
 <p>它们的作用是减少重复解释，让 AI 每次写代码时都遵守项目边界。</p>
 <section id="层次一项目规则文件" class="level3" data-number="10.7.1">
@@ -587,7 +587,7 @@ skills/evaluator/SKILL.md</code></pre>
 </section>
 </section>
 <section id="展示工程化" class="level2" data-number="10.8">
-<h2 data-number="10.8" class="anchored" data-anchor-id="展示工程化"><span class="header-section-number">10.8</span> 15.7 展示工程化</h2>
+<h2 data-number="10.8" class="anchored" data-anchor-id="展示工程化"><span class="header-section-number">10.8</span> 展示工程化</h2>
 <p>最终 repo 至少包含：</p>
 <pre class="text"><code>README.md
 requirements.txt
@@ -629,16 +629,17 @@ ai_usage_statement.md</code></pre>
 <section id="课后提交" class="level2" data-number="10.10">
 <h2 data-number="10.10" class="anchored" data-anchor-id="课后提交"><span class="header-section-number">10.10</span> 课后提交</h2>
 <p>Deliverable 15：</p>
-<pre class="text"><code>final_repo/ 或 final.zip
+<pre class="text"><code>GitHub 公开仓库链接
 eval_report_final.md
 optimization_log.md
+final_report.md 或 final_report.pdf
 AGENTS.md / CODING_RULES.md / skills/
 demo_script.md
 final_slides.pdf
 ai_usage_statement.md
 ai_worklog_all.md</code></pre>
-<p>最终项目目录建议：</p>
-<pre class="text"><code>final_repo/
+<p>最终项目必须放在 GitHub 公开仓库中，不接受只交 <code>final.zip</code>。目录建议：</p>
+<pre class="text"><code>public_repo/
   README.md
   requirements.txt
   .env.example
@@ -663,9 +664,11 @@ ai_worklog_all.md</code></pre>
     logs/
     results/
     reports/
+  final_report.md 或 final_report.pdf
   tests/
   ai_worklog_all.md
   ai_usage_statement.md
+  demo_script.md
   final_slides.pdf</code></pre>
 </section>
 <section id="常见错误" class="level2" data-number="10.11">
