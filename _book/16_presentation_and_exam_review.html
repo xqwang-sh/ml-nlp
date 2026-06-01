@@ -235,7 +235,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Week 16 是项目二的收尾周。本周需要完成三件事：</p>
 <ol type="1">
 <li>完成小组项目展示与答辩；</li>
-<li>提交最终项目仓库与展示材料；</li>
+<li>提交 GitHub 公开仓库链接与展示材料；</li>
 <li>明确期末考试中模块 B 的考查范围和题型比例。</li>
 </ol>
 <p>展示和答辩检查的是学生是否真正理解：</p>
@@ -371,9 +371,17 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="最终仓库要求" class="level2" data-number="11.5">
 <h2 data-number="11.5" class="anchored" data-anchor-id="最终仓库要求"><span class="header-section-number">11.5</span> 最终仓库要求</h2>
-<p>最终提交应是一个可以复现的小项目，而不是只有 PPT。</p>
+<p>最终提交必须是一个 GitHub 公开仓库，而不是只有 PPT 或一个压缩包。教师应能直接打开仓库链接检查项目结构、运行说明和最终材料。</p>
+<p>仓库必须同时包含：</p>
+<ul>
+<li>数据：至少包含 <code>metadata.csv</code>、可检查的样本数据，以及必要的中间结果；如果原始 PDF 太大，可以保留样本并提供下载脚本与说明；</li>
+<li>代码：数据抓取、解析、抽取、校验、评估所需的核心代码；</li>
+<li>最终报告：<code>final_report.md</code> 或 <code>final_report.pdf</code>；</li>
+<li>展示材料：<code>final_slides.pdf</code>、<code>demo_script.md</code>；</li>
+<li>复现说明：<code>README.md</code> 中写明环境配置、运行命令和输出位置。</li>
+</ul>
 <p>最低目录结构：</p>
-<pre class="text"><code>final_repo/
+<pre class="text"><code>public_repo/
   README.md
   requirements.txt
   .env.example
@@ -401,6 +409,7 @@ ul.task-list li input[type="checkbox"] {
     reports/eval_report_final.md
   tests/ 或 sample_checks/
   pipeline_run.py 或 run.py
+  final_report.md 或 final_report.pdf
   demo_script.md
   final_slides.pdf
   ai_usage_statement.md
@@ -432,7 +441,7 @@ MINERU_API_KEY=your_key_here</code></pre>
 </section>
 <section id="最终提交清单" class="level2" data-number="11.6">
 <h2 data-number="11.6" class="anchored" data-anchor-id="最终提交清单"><span class="header-section-number">11.6</span> 最终提交清单</h2>
-<pre class="text"><code>final_repo/ 或 final.zip
+<pre class="text"><code>GitHub 公开仓库 URL
 README.md
 requirements.txt
 .env.example
@@ -440,15 +449,19 @@ configs/
 pipeline_run.py 或 run.py
 src/
 data/metadata/metadata.csv
+data/ 中的样本数据或下载脚本
 outputs/logs/sample_run_log.jsonl
 outputs/results/final_results.csv 或 final_results.jsonl
 outputs/reports/eval_report_final.md
+final_report.md 或 final_report.pdf
 demo_script.md
 final_slides.pdf
 ai_usage_statement.md
 ai_worklog_all.md</code></pre>
 <p>提交前自查：</p>
 <ul class="task-list">
+<li><label><input type="checkbox">GitHub 仓库为公开可访问状态；</label></li>
+<li><label><input type="checkbox">仓库中同时包含数据、代码、最终报告和展示材料；</label></li>
 <li><label><input type="checkbox"><code>metadata.csv</code> 能追溯到巨潮公告；</label></li>
 <li><label><input type="checkbox">PDF 样本或解析样本能对应 metadata；</label></li>
 <li><label><input type="checkbox">核心字段有 Pydantic Schema；</label></li>

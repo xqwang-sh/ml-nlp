@@ -1,0 +1,580 @@
+---
+title: "模板与材料清单"
+---
+
+## 学生模板总览
+
+本章汇总学生可直接复制使用的模板。课程项目中建议把模板放入项目根目录或 `templates/` 目录。
+
+```text
+templates/
+  team_info.md
+  tool_setup_check.md
+  cninfo_data_discovery.md
+  topic_ideas.md
+  topic_proposal.md
+  output_sample.md
+  crawl_spec.md
+  difficulty_declaration.md
+  ai_worklog_weekXX.md
+  AGENTS.md
+  CODING_RULES.md
+  model_config.yaml
+  parse_check.md
+  section_rules.yaml
+  workflow_design.md
+  workflow.yaml
+  eval_report_template.md
+  ai_usage_statement.md
+  presentation_checklist.md
+```
+
+## 课堂 Labs
+
+`labs/` 目录提供 Week 12–14 的贯穿示范。它使用“沪主板年报风险披露类别抽取”作为小样例，真实访问巨潮公开公告查询接口并下载沪主板年报 PDF。默认选择 20 家沪主板公司，便于课堂控制。
+
+```text
+labs/
+  week12_metadata_demo.qmd
+  week13_schema_section_demo.qmd
+  week14_workflow_demo.qmd
+  cninfo_annual_report_risk_lab/
+```
+
+运行示范项目：
+
+```bash
+cd labs/cninfo_annual_report_risk_lab
+python3 src/pipeline_run.py --step all
+```
+
+## `team_info.md`
+
+```markdown
+# Team Info
+
+## 小组名称
+
+## 成员与分工
+| 姓名 | 学号 | 角色 | 主要负责内容 |
+|---|---|---|---|
+
+## 联系方式
+
+## GitHub 公开仓库链接
+
+## 初步选题方向
+```
+
+## `tool_setup_check.md`
+
+```markdown
+# Tool Setup Check
+
+- 使用工具：TRAE / Claude Code / Codex / Kimi Code / 其他
+- 操作系统：
+- Python 版本：
+- 是否能打开项目目录：是/否
+- 是否能运行 `python run.py --help`：是/否
+- 是否能运行 starter example：是/否
+- 是否已创建 `.env.example`：是/否
+- 是否确认 `.env` 不提交：是/否
+
+## 遇到的问题
+| 问题 | 报错信息 | 解决方式 |
+|---|---|---|
+```
+
+## `cninfo_data_discovery.md`
+
+```markdown
+# 巨潮数据探索记录
+
+## 方向 A
+- 关键词：
+- 公告类型：
+- 示例公司/代码：
+- 示例标题：
+- PDF 是否可下载：是/否
+- 可能字段：
+- 金融问题：
+- 风险点：
+
+## 方向 B
+- 关键词：
+- 公告类型：
+- 示例公司/代码：
+- 示例标题：
+- PDF 是否可下载：是/否
+- 可能字段：
+- 金融问题：
+- 风险点：
+
+## 初步选择
+我们更倾向于：
+理由：
+```
+
+## `topic_proposal.md`
+
+```markdown
+# Topic Proposal
+
+## 项目题目
+
+## 金融问题
+
+## 巨潮数据来源
+
+## 公告类型
+
+## 示例公告
+| 公司 | 代码 | 标题 | 日期 | URL |
+|---|---|---|---|---|
+
+## 目标字段
+| 字段 | 类型 | 是否必填 | 金融含义 | 证据来源 |
+|---|---|---|---|---|
+
+## 最终输出形式
+
+## 难度档位
+- 0.9 / 1.0 / 1.1
+- 理由：
+
+## 风险与备选方案
+```
+
+## `topic_ideas.md`
+
+```markdown
+# Topic Ideas
+
+## 候选方向 1
+- 公告类型：
+- 关键词：
+- 金融问题：
+- 可能字段：
+- 预计输出：
+- 主要风险：
+
+## 候选方向 2
+- 公告类型：
+- 关键词：
+- 金融问题：
+- 可能字段：
+- 预计输出：
+- 主要风险：
+
+## 初步排序
+1.
+2.
+```
+
+## `output_sample.md`
+
+```markdown
+# Output Sample
+
+## 目标输出说明
+- CSV / JSONL / 风险卡 / 时间线 / 其他：
+- 每条记录对应的公告粒度：
+- 每条记录是否需要 evidence：
+
+## 示例表格
+| doc_id | company_name | field_1 | field_2 | evidence_text | page_no |
+|---|---|---|---|---|---:|
+
+## 字段解释
+| 字段 | 类型 | 是否必填 | 金融含义 | 如何判断对错 |
+|---|---|---|---|---|
+```
+
+## `crawl_spec.md`
+
+```markdown
+# Crawl Spec
+
+## 项目名称
+
+## 数据来源
+巨潮资讯网公开公告。
+
+## 抓取范围
+- 股票池或行业：
+- 时间范围：
+- 市场：
+- 公告类型：
+- 关键词：
+
+## 数据量目标
+
+## metadata 字段
+
+## PDF 保存规则
+
+## 限速与失败处理
+
+## 合规说明
+- 不绕过登录、验证码或访问限制。
+- 保留日志。
+- 只抓取公开可访问数据。
+```
+
+## `difficulty_declaration.md`
+
+```markdown
+# 难度申请
+
+- 申请难度：基础 / 标准 / 挑战
+- 系数：0.9 / 1.0 / 1.1
+- 数据量：
+- 公告类型：
+- 是否多公告匹配：
+- 字段数量：
+- 主要挑战：
+- 我们认为该难度合理的理由：
+```
+
+## `ai_worklog_weekXX.md`
+
+```markdown
+# AI Worklog Week XX
+
+## 使用的工具
+TRAE / Claude Code / Codex / Kimi Code / 其他
+
+## 本周让 AI 帮助的任务
+
+## 我给 AI 的上下文
+
+## AI 生成或修改的文件
+
+## 我实际运行的命令
+
+## 报错与修复
+
+## 我人工检查了什么
+
+## 我理解的关键代码
+```
+
+## `AGENTS.md` / `CODING_RULES.md`
+
+```markdown
+# Agent Instructions for CNINFO Project
+
+## Project Goal
+本项目从巨潮资讯网公告 PDF 中抽取结构化金融事件信息。
+
+## Data Rules
+- 主数据必须来自巨潮资讯网公开公告。
+- 不绕过登录、验证码或访问限制。
+- 原始 PDF 不得修改。
+
+## Secret Rules
+- 不要把 API Key 写入代码。
+- 不要提交 .env。
+- 只维护 .env.example。
+
+## Coding Rules
+- 每个脚本必须支持命令行运行。
+- 所有输出写入 outputs/。
+- 所有错误写入 outputs/logs/。
+- 修改代码后必须说明运行哪个命令验证。
+
+## Extraction Rules
+- 字段值必须来自公告文本。
+- 每个关键字段要有 evidence_text。
+- 无法判断时输出 null。
+- 抽取结果必须通过 Pydantic 校验。
+```
+
+## `model_config.yaml`
+
+```yaml
+provider: "your_provider"
+model: "your_model_here"
+base_url_env: "LLM_BASE_URL"
+api_key_env: "LLM_API_KEY"
+temperature: 0
+max_tokens: 1024
+timeout_seconds: 60
+```
+
+## `parse_check.md`
+
+```markdown
+# Parse Check
+
+## Document
+- doc_id:
+- title:
+- pdf_path:
+- parsed_path:
+
+## Page Check
+- 页码是否保留：
+- 是否有乱码：
+- 表格是否完整：
+- 标题层级是否合理：
+- 目录是否混入正文：
+
+## Target Content
+- 目标章节是否出现：
+- 关键字段是否能在解析文本中找到：
+- 是否需要人工修正：
+```
+
+## `section_rules.yaml`
+
+```yaml
+target_sections:
+  risk_factors:
+    include_keywords:
+      - "风险因素"
+      - "可能面对的风险"
+      - "公司面临的风险"
+    exclude_keywords:
+      - "目录"
+      - "释义"
+      - "重要提示"
+    min_chars: 500
+    page_expansion: 1
+
+  annual_report_risk:
+    include_keywords:
+      - "可能面对的风险"
+      - "公司面临的风险"
+      - "风险因素"
+    exclude_keywords:
+      - "目录"
+      - "释义"
+    min_chars: 500
+    page_expansion: 0
+```
+
+## `workflow_design.md`
+
+```markdown
+# Workflow Design
+
+## 项目目标
+
+## 节点表
+| 节点 | 输入 | 输出 | 成功标准 | 失败处理 | 日志 |
+|---|---|---|---|---|---|
+
+## 流程图
+
+## 人工检查点
+
+## 最小运行命令
+```
+
+## `workflow.yaml`
+
+```yaml
+project_name: "your_project_name"
+paths:
+  metadata: "data/metadata/metadata.csv"
+  pdf_dir: "data/pdf"
+  parsed_dir: "data/parsed"
+  results_jsonl: "outputs/results/extract_results.jsonl"
+  validated_csv: "outputs/results/records_validated.csv"
+  run_log: "outputs/logs/run_log.jsonl"
+
+steps:
+  audit:
+    enabled: true
+  parse:
+    enabled: true
+  route_sections:
+    enabled: true
+    rules: "configs/section_rules.yaml"
+  extract:
+    enabled: true
+    prompt: "prompts/prompt_final.md"
+  validate:
+    enabled: true
+  report:
+    enabled: true
+```
+
+## `eval_report_template.md`
+
+```markdown
+# Evaluation Report
+
+## 评估样本
+
+## Data Quality
+
+## Section Quality
+
+## Extraction Quality
+
+## Evidence Quality
+
+## Pipeline Stability
+
+## 错误分类
+| 错误类型 | 数量 | 示例 | 修复策略 |
+|---|---:|---|---|
+
+## 优化前后对比
+
+## 局限性
+```
+
+## `ai_usage_statement.md`
+
+```markdown
+# AI Usage Statement
+
+## 使用的 AI coding agent
+
+## AI 帮助完成的内容
+
+## 学生人工完成的内容
+
+## 我们如何验证 AI 生成内容
+
+## 发现过的 AI 错误
+
+## API Key 与数据合规说明
+```
+
+## 展示检查表
+
+```markdown
+# Presentation Checklist
+
+- [ ] GitHub 公开仓库链接可直接访问
+- [ ] 仓库中包含数据、代码、最终报告和展示材料
+- [ ] 题目与金融问题清楚
+- [ ] 说明巨潮数据来源
+- [ ] 说明数据量与难度档位
+- [ ] 展示 Schema
+- [ ] 展示 MinerU 解析与 Section 检查
+- [ ] 展示 Workflow
+- [ ] 展示一个 PDF 到结构化结果的 Demo
+- [ ] 展示 evidence_text
+- [ ] 展示评估结果和失败案例
+- [ ] 说明 Vibe Coding 过程
+- [ ] 准备答辩问题
+```
+
+## Starter Code 建议
+
+教师可以发轻量 starter，而不是完整答案。当前 `starter_example/` 默认离线运行，不访问真实网站，不调用真实 LLM API。它先让学生看懂项目链路，再去替换真实巨潮数据和 API。
+
+```text
+starter_example/
+  README.md
+  run.py
+  .env.example
+  requirements.txt
+  configs/
+    workflow.yaml
+    model_config.yaml
+    section_rules.yaml
+  data/
+    metadata/metadata.csv
+    parsed/parsed_docs_sample.jsonl
+  src/
+    common.py
+    crawl_cninfo.py
+    download_pdfs.py
+    check_dataset.py
+    llm_client.py
+    hello_llm.py
+    schemas.py
+    parse_with_mineru.py
+    route_sections.py
+    extract_fields.py
+    validate_results.py
+    report_results.py
+  pipeline_run.py
+```
+
+推荐学生先运行：
+
+```bash
+cd starter_example
+python3 -m pip install -r requirements.txt
+python3 run.py all
+```
+
+若需要检查真实 LLM API，再复制 `.env.example` 为 `.env`，填入真实 key 后运行：
+
+```bash
+python3 src/hello_llm.py --config configs/model_config.yaml
+```
+
+Starter code 不应包含真实 API Key，也不应鼓励绕过访问限制。
+
+## 教师材料清单
+
+### Week 11
+
+- 巨潮官网入口；
+- 3–5 个公告样例；
+- TRAE 安装说明；
+- Claude Code / Codex / Kimi Code 可选说明；
+- Vibe coding prompt 模板；
+- `topic_proposal.md` 模板。
+
+### Week 12
+
+- `crawl_spec.md` 模板；
+- `configs/crawl.yaml` 示例；
+- metadata 样例；
+- failed_downloads 样例；
+- 难度声明表。
+
+### Week 13
+
+- 硅基流动 API 示例；
+- 千问官方 API 示例；
+- `.env.example`；
+- Pydantic schema 示例；
+- MinerU API 示例；
+- section rules 示例；
+- section check report 示例。
+
+### Week 14
+
+- workflow design 模板；
+- workflow.yaml 示例；
+- pipeline_run 示例；
+- 五种工作流模式图。
+
+### Week 15
+
+- eval report 模板；
+- prompt 优化前后案例；
+- AGENTS.md / CODING_RULES.md 示例；
+- skill 示例；
+- final repo checklist。
+
+### Week 16
+
+- presentation checklist；
+- 项目评分表；
+- 答辩问题库；
+- 期末考试模块 B 复习提纲。
+
+## 参考链接
+
+- 巨潮资讯网：<https://www.cninfo.com.cn/>
+- TRAE 官方文档：<https://docs.trae.ai/>
+- Claude Code Docs：<https://code.claude.com/docs/>
+- OpenAI Codex CLI：<https://developers.openai.com/codex/cli>
+- OpenAI Codex AGENTS.md：<https://developers.openai.com/codex/guides/agents-md>
+- Kimi Code Docs：<https://www.kimi.com/code/docs/en/>
+- 硅基流动文档：<https://docs.siliconflow.cn/>
+- 阿里云百炼 / 千问文档：<https://www.alibabacloud.com/help/en/model-studio/>
+- Pydantic 文档：<https://pydantic.dev/>
+- MinerU 文档：<https://opendatalab.github.io/MinerU/>
+- MinerU API 文档：<https://mineru.net/apiManage/docs>

@@ -1,0 +1,258 @@
+---
+title: "Week 16：项目展示、答辩与期末考试说明"
+---
+
+## 本周目标
+
+Week 16 是项目二的收尾周。本周需要完成三件事：
+
+1. 完成小组项目展示与答辩；
+2. 提交 GitHub 公开仓库链接与展示材料；
+3. 明确期末考试中模块 B 的考查范围和题型比例。
+
+展示和答辩检查的是学生是否真正理解：
+
+- 数据从哪里来；
+- 字段为什么这样设计；
+- PDF 解析和 section 定位哪里可能错；
+- 模型输出如何校验；
+- 评估结果说明了什么；
+- AI coding agent 帮了什么，又错在哪里。
+
+## 展示安排
+
+如果班级约 10 组，可以安排：
+
+| 课次 | 安排 |
+|---|---|
+| 16.1 | 4 组展示，每组 10–12 分钟 + Q&A 3–5 分钟 |
+| 16.2 | 3 组展示，每组 10–12 分钟 + Q&A 3–5 分钟 |
+| 16.3 | 3 组展示 + 教师总结 + 期末考试模块 B 说明 |
+
+教师可根据实际组数调整时间，但每组必须有问答环节。展示超时会影响评分，因为项目表达能力也是本项目的一部分。
+
+## 展示内容要求
+
+每组 slides 建议 8–10 页。不要把展示做成工具安装汇报，也不要只展示最终表格。推荐结构如下：
+
+| 页码 | 内容 | 必须讲清楚什么 |
+|--:|-----|--------|
+| 1 | 题目与金融问题 | 研究什么公告，解决什么金融问题 |
+| 2 | 巨潮数据来源 | 入口、关键词、公告类型、时间范围、样本规模 |
+| 3 | 难度档位 | 申请 0.9 / 1.0 / 1.1 的理由 |
+| 4 | 字段与 Schema | 核心字段、字段类型、null rule、证据字段 |
+| 5 | PDF 解析与 Section 检查 | MinerU 解析结果、目标章节如何定位、人工检查结果 |
+| 6 | Workflow | 从 metadata 到 final result 的流程图 |
+| 7 | Demo | 展示一个公告从 PDF 到结构化结果 |
+| 8 | 评估结果 | 人工评估样本、主要指标、典型错误 |
+| 9 | 优化过程 | 改过哪些 prompt、schema、section rules 或 workflow |
+| 10 | Vibe Coding 反思 | AI 帮助了什么，学生如何验证，AI 出过什么错 |
+
+## Demo 要求
+
+Demo 不要求现场跑完整数据集，但必须展示一条完整证据链：
+
+```text
+一份巨潮公告 PDF
+  -> metadata 记录
+  -> MinerU 解析片段
+  -> section 定位结果
+  -> LLM 抽取结果
+  -> Pydantic 校验结果
+  -> final result
+  -> evidence_text / page_no
+```
+
+最低要求：
+
+- 展示 1 份原始 PDF；
+- 展示该 PDF 在 `metadata.csv` 中的记录；
+- 展示解析后的目标文本片段；
+- 展示 section 检查记录；
+- 展示抽取 JSON 或 JSONL；
+- 展示 Pydantic 校验是否通过；
+- 展示最终表格中的对应行；
+- 至少解释 2 个关键字段的 `evidence_text`。
+
+如果现场网络或 API 不稳定，可以使用提前保存的小样本输出，但必须能说明这些输出如何由项目代码生成。
+
+## 最终仓库要求
+
+最终提交必须是一个 GitHub 公开仓库，而不是只有 PPT 或一个压缩包。教师应能直接打开仓库链接检查项目结构、运行说明和最终材料。
+
+仓库必须同时包含：
+
+- 数据：至少包含 `metadata.csv`、可检查的样本数据，以及必要的中间结果；如果原始 PDF 太大，可以保留样本并提供下载脚本与说明；
+- 代码：数据抓取、解析、抽取、校验、评估所需的核心代码；
+- 最终报告：`final_report.md` 或 `final_report.pdf`；
+- 展示材料：`final_slides.pdf`、`demo_script.md`；
+- 复现说明：`README.md` 中写明环境配置、运行命令和输出位置。
+
+最低目录结构：
+
+```text
+public_repo/
+  README.md
+  requirements.txt
+  .env.example
+  AGENTS.md 或 CODING_RULES.md
+  configs/
+    task.yaml 或 workflow.yaml
+    crawl_config.yaml
+    model_config.yaml
+    section_rules.yaml
+  data/
+    metadata/metadata.csv
+    parsed/parsed_docs_sample.jsonl
+  prompts/
+    prompt_v1.md
+    prompt_final.md
+  src/
+    cninfo/
+    llm/
+    mineru/
+    workflow/
+    evaluation/
+  outputs/
+    logs/sample_run_log.jsonl
+    results/final_results.csv 或 final_results.jsonl
+    reports/eval_report_final.md
+  tests/ 或 sample_checks/
+  pipeline_run.py 或 run.py
+  final_report.md 或 final_report.pdf
+  demo_script.md
+  final_slides.pdf
+  ai_usage_statement.md
+  ai_worklog_all.md
+```
+
+### README 必须包含
+
+- 项目题目和金融问题；
+- 数据来源与公告范围；
+- 目录结构；
+- 环境安装方法；
+- `.env.example` 中变量说明；
+- 最小运行命令；
+- 输出文件说明；
+- 评估结果摘要；
+- 主要局限。
+
+### `.env.example` 必须包含
+
+只写变量名和占位符，不得写真实 Key：
+
+```text
+LLM_PROVIDER=your_provider
+LLM_BASE_URL=your_base_url
+LLM_API_KEY=your_key_here
+LLM_MODEL=your_model_here
+MINERU_API_KEY=your_key_here
+```
+
+真实 `.env` 不得提交。
+
+## 最终提交清单
+
+```text
+GitHub 公开仓库 URL
+README.md
+requirements.txt
+.env.example
+configs/
+pipeline_run.py 或 run.py
+src/
+data/metadata/metadata.csv
+data/ 中的样本数据或下载脚本
+outputs/logs/sample_run_log.jsonl
+outputs/results/final_results.csv 或 final_results.jsonl
+outputs/reports/eval_report_final.md
+final_report.md 或 final_report.pdf
+demo_script.md
+final_slides.pdf
+ai_usage_statement.md
+ai_worklog_all.md
+```
+
+提交前自查：
+
+- [ ] GitHub 仓库为公开可访问状态；
+- [ ] 仓库中同时包含数据、代码、最终报告和展示材料；
+- [ ] `metadata.csv` 能追溯到巨潮公告；
+- [ ] PDF 样本或解析样本能对应 metadata；
+- [ ] 核心字段有 Pydantic Schema；
+- [ ] 至少有一份 section 检查报告；
+- [ ] 最终结果包含 evidence；
+- [ ] 有人工评估与错误分类；
+- [ ] 有运行日志；
+- [ ] README 写明复现命令；
+- [ ] 没有提交真实 API Key；
+- [ ] AI 使用过程有记录。
+
+## 展示评分 Rubric
+
+| 维度 | 分值 | 评价标准 |
+|---|-:|------|
+| 金融问题表达 | 3 | 能讲清为什么该公告任务有价值 |
+| 方法链路表达 | 3 | 能讲清数据、API、Schema、MinerU、Section、Workflow 如何串联 |
+| Demo 与证据链 | 4 | 能展示一个 PDF 到结构化结果的过程；字段有证据文本和页码 |
+| 评估与局限 | 3 | 能说明系统好坏、失败案例和下一步优化 |
+| Vibe Coding 反思 | 2 | 能说明 AI 帮了什么、错在哪里、学生如何验证 |
+
+## 答辩关注点
+
+答辩会围绕项目本身提问，不要求背诵工具文档。常见关注点包括：
+
+- 选题是否有金融意义；
+- 数据量与难度档位是否匹配；
+- 字段设计是否合理；
+- section 是否真的找对；
+- evidence 是否支持字段值；
+- Pydantic 发现过哪些错误；
+- workflow 哪一步最容易失败；
+- AI coding agent 生成的内容如何被验证；
+- 如果换一批公告，项目是否还能复现。
+
+## 常见展示问题
+
+- 展示时间花在背景介绍，Demo 不完整；
+- 只给最终表格，不展示证据链；
+- 只展示成功案例，没有失败样本；
+- 无法说明 section 是如何检查的；
+- 无法解释 Pydantic 校验错误；
+- 把 AI 生成代码等同于自己完成项目；
+- 难度申请和实际完成程度不匹配；
+- 最终 repo 缺少运行命令；
+- 提交材料中出现真实 API Key。
+
+## 期末考试说明
+
+期末考试覆盖全课程，模块 B 只占其中一部分。模块 B 相关内容约占期末考试 **30%**，具体以正式试卷为准。
+
+模块 B 题目只考察课程中反复使用的核心概念、流程设计和项目错误分析，不考具体工具安装命令，不要求背诵 API 代码。
+
+| 部分 | 预计题量 | 模块 B 占期末比例 | 考查重点 |
+|---|---:|---:|-------|
+| 客观题 | 2–4 小题 | 约 8%–10% | 基本概念、术语辨析、流程顺序 |
+| 简答题 | 1 小题 | 约 8%–10% | 为什么这样设计、如何避免常见错误 |
+| 案例分析题 | 1 小题 | 约 10%–12% | 结合金融公告项目，分析数据、schema、section、workflow 或评估问题 |
+
+### 考点范围
+
+- Vibe coding 与学生责任；
+- AI coding agent 的作用和边界；
+- 巨潮数据抓取与 metadata；
+- LLM API 的基本组成；
+- Prompt 与结构化输出；
+- Pydantic Schema；
+- MinerU 文档解析；
+- Section Routing / Section Checking；
+- Evidence / 证据回填；
+- Workflow 设计；
+- Human-in-the-loop；
+- Evaluation metrics；
+- Hallucination；
+- Null rule；
+- Skills / Rules。
+
+案例分析题会与同学们做过的项目类型相关，例如公告抓取、PDF 解析、section 检查、字段抽取、证据回填、workflow 复现或评估错误分析。考试不会要求复现某个小组的具体代码。
